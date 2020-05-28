@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "297561593260",
+    "firebase_url": "https://psi-app-6b931.firebaseio.com",
+    "project_id": "psi-app-6b931",
+    "storage_bucket": "psi-app-6b931.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:297561593260:android:800fad4d6e1046ac855609",
+        "android_client_info": {
+          "package_name": "au.com.cocreations.psiapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "297561593260-9jjohutf1i8rrj8o1u4el9qhq0si1npb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaJm2033C9kzjSeQG4du5OaZPBTdHaFOQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "297561593260-9jjohutf1i8rrj8o1u4el9qhq0si1npb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
