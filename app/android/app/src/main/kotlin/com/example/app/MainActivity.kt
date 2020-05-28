@@ -1,4 +1,4 @@
-package com.example.app
+package au.com.cocreations.psiapp
 
 import io.flutter.embedding.android.FlutterActivity
 
