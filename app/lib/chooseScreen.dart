@@ -1,5 +1,6 @@
-import 'package:app/senderScreen.dart';
-import 'receiverScreen.dart';
+
+import 'package:app/screens/receiverScreen.dart';
+import 'package:app/screens/senderScreen.dart';
 import 'package:flutter/material.dart';
 
 bool receiver;
