@@ -1,11 +1,13 @@
 
 import 'package:app/components/button.dart';
 import 'package:app/components/screenBackground.dart';
+import 'package:app/components/slideRoute.dart';
 import 'package:app/components/textComponents.dart';
 import 'package:app/screens/receiverScreen.dart';
 import 'package:app/screens/senderScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_page_transition/flutter_page_transition.dart';
 
 
 class HomePage extends StatelessWidget {
@@ -49,22 +51,14 @@ class HomePage extends StatelessWidget {
           Button(
             " ◄  Be The Sender",
             (){
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SenderScreen()
-                )
+              Navigator.of(context).push(
+                SlideRoute(
+                  exitPage: HomePage(), 
+                  enterPage: SenderScreen(),
+                  ),
               );
             },
           ),
-/*
-              Navigator.of(context).push(
-                PageTransition(
-                  type: PageTransitionType.slideInLeft, 
-                  child: SenderScreen(),
-                  ),
-              );
-              */
 
           Padding( padding: EdgeInsets.all(20.0) ),
 
