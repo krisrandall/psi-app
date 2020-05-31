@@ -31,3 +31,13 @@ class GypsyBgWrapper extends BgWrapper {
   GypsyBgWrapper(this.child) : super(child, "assets/table.jpg");
 }
 
+class LeftBgWrapper extends BgWrapper {
+  final Widget child;
+  LeftBgWrapper(this.child) : super(child, "assets/left.jpg");
+}
+
+class RightBgWrapper extends BgWrapper {
+  final Widget child;
+  RightBgWrapper(this.child) : super(child, "assets/left.jpg");
+}
+

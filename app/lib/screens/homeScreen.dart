@@ -1,5 +1,4 @@
 
-
 import 'package:app/components/button.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:app/components/textComponents.dart';
@@ -58,7 +57,14 @@ class HomePage extends StatelessWidget {
               );
             },
           ),
-
+/*
+              Navigator.of(context).push(
+                PageTransition(
+                  type: PageTransitionType.slideInLeft, 
+                  child: SenderScreen(),
+                  ),
+              );
+              */
 
           Padding( padding: EdgeInsets.all(20.0) ),
 
