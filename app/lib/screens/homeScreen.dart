@@ -65,6 +65,46 @@ class HomePage extends StatelessWidget {
             
             SizedBox(height: 150),
 
+            
+            Padding(
+              padding: EdgeInsets.all(10.0),
+              child : Stack(
+                children: <Widget>[
+
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: FloatingActionButton.extended(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.deepPurple[900],
+                      icon: Icon(Icons.help),
+                      label: Text('Learn More'),
+                      onPressed: () { 
+                        print('Clicked'); 
+                      },
+                    ),
+                  ),
+
+                  // This looks SO GOOD here, but sadly and bizarely 
+                  // breaks the sender and receiver screens (on iOS emulater tests)
+                  // (they show just a black screen if this button exists)
+                  /*
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: FloatingActionButton.extended(
+                      backgroundColor: Colors.deepPurple[900],
+                      foregroundColor: Colors.white,
+                      icon: Icon(Icons.info),
+                      label: Text('Credits'),
+                      onPressed: () { print('Clicked'); },
+                    ),
+                  ),
+                  */
+
+                ],
+              ),
+            ),
+            
+            
         ],) 
       )
     );
