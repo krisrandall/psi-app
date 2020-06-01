@@ -74,6 +74,7 @@ class HomePage extends StatelessWidget {
                   Align(
                     alignment: Alignment.bottomRight,
                     child: FloatingActionButton.extended(
+                      heroTag: null,
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.deepPurple[900],
                       icon: Icon(Icons.help),
@@ -84,13 +85,11 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
 
-                  // This looks SO GOOD here, but sadly and bizarely 
-                  // breaks the sender and receiver screens (on iOS emulater tests)
-                  // (they show just a black screen if this button exists)
-                  /*
+
                   Align(
                     alignment: Alignment.bottomLeft,
                     child: FloatingActionButton.extended(
+                      heroTag: null,
                       backgroundColor: Colors.deepPurple[900],
                       foregroundColor: Colors.white,
                       icon: Icon(Icons.info),
@@ -98,7 +97,7 @@ class HomePage extends StatelessWidget {
                       onPressed: () { print('Clicked'); },
                     ),
                   ),
-                  */
+
 
                 ],
               ),
