@@ -22,3 +22,7 @@ firebase login
 ```
 
 
+## More Information
+
+See the [Psychic Connectedness Test Google Driver Folder](https://drive.google.com/drive/u/0/folders/0B131WpwtLMcIY3VMWW9zZkNNTlU)
+
