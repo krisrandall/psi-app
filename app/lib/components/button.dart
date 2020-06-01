@@ -10,76 +10,24 @@ class Button extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: RaisedButton(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(0.0),
-            side: BorderSide(color: Colors.yellow)
-          ),
-          onPressed: onPressed,
-          textColor: Colors.white,
-          padding: const EdgeInsets.all(0.0),
-          child: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color(0xFF0D47A1),
-                  Color(0xFF1976D2),
-                  Color(0xFF42A5F5),
-                ],
-              ),
-            ),
-            padding: const EdgeInsets.all(10.0),
-            child: Text(
-              buttonText,
-              style: TextStyle(fontSize: 20)
-            ),
-          ),
-        ),
-
-    );
-  }
-
-}
-
-
-
-class ButtonLeft extends StatelessWidget {
-
-  final buttonText;
-  final onPressed;
-
-  ButtonLeft(this.buttonText, this.onPressed);
-  
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: RaisedButton(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(0.0),
-            side: BorderSide(color: Colors.yellow)
-          ),
-          onPressed: onPressed,
-          textColor: Colors.white,
-          padding: const EdgeInsets.all(0.0),
-          child: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color(0xFF42A5F5),
-                  Color(0xFF0D47A1),
-                  Color(0xFF1976D2),
-                ],
-              ),
-            ),
-            padding: const EdgeInsets.all(10.0),
-            child: Text(
-              buttonText,
-              style: TextStyle(fontSize: 20)
-            ),
-          ),
-        ),
-
+    return FlatButton(
+      color: Colors.deepPurple[900],
+      textColor: Colors.white,
+      disabledColor: Colors.grey,
+      disabledTextColor: Colors.black,
+      padding: EdgeInsets.all(18.0),
+      splashColor: Colors.blueAccent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(32.0),
+        side: BorderSide(
+          color: Colors.white,
+          width: 4.0)
+      ),
+      onPressed: onPressed,
+      child: Text(
+        buttonText,
+        style: TextStyle(fontSize: 20.0),
+      ),
     );
   }
 

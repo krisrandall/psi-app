@@ -1,13 +1,11 @@
 
 import 'package:app/components/button.dart';
 import 'package:app/components/screenBackground.dart';
-import 'package:app/components/slideRoute.dart';
 import 'package:app/components/textComponents.dart';
 import 'package:app/screens/receiverScreen.dart';
 import 'package:app/screens/senderScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_page_transition/flutter_page_transition.dart';
 
 
 class HomePage extends StatelessWidget {
@@ -46,23 +44,23 @@ class HomePage extends StatelessWidget {
 
           CopyText('The Psi Test App lets you discover your telepathic abilities with a friend.'),
 
-          Padding( padding: EdgeInsets.all(80.0) ),
+          SizedBox(height: 80),
           
           Button(
-            " ◄  Be The Sender",
+            "Be The Sender",
             (){
-              Navigator.of(context).push(
-                SlideRoute(
-                  exitPage: HomePage(), 
-                  enterPage: SenderScreen(),
-                  ),
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SenderScreen()
+                )
               );
             },
           ),
 
-          Padding( padding: EdgeInsets.all(20.0) ),
+          SizedBox(height: 20),
 
-          ButtonLeft('Be The Receiver ► ',
+          Button('Be The Receiver',
           () {
             Navigator.push(
               context,
@@ -72,6 +70,8 @@ class HomePage extends StatelessWidget {
             );
           }),
           
+
+          SizedBox(height: 40),
 
         ],) 
       )

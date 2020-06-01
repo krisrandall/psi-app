@@ -9,7 +9,7 @@ class TitleText extends StatelessWidget {
   @override 
   Widget build(BuildContext context) {
     return Padding(
-    padding: EdgeInsets.all(20.0),
+    padding: EdgeInsets.only(top: 20.0, bottom: 10.0, left: 20.0, right: 20.0),
     child: Text(
       text,
       style: TextStyle(
@@ -29,7 +29,7 @@ class CopyText extends StatelessWidget {
   @override 
   Widget build(BuildContext context) {
     return Padding(
-    padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 30.0, right: 20),
+    padding: EdgeInsets.only(top: 10.0, bottom: 10.0, left: 20.0, right: 20),
     child: Text(
       text,
       style: TextStyle(
