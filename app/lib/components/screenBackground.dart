@@ -16,7 +16,7 @@ class BgWrapper extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            colorFilter: new ColorFilter.mode(Colors.black.withOpacity(0.75), BlendMode.dstATop),
+            colorFilter: new ColorFilter.mode(Colors.black.withOpacity(.75), BlendMode.dstATop),
             image: AssetImage(bgFile),
             fit: BoxFit.cover,
             alignment: align,

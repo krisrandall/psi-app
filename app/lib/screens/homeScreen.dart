@@ -33,12 +33,12 @@ class HomePage extends StatelessWidget {
 
             SizedBox(height: 10),
 
-            CopyText('The Psi Telepathy Test App lets you discover your telepathic abilities with a friend.'),
+            TitleText('The Psi Telepathy Test App lets you discover your telepathic abilities with a friend.'),
 
             SizedBox(height: 100),
             
             Button(
-              "Be The Sender",
+              "Be the Sender",
               (){
                 Navigator.push(
                   context,
@@ -52,7 +52,7 @@ class HomePage extends StatelessWidget {
 
             SizedBox(height: 10),
 
-            Button('Be The Receiver',
+            Button('Be the Receiver',
             () {
               Navigator.push(
                 context,

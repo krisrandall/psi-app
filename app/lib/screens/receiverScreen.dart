@@ -14,11 +14,23 @@ class ReceiverScreen extends StatelessWidget{
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
 
+            SizedBox(height: 5),
+
+            TitleText('Receiver'),
+
+            CopyText('''As the Receiver you will be presented with a set of four different pictures.  The Sender will be looking at one of those pictures and telepathically projecting a mental image of it to you.
+
+Your job as the Receiver is to receive that mental image, and choose the picture that the Sender is sending by clicking on it.
+
+There will be 10 sets of images in the test.
+'
+'''),
+
             SizedBox(height: 10),
 
-            CopyText('Receiver Screen'),
+            TitleText('[Here goes the button, or other text depending on state]'),
 
-            SizedBox(height: 480),
+            SizedBox(height: 130),
 
         ])
       )
