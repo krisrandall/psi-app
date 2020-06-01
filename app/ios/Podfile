@@ -1,4 +1,4 @@
-# Uncomment this line to define a global platform for your project
+# Uncomment the next line to define a global platform for your project
 # platform :ios, '9.0'
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
@@ -37,6 +37,11 @@ target 'Runner' do
   use_modular_headers!
 
   # Flutter Pod
+  
+  # Pods for Firesearch
+  pod 'Firebase/Core'
+  pod 'Firebase/Auth'
+  pod 'Firebase/Firestore'
 
   copied_flutter_dir = File.join(__dir__, 'Flutter')
   copied_framework_path = File.join(copied_flutter_dir, 'Flutter.framework')
