@@ -40,6 +40,6 @@ class LeftBgWrapper extends BgWrapper {
 
 class RightBgWrapper extends BgWrapper {
   final Widget child;
-  RightBgWrapper(this.child) : super(child, "assets/left.jpg", Alignment.centerLeft);
+  RightBgWrapper(this.child) : super(child, "assets/right.jpg", Alignment.centerLeft);
 }
 

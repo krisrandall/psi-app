@@ -6,6 +6,7 @@ import 'package:app/screens/receiverScreen.dart';
 import 'package:app/screens/senderScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 
 class HomePage extends StatelessWidget {
@@ -23,55 +24,43 @@ class HomePage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Page'),
-        actions: <Widget>[
-          FlatButton(
-            child: Text(
-              'Logout',
-              style: TextStyle(
-                fontSize: 18.0,
-                color: Colors.white,
-              ),
-            ),
-            onPressed: _signOut,
-          ),
-        ],
+        title: Text('𝚿 Psi Telepathy Test'),
       ),
       body: GypsyBgWrapper( 
         Column(children: <Widget>[
 
-          TitleText('𝚿 Psi'),
+          SizedBox(height: 50),
 
-          CopyText('The Psi Test App lets you discover your telepathic abilities with a friend.'),
+          CopyText('The Psi Telepathy Test App lets you discover your telepathic abilities with a friend.'),
 
-          SizedBox(height: 80),
+          SizedBox(height: 100),
           
           Button(
             "Be The Sender",
             (){
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => SenderScreen()
+                PageTransition(
+                  type: PageTransitionType.fade, 
+                  child: SenderScreen()
                 )
               );
             },
           ),
 
-          SizedBox(height: 20),
+          SizedBox(height: 30),
 
           Button('Be The Receiver',
           () {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => ReceiverScreen()
+              PageTransition(
+                type: PageTransitionType.fade, 
+                child: ReceiverScreen()
               )
             );
           }),
           
-
-          SizedBox(height: 40),
 
         ],) 
       )
