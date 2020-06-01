@@ -10,11 +10,15 @@ class ReceiverScreen extends StatelessWidget{
         title: Text('𝚿 Psi Telepathy Test'),
       ),
       body: RightBgWrapper( 
-        Column(children: <Widget>[
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
 
-          SizedBox(height: 50),
+            SizedBox(height: 10),
 
-          CopyText('Receiver Screen'),
+            CopyText('Receiver Screen'),
+
+            SizedBox(height: 480),
 
         ])
       )

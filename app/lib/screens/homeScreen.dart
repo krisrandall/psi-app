@@ -27,40 +27,43 @@ class HomePage extends StatelessWidget {
         title: Text('𝚿 Psi Telepathy Test'),
       ),
       body: GypsyBgWrapper( 
-        Column(children: <Widget>[
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
 
-          SizedBox(height: 50),
+            SizedBox(height: 10),
 
-          CopyText('The Psi Telepathy Test App lets you discover your telepathic abilities with a friend.'),
+            CopyText('The Psi Telepathy Test App lets you discover your telepathic abilities with a friend.'),
 
-          SizedBox(height: 100),
-          
-          Button(
-            "Be The Sender",
-            (){
+            SizedBox(height: 100),
+            
+            Button(
+              "Be The Sender",
+              (){
+                Navigator.push(
+                  context,
+                  PageTransition(
+                    type: PageTransitionType.fade, 
+                    child: SenderScreen()
+                  )
+                );
+              },
+            ),
+
+            SizedBox(height: 10),
+
+            Button('Be The Receiver',
+            () {
               Navigator.push(
                 context,
                 PageTransition(
                   type: PageTransitionType.fade, 
-                  child: SenderScreen()
+                  child: ReceiverScreen()
                 )
               );
-            },
-          ),
-
-          SizedBox(height: 30),
-
-          Button('Be The Receiver',
-          () {
-            Navigator.push(
-              context,
-              PageTransition(
-                type: PageTransitionType.fade, 
-                child: ReceiverScreen()
-              )
-            );
-          }),
-          
+            }),
+            
+            SizedBox(height: 150),
 
         ],) 
       )

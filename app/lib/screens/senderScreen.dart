@@ -10,11 +10,15 @@ class SenderScreen extends StatelessWidget{
         title: Text('𝚿 Psi Telepathy Test'),
       ),
       body: LeftBgWrapper( 
-        Column(children: <Widget>[
+        Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
 
-          SizedBox(height: 50),
+            SizedBox(height: 10),
 
-          CopyText('Sender Screen'),
+            CopyText('Sender Screen'),
+
+            SizedBox(height: 480),
 
         ])
       )
