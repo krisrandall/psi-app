@@ -2,6 +2,7 @@
 import 'package:app/components/button.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:app/components/textComponents.dart';
+import 'package:app/screens/learnMoreScreen.dart';
 import 'package:app/screens/receiverScreen.dart';
 import 'package:app/screens/senderScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -20,8 +21,19 @@ class HomePage extends StatelessWidget {
   }
 
 
+
   @override
   Widget build(BuildContext context) {
+
+    void _goToScreen(Widget screen) {
+      Navigator.push(
+        context,
+        PageTransition(
+          type: PageTransitionType.fade, 
+          child: screen
+        )
+      );
+    }
 
     // load other BG images to avoid a flash of white BG when navigating to other pages for the first time
     precacheImage(AssetImage('assets/table.jpg'), context);
@@ -47,29 +59,15 @@ class HomePage extends StatelessWidget {
             
             Button(
               "Be the Sender",
-              (){
-                Navigator.push(
-                  context,
-                  PageTransition(
-                    type: PageTransitionType.fade, 
-                    child: SenderScreen()
-                  )
-                );
-              },
+              (){ _goToScreen(SenderScreen()); },
             ),
 
             SizedBox(height: 10),
 
-            Button('Be the Receiver',
-            () {
-              Navigator.push(
-                context,
-                PageTransition(
-                  type: PageTransitionType.fade, 
-                  child: ReceiverScreen()
-                )
-              );
-            }),
+            Button(
+              'Be the Receiver',
+              (){ _goToScreen(ReceiverScreen()); },
+            ),
             
             SizedBox(height: 150),
 
@@ -88,7 +86,7 @@ class HomePage extends StatelessWidget {
                       icon: Icon(Icons.help),
                       label: Text('Learn More'),
                       onPressed: () { 
-                        print('Clicked'); 
+                        _goToScreen(LearnMoreScreen());
                       },
                     ),
                   ),

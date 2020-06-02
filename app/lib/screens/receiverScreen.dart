@@ -18,7 +18,9 @@ class ReceiverScreen extends StatelessWidget{
 
             TitleText('Receiver'),
 
-            CopyText('''As the Receiver you will be presented with a set of four different pictures.  The Sender will be looking at one of those pictures and telepathically projecting a mental image of it to you.
+            CopyText('''As the Receiver you will be presented with a set of four different pictures.  
+
+The Sender will be looking at one of those pictures and telepathically projecting a mental image of it to you.
 
 Your job as the Receiver is to receive that mental image, and choose the picture that the Sender is sending by clicking on it.
 
