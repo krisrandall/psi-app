@@ -19,14 +19,22 @@ class HomePage extends StatelessWidget {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
+
+    // load other BG images to avoid a flash of white BG when navigating to other pages for the first time
+    precacheImage(AssetImage('assets/table.jpg'), context);
+    precacheImage(AssetImage('assets/left.jpg'), context);
+    precacheImage(AssetImage('assets/right.jpg'), context);
+    precacheImage(AssetImage('assets/gypsie.png'), context);
+    
 
     return Scaffold(
       appBar: AppBar(
         title: Text('𝚿 Psi Telepathy Test'),
       ),
-      body: GypsyBgWrapper( 
+      body: TableBgWrapper( 
         Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[

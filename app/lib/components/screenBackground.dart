@@ -28,9 +28,14 @@ class BgWrapper extends StatelessWidget {
   }
 }
 
+class TableBgWrapper extends BgWrapper {
+  final Widget child;
+  TableBgWrapper(this.child) : super(child, "assets/table.jpg", Alignment.center);
+}
+
 class GypsyBgWrapper extends BgWrapper {
   final Widget child;
-  GypsyBgWrapper(this.child) : super(child, "assets/table.jpg", Alignment.center);
+  GypsyBgWrapper(this.child) : super(child, "assets/gypsie.png", Alignment.center);
 }
 
 class LeftBgWrapper extends BgWrapper {
