@@ -2,6 +2,7 @@
 import 'package:app/components/button.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:app/components/textComponents.dart';
+import 'package:app/screens/creditsScreen.dart';
 import 'package:app/screens/learnMoreScreen.dart';
 import 'package:app/screens/receiverScreen.dart';
 import 'package:app/screens/senderScreen.dart';
@@ -100,7 +101,9 @@ class HomePage extends StatelessWidget {
                       foregroundColor: Colors.white,
                       icon: Icon(Icons.info),
                       label: Text('Credits'),
-                      onPressed: () { print('Clicked'); },
+                      onPressed: () { 
+                        _goToScreen(CreditsScreen());
+                      },
                     ),
                   ),
 

@@ -33,6 +33,11 @@ class TableBgWrapper extends BgWrapper {
   TableBgWrapper(this.child) : super(child, "assets/table.jpg", Alignment.center);
 }
 
+class CreditsBgWrapper extends BgWrapper {
+  final Widget child;
+  CreditsBgWrapper(this.child) : super(child, "assets/left.jpg", Alignment.centerLeft);
+}
+
 class GypsyBgWrapper extends BgWrapper {
   final Widget child;
   GypsyBgWrapper(this.child) : super(child, "assets/gypsie.png", Alignment.center);
