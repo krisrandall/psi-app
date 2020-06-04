@@ -37,7 +37,6 @@ class HomePage extends StatelessWidget {
     }
 
     // load other BG images to avoid a flash of white BG when navigating to other pages for the first time
-    precacheImage(AssetImage('assets/table.jpg'), context);
     precacheImage(AssetImage('assets/left.jpg'), context);
     precacheImage(AssetImage('assets/right.jpg'), context);
     precacheImage(AssetImage('assets/gypsie.png'), context);

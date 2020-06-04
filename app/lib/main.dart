@@ -34,6 +34,7 @@ class _LandingPageState extends State<LandingPage> {
 
     Future<void> _signInAnonymously() async {
       try {
+        await precacheImage(AssetImage('assets/table.jpg'), context);
         await FirebaseAuth.instance.signInAnonymously();
       } catch (e) {
         setState(() { 
