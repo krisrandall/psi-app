@@ -1,5 +1,6 @@
 import 'package:app/components/screenBackground.dart';
 import 'package:app/components/textComponents.dart';
+import 'package:app/models/psiTest.dart';
 import 'package:flutter/material.dart';
 
 class SenderScreen extends StatelessWidget{
@@ -22,7 +23,7 @@ class SenderScreen extends StatelessWidget{
 
 The Receiver should not be able to physically see or hear you, they need to receive the mental image you project to them telepathically and pick which image you are Sending.
 
-There will be 10 images in the test.
+There will be $DEFAULT_NUM_QUESTIONS images in the test.
 '''),
 
             SizedBox(height: 10),

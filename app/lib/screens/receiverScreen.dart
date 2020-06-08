@@ -1,5 +1,7 @@
+import 'package:app/components/button.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:app/components/textComponents.dart';
+import 'package:app/models/psiTest.dart';
 import 'package:flutter/material.dart';
 
 class ReceiverScreen extends StatelessWidget{
@@ -24,19 +26,31 @@ The Sender will be looking at one of those pictures and telepathically projectin
 
 Your job as the Receiver is to receive that mental image, and choose the picture that the Sender is sending by clicking on it.
 
-There will be 10 sets of images in the test.
-'
+There will be $DEFAULT_NUM_QUESTIONS sets of images in the test.
+
 '''),
 
             SizedBox(height: 10),
 
-            TitleText('[Here goes the button, or other text depending on state]'),
+            BeginTestActionButton(),
 
-            SizedBox(height: 130),
+            SizedBox(height: 180),
 
         ])
       )
     );
   }
         
+}
+
+class BeginTestActionButton extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context){
+    return Button(
+      'Begin Test (Invite Friend)',
+      () { print('does nothinng yet ..'); },
+    );
+  }
+
 }
