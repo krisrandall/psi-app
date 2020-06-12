@@ -37,6 +37,7 @@ dependencies:
   url_launcher: ^5.4.10
 
   rxdart: ^0.24.1
+  
 
 dev_dependencies:
   flutter_test:

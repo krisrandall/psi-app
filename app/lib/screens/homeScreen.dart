@@ -1,4 +1,6 @@
 
+import 'package:app/bloc/bloc_helpers/bloc_provider.dart';
+import 'package:app/bloc/psi_test_server_interactions/ptsi_bloc.dart';
 import 'package:app/components/button.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:app/components/textComponents.dart';
@@ -25,6 +27,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    PtsiBloc bloc = BlocProvider.of<PtsiBloc>(context);
 
     void _goToScreen(Widget screen) {
       Navigator.push(
