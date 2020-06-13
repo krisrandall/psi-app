@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:app/bloc/bloc_helpers/bloc_event_state.dart';
 import 'package:app/bloc/psi_test_server_interactions/ptsi_event.dart';
 import 'package:app/bloc/psi_test_server_interactions/ptsi_state.dart';
@@ -81,7 +83,7 @@ class PtsiBloc
                   (serverTestData['receiver']?.isEmpty ?? true) ? PsiTestStatus.AWAITING_RECEIVER :
                   PsiTestStatus.UNDERWAY
             ),
-            numQuestionsAnswered : serverTestData['questions'].length,
+            numQuestionsAnswered : max(serverTestData['questions'].length-1, 0),
             answeredQuestions : questions,
             currentQuestion : questions[questions.length-1],
           );

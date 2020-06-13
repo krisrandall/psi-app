@@ -6,9 +6,7 @@ import 'package:app/models/psiTest.dart';
 import 'package:flutter/material.dart';
 
 class TestScreen extends StatelessWidget{
-
   final PtsiBloc bloc;
-
   TestScreen( this.bloc );
 
   @override
@@ -23,7 +21,11 @@ class TestScreen extends StatelessWidget{
         builder: (BuildContext context, PtsiState state) {
 
           if (state.existingTest.myRole == PsiTestRole.SENDER) {
-            return TestQuestionSender(state.existingTest.currentQuestion.options[state.existingTest.currentQuestion.correctAnswer]);
+            return TestQuestionSender(
+              state.existingTest.currentQuestion.options[state.existingTest.currentQuestion.correctAnswer],
+              state.existingTest.numQuestionsAnswered+1,
+              state.existingTest.totalNumQuestions
+            );
           } else {
             return TestQuestionReceiver(
               state.existingTest.currentQuestion.options,
@@ -40,10 +42,22 @@ class TestScreen extends StatelessWidget{
 
 class TestQuestionSender extends StatelessWidget{
   final String imageUrl;
-  TestQuestionSender( this.imageUrl );
+  final int currentQuestionNumber;
+  final int totalNumberQuestions;
+  TestQuestionSender( this.imageUrl, this.currentQuestionNumber, this.totalNumberQuestions  );
   @override
   Widget build(BuildContext context){
-    return Image.network(imageUrl);
+    return Column( 
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [ 
+        Image.network(imageUrl),
+        Padding(
+          padding: EdgeInsets.all(30.0),
+          child: Text('Concentrate on this image\n\n\n'+
+                'Question $currentQuestionNumber of $totalNumberQuestions'),
+        ),
+      ],
+    );
   }
 }
 
@@ -82,6 +96,3 @@ class TestQuestionReceiver extends StatelessWidget{
         );
   }
 }
-
-
-
