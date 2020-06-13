@@ -12,13 +12,11 @@ import 'package:app/screens/learnMoreScreen.dart';
 import 'package:app/screens/receiverScreen.dart';
 import 'package:app/screens/senderScreen.dart';
 import 'package:app/screens/testScreen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
 
 class HomePage extends StatelessWidget {
-
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +64,7 @@ class HomePage extends StatelessWidget {
               ),
           ];
 
-          List<Widget> activeTestScreen = [
+          List<Widget> activeTestScreen = (state.existingTest==null) ? [] : [
 
               SizedBox(height: 5),
 
@@ -76,7 +74,7 @@ class HomePage extends StatelessWidget {
 
               Button(
                 'Continue the Test',
-                (){ _goToScreen(TestScreen()); }
+                (){ _goToScreen(TestScreen(bloc)); }
               ),
 
               SecondaryButton( // This should be a subtle (Secondary)Button
