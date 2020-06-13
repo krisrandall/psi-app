@@ -4,7 +4,7 @@ import 'package:app/bloc/bloc_widgets/bloc_state_builder.dart';
 import 'package:app/bloc/psi_test_server_interactions/ptsi_bloc.dart';
 import 'package:app/bloc/psi_test_server_interactions/ptsi_state.dart';
 import 'package:app/components/button.dart';
-import 'package:app/components/goToScreen.dart';
+import 'package:app/components/utils.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:app/components/secondaryButton.dart';
 import 'package:app/components/textComponents.dart';
@@ -14,7 +14,6 @@ import 'package:app/screens/receiverScreen.dart';
 import 'package:app/screens/senderScreen.dart';
 import 'package:app/screens/testScreen.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 
 
 class HomePage extends StatelessWidget {

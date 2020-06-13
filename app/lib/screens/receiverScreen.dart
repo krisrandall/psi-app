@@ -2,7 +2,7 @@ import 'package:app/bloc/bloc_widgets/bloc_state_builder.dart';
 import 'package:app/bloc/psi_test_server_interactions/ptsi_bloc.dart';
 import 'package:app/bloc/psi_test_server_interactions/ptsi_state.dart';
 import 'package:app/components/button.dart';
-import 'package:app/components/goToScreen.dart';
+import 'package:app/components/utils.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:app/components/textComponents.dart';
 import 'package:app/models/psiTest.dart';

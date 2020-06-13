@@ -2,12 +2,13 @@ import 'package:app/bloc/bloc_widgets/bloc_state_builder.dart';
 import 'package:app/bloc/psi_test_server_interactions/ptsi_bloc.dart';
 import 'package:app/bloc/psi_test_server_interactions/ptsi_state.dart';
 import 'package:app/components/button.dart';
-import 'package:app/components/goToScreen.dart';
+import 'package:app/components/utils.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:app/components/textComponents.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:app/screens/testScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:share/share.dart';
 
 class SenderScreen extends StatelessWidget{
 
@@ -29,7 +30,12 @@ class SenderScreen extends StatelessWidget{
             if (state.existingTest == null) {
               actionButton = Button(
                                   'Begin Test (Invite Friend)',
-                                  () { print('does nothinng yet ..'); },
+                                  () async { 
+                                    print('TODO - actually CREATE THE TEST ON THE SERVER FIRST !!!');
+                                    var shareTestUrl = await dynamicLink('123'); 
+                                    // TODO -- shorten this link -- maybe with https://developers.rebrandly.com/docs
+                                    Share.share('Take a Telepathy Test with me! $shareTestUrl');
+                                  },
                                 );
             } else if (state.existingTest.myRole == PsiTestRole.SENDER) {
               actionButton = Button(

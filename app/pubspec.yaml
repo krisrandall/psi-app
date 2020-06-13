@@ -29,6 +29,9 @@ dependencies:
   cloud_firestore: ^0.13.6
 
   page_transition: "^1.1.5"
+  
+  firebase_dynamic_links: ^0.5.1
+  share: ^0.6.4+3
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
