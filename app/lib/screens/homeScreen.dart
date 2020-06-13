@@ -4,6 +4,7 @@ import 'package:app/bloc/bloc_widgets/bloc_state_builder.dart';
 import 'package:app/bloc/psi_test_server_interactions/ptsi_bloc.dart';
 import 'package:app/bloc/psi_test_server_interactions/ptsi_state.dart';
 import 'package:app/components/button.dart';
+import 'package:app/components/goToScreen.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:app/components/secondaryButton.dart';
 import 'package:app/components/textComponents.dart';
@@ -23,15 +24,6 @@ class HomePage extends StatelessWidget {
 
     PtsiBloc bloc = BlocProvider.of<PtsiBloc>(context);
 
-    void _goToScreen(Widget screen) {
-      Navigator.push(
-        context,
-        PageTransition(
-          type: PageTransitionType.fade, 
-          child: screen
-        )
-      );
-    }
 
     // load other BG images to avoid a flash of white BG when navigating to other pages for the first time
     precacheImage(AssetImage('assets/left.jpg'), context);
@@ -49,14 +41,14 @@ class HomePage extends StatelessWidget {
   
               Button(
                 "Be the Sender",
-                (){ _goToScreen(SenderScreen()); },
+                (){ goToScreen(context, SenderScreen(bloc)); },
               ),
 
               SizedBox(height: 10),
 
               Button(
                 'Be the Receiver',
-                (){ _goToScreen(ReceiverScreen()); },
+                (){ goToScreen(context, ReceiverScreen(bloc)); },
               ),
           ];
 
@@ -70,7 +62,7 @@ class HomePage extends StatelessWidget {
 
               Button(
                 'Continue the Test',
-                (){ _goToScreen(TestScreen(bloc)); }
+                (){ goToScreen(context, TestScreen(bloc)); }
               ),
 
               SecondaryButton( // This should be a subtle (Secondary)Button
@@ -110,6 +102,7 @@ class HomePage extends StatelessWidget {
   }
 }
 
+
 class FooterButtons extends StatelessWidget {
   const FooterButtons({
     Key key,
@@ -117,16 +110,6 @@ class FooterButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    void _goToScreen(Widget screen) {
-      Navigator.push(
-        context,
-        PageTransition(
-          type: PageTransitionType.fade, 
-          child: screen
-        )
-      );
-    }
 
     return Padding(
       padding: EdgeInsets.all(10.0),
@@ -142,11 +125,10 @@ class FooterButtons extends StatelessWidget {
               icon: Icon(Icons.help),
               label: Text('Learn More'),
               onPressed: () { 
-                _goToScreen(LearnMoreScreen());
+                goToScreen(context, LearnMoreScreen());
               },
             ),
           ),
-
 
           Align(
             alignment: Alignment.bottomLeft,
@@ -157,15 +139,13 @@ class FooterButtons extends StatelessWidget {
               icon: Icon(Icons.info),
               label: Text('Credits'),
               onPressed: () { 
-                _goToScreen(CreditsScreen());
+                goToScreen(context, CreditsScreen());
               },
             ),
           ),
-
 
         ],
       ),
     );
   }
 }
-

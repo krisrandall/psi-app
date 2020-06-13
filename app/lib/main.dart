@@ -6,6 +6,7 @@ import 'package:app/components/textComponents.dart';
 import 'package:app/screens/homeScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'bloc/bloc_helpers/bloc_provider.dart';
 import 'bloc/psi_test_server_interactions/ptsi_bloc.dart';
@@ -15,6 +16,13 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
+    /* to prevent device rotation - but not proven yet if works, or needed... 
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+    */
+    
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
