@@ -40,7 +40,19 @@ class CreditsScreen extends StatelessWidget{
 
             SizedBox(height: 30),
 
-            CopyText('The wonderful images, and the basis for app icon, are designed by upklyak (from Freepik).'),
+            CopyText('The test images  are courtesy of Lorem Picsum.'),
+
+            FlatButton.icon(
+              onPressed: () { _launchURL('https://picsum.photos/'); },
+              icon: Icon(Icons.image),
+              label: Text('Visit picsum.photos'),
+              color: Colors.white,
+              textColor: Colors.deepPurple[900],
+            ),
+
+            SizedBox(height: 30),
+
+            CopyText('The wonderful artwork, and the basis for app icon, are designed by upklyak (from Freepik).'),
 
             FlatButton.icon(
               onPressed: () { _launchURL('http://www.freepik.com'); },
@@ -52,7 +64,7 @@ class CreditsScreen extends StatelessWidget{
 
             SizedBox(height: 30),
 
-            CopyText('This app was created by Nick Randall and Kris Randall.  The source code may be made available in the future.'),
+            CopyText('This app was created by Nick Randall and Kris Randall.  Please feel free to reach out to us with any questions or comments.'),
 
             FlatButton.icon(
               onPressed: () { _launchURL('mailto:psiapp@cocreations.com.au'); },

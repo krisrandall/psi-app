@@ -1,16 +1,17 @@
 
 class PsiTestQuestion {
 
-  List<String> options; // a list of 4 URLs to the images represented
+  List<String> options = []; // a list of 4 URLs to the images represented
   int _providedAnswer;
   int _correctAnswer;
 
-  PsiTestQuestion(String o1, String o2, String o3, String o4, {int answer}) {
+  PsiTestQuestion(String o1, String o2, String o3, String o4, {int correctAnswer, int providedAnswer}) {
     options.add(o1);
     options.add(o2);
     options.add(o3);
     options.add(o4);
-    _correctAnswer = answer;
+    _correctAnswer = correctAnswer;
+    _providedAnswer = providedAnswer;
   }
 
   int get providedAnswer { return _providedAnswer; }

@@ -2,6 +2,7 @@ import 'package:app/bloc/bloc_helpers/bloc_event_state.dart';
 import 'package:app/bloc/psi_test_server_interactions/ptsi_event.dart';
 import 'package:app/bloc/psi_test_server_interactions/ptsi_state.dart';
 import 'package:app/models/psiTest.dart';
+import 'package:app/models/psiTestQuestion.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -44,7 +45,7 @@ class PtsiBloc
           PtsiState.failureFetching(Exception( "Multiple Tests on Server"));
           // then we need a mechanism to prooceed - probably we pick one, or delete both
         } else if (snapshotS.documents.length + snapshotR.documents.length ==0) {
-          PtsiState.fetched(null);
+          yield PtsiState.fetched(null);
         } else {
 
           var serverTestData; 
@@ -58,13 +59,31 @@ class PtsiBloc
             serverTestData = snapshotR.documents[0].data;
           }
 
+          // create the questions
+          List<PsiTestQuestion> questions = [];
+          serverTestData['questions'].forEach( (q) {
+            print(questions);
+            questions.add(PsiTestQuestion(
+              q['options'][0],
+              q['options'][1],
+              q['options'][2],
+              q['options'][3],
+              correctAnswer : q['correctAnswer'],
+              providedAnswer : q['providedAnswer'],
+            ));
+          });
+
           PsiTest test = PsiTest(
             myRole : iAm,
             totalNumQuestions : DEFAULT_NUM_QUESTIONS,
-            testStatus : PsiTestStatus.UNDERWAY // TODOD - this logic !,
-            //numQuestionsAnswered,
-            //answeredQuestions,
-            //currentQuestion,
+            testStatus : ( 
+                  (serverTestData['sender']?.isEmpty ?? true) ? PsiTestStatus.AWAITING_SENDER :
+                  (serverTestData['receiver']?.isEmpty ?? true) ? PsiTestStatus.AWAITING_RECEIVER :
+                  PsiTestStatus.UNDERWAY
+            ),
+            numQuestionsAnswered : serverTestData['questions'].length,
+            answeredQuestions : questions,
+            currentQuestion : questions[questions.length-1],
           );
           print(serverTestData);
           print(test);
