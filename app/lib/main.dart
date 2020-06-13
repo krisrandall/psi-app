@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.indigo,
+        scaffoldBackgroundColor: Color.fromRGBO(47, 11, 56, 1),
       ),
       home: LandingPage(),
     );
@@ -42,6 +43,7 @@ class _LandingPageState extends State<LandingPage> {
     Future<void> _signInAnonymously() async {
       try {
         await precacheImage(AssetImage('assets/table.jpg'), context);
+        await precacheImage(AssetImage('assets/splash.png'), context);
         await FirebaseAuth.instance.signInAnonymously();
       } catch (e) {
         setState(() { 
@@ -54,36 +56,41 @@ class _LandingPageState extends State<LandingPage> {
 
     _signInAnonymously(); // auto anon signin
 
-    return GypsyBgWrapper(
-      StreamBuilder<FirebaseUser>(
-        stream: FirebaseAuth.instance.onAuthStateChanged,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.active) {
-            FirebaseUser user = snapshot.data;
-            if (user == null) {
-              return Column(children: <Widget>[
-                    CircularProgressIndicator(),
-                    Text('Logging in ..'),
-                  ]
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('𝚿 Psi Telepathy Test'),
+      ),
+      body: TableBgWrapper(
+        StreamBuilder<FirebaseUser>(
+          stream: FirebaseAuth.instance.onAuthStateChanged,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.active) {
+              FirebaseUser user = snapshot.data;
+              if (user == null) {
+                return Column(children: <Widget>[
+                      CircularProgressIndicator(),
+                      Text('Logging in ..'),
+                    ]
+                  );
+              } else if (signinErrorMessage!='') {
+                return TitleText( signinErrorMessage );
+              } else {
+                return BlocProvider<PtsiBloc>(
+                      bloc: PtsiBloc(),
+                      child:AfterAuthWidget(),
                 );
-            } else if (signinErrorMessage!='') {
-              return TitleText( signinErrorMessage );
+              }
+              
             } else {
-              return BlocProvider<PtsiBloc>(
-                    bloc: PtsiBloc(),
-                    child:AfterAuthWidget(),
+              return Column(children: <Widget>[
+                      CircularProgressIndicator(),
+                      Text('Connecting ..'),
+                    ],
               );
             }
-            
-          } else {
-            return Column(children: <Widget>[
-                    CircularProgressIndicator(),
-                    Text('Connecting ..'),
-                  ],
-            );
-          }
-        },
-      )
+          },
+        )
+      ),
     );
   }
 }
@@ -107,7 +114,7 @@ class _AfterAuthWidgetState extends State<AfterAuthWidget> {
       builder: (BuildContext context, PtsiState state) {
 
         if (state.isFetchingForExistingTest) {
-          return Text("Fetching existing test data ..");
+          return CopyText("Fetching existing test data ..");
         }
 
         // Display a text if the authentication failed

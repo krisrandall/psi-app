@@ -7,8 +7,9 @@ class BgWrapper extends StatelessWidget {
   final Widget child;
   final String bgFile;
   final Alignment align;
+  final double opacity;
 
-  BgWrapper(this.child, this.bgFile, this.align);
+  BgWrapper(this.child, this.bgFile, this.align, {this.opacity = 0.75} );
 
   @override
   Widget build(BuildContext context){
@@ -16,7 +17,7 @@ class BgWrapper extends StatelessWidget {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            colorFilter: new ColorFilter.mode(Colors.black.withOpacity(.75), BlendMode.dstATop),
+            colorFilter: new ColorFilter.mode(Colors.black.withOpacity(opacity), BlendMode.dstATop),
             image: AssetImage(bgFile),
             fit: BoxFit.cover,
             alignment: align,
@@ -51,5 +52,10 @@ class LeftBgWrapper extends BgWrapper {
 class RightBgWrapper extends BgWrapper {
   final Widget child;
   RightBgWrapper(this.child) : super(child, "assets/right.jpg", Alignment.centerLeft);
+}
+
+class SplashBgWrapper extends BgWrapper {
+  final Widget child;
+  SplashBgWrapper(this.child) : super(child, "assets/splash.png", Alignment.center, opacity : 1 );
 }
 

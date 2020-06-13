@@ -34,7 +34,7 @@ There will be $DEFAULT_NUM_QUESTIONS sets of images in the test.
 
             BeginTestActionButton(),
 
-            SizedBox(height: 180),
+            SizedBox(height: 150),
 
         ])
       )

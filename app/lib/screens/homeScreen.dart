@@ -39,11 +39,7 @@ class HomePage extends StatelessWidget {
     precacheImage(AssetImage('assets/gypsie.png'), context);
     
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('𝚿 Psi Telepathy Test'),
-      ),
-      body: BlocEventStateBuilder<PtsiState>(
+    return BlocEventStateBuilder<PtsiState>(
         bloc: bloc,
         builder: (BuildContext context, PtsiState state) {
 
@@ -109,7 +105,6 @@ class HomePage extends StatelessWidget {
             ],) 
           );
         }
-      ),
     );
 
   }
