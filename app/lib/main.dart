@@ -1,17 +1,18 @@
-import 'package:app/bloc/bloc_widgets/bloc_state_builder.dart';
-import 'package:app/bloc/psi_test_server_interactions/ptsi_event.dart';
-import 'package:app/bloc/psi_test_server_interactions/ptsi_state.dart';
+
+import 'dart:math';
+
 import 'package:app/components/screenBackground.dart';
 import 'package:app/components/textComponents.dart';
+import 'package:app/models/psiTest.dart';
+import 'package:app/models/psiTestQuestion.dart';
 import 'package:app/screens/homeScreen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
-import 'bloc/bloc_helpers/bloc_provider.dart';
-import 'bloc/psi_test_server_interactions/ptsi_bloc.dart';
 
 void main() => runApp(MyApp());
+
+var currentUser;
 
 class MyApp extends StatelessWidget {
   @override
@@ -72,6 +73,9 @@ class _LandingPageState extends State<LandingPage> {
         StreamBuilder<FirebaseUser>(
           stream: FirebaseAuth.instance.onAuthStateChanged,
           builder: (context, snapshot) {
+
+            print(' building main - ${snapshot.toString()}');
+            
             if (snapshot.connectionState == ConnectionState.active) {
               FirebaseUser user = snapshot.data;
               if (user == null) {
@@ -83,10 +87,8 @@ class _LandingPageState extends State<LandingPage> {
               } else if (signinErrorMessage!='') {
                 return TitleText( signinErrorMessage );
               } else {
-                return BlocProvider<PtsiBloc>(
-                      bloc: PtsiBloc(),
-                      child:AfterAuthWidget(),
-                );
+                currentUser = user;
+                return AfterAuthWidget();
               }
               
             } else {
@@ -103,38 +105,77 @@ class _LandingPageState extends State<LandingPage> {
   }
 }
 
-class AfterAuthWidget extends StatefulWidget {
-  @override
-  _AfterAuthWidgetState createState() => _AfterAuthWidgetState();
-}
-
-class _AfterAuthWidgetState extends State<AfterAuthWidget> {
-
+class AfterAuthWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: Firestore
+              .instance
+              .collection('test')
+              .where('parties', arrayContains: currentUser.uid)
+              .where("status", isEqualTo: "underway")
+              .snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
 
-    PtsiBloc bloc = BlocProvider.of<PtsiBloc>(context);
+        if (snapshot.hasError) {
+          return new Text('Error: ${snapshot.error}');
+        }
 
-    bloc.emitEvent(PtsiEventFetchExistingTest());
-
-    return BlocEventStateBuilder<PtsiState>(
-      bloc: bloc,
-      builder: (BuildContext context, PtsiState state) {
-
-        if (state.isFetchingForExistingTest) {
+        if (snapshot.connectionState==ConnectionState.waiting) {
           return CopyText("Fetching existing test data ..");
         }
 
-        // Display a text if the authentication failed
-        if (state.exceptionFetchingExistingTest!=null){
-          return CopyText('Failure fetching existing test! ${state.exceptionFetchingExistingTest.toString()} ');
+        if (snapshot.data.documents.length>1) {
+          // TODO -- decide how to handle this bettter
+          return CopyText("More than one active test");
         }
 
-        return HomePage();
+        if (snapshot.data.documents.length==0) {
+          return HomePage(null);
+        }
 
-      },
+        var currentTest = createTestFromFirestore(snapshot.data.documents[0]);
+        return HomePage(currentTest);
+      }
+
     );
-
   }
+}
 
-} 
+PsiTest createTestFromFirestore(DocumentSnapshot data) {
+
+  var iAm; 
+  
+  if (data['sender'] == currentUser) iAm = PsiTestRole.SENDER;
+  else iAm = PsiTestRole.RECEIVER;
+
+  // create the questions
+  List<PsiTestQuestion> questions = [];
+  data['questions'].forEach( (q) {
+    print(questions);
+    questions.add(PsiTestQuestion(
+      q['options'][0],
+      q['options'][1],
+      q['options'][2],
+      q['options'][3],
+      correctAnswer : q['correctAnswer'],
+      providedAnswer : q['providedAnswer'],
+    ));
+  });
+
+  PsiTest test = PsiTest(
+    myRole : iAm,
+    totalNumQuestions : DEFAULT_NUM_QUESTIONS,
+    testStatus : ( 
+          (data['sender']?.isEmpty ?? true) ? PsiTestStatus.AWAITING_SENDER :
+          (data['receiver']?.isEmpty ?? true) ? PsiTestStatus.AWAITING_RECEIVER :
+          PsiTestStatus.UNDERWAY
+    ),
+    numQuestionsAnswered : max(data['questions'].length-1, 0),
+    answeredQuestions : questions,
+    currentQuestion : questions[questions.length-1],
+  );
+
+  return test;
+
+}

@@ -1,13 +1,10 @@
-import 'package:app/bloc/bloc_helpers/bloc_provider.dart';
-import 'package:app/bloc/bloc_widgets/bloc_state_builder.dart';
-import 'package:app/bloc/psi_test_server_interactions/ptsi_bloc.dart';
-import 'package:app/bloc/psi_test_server_interactions/ptsi_state.dart';
+
 import 'package:app/models/psiTest.dart';
 import 'package:flutter/material.dart';
 
 class TestScreen extends StatelessWidget{
-  final PtsiBloc bloc;
-  TestScreen( this.bloc );
+  final PsiTest currentTest; 
+  TestScreen( this.currentTest );
 
   @override
   Widget build(BuildContext context){
@@ -16,26 +13,19 @@ class TestScreen extends StatelessWidget{
       appBar: AppBar(
         title: Text('𝚿 Test Underway'),
       ),
-      body: BlocEventStateBuilder<PtsiState>(
-        bloc: bloc,
-        builder: (BuildContext context, PtsiState state) {
+      body: (currentTest.myRole == PsiTestRole.SENDER) ?
+             TestQuestionSender(
+              currentTest.currentQuestion.options[currentTest.currentQuestion.correctAnswer],
+              currentTest.numQuestionsAnswered+1,
+              currentTest.totalNumQuestions
+            )
+          :
+           TestQuestionReceiver(
+              currentTest.currentQuestion.options,
+              currentTest.numQuestionsAnswered+1,
+              currentTest.totalNumQuestions
+            ),
 
-          if (state.existingTest.myRole == PsiTestRole.SENDER) {
-            return TestQuestionSender(
-              state.existingTest.currentQuestion.options[state.existingTest.currentQuestion.correctAnswer],
-              state.existingTest.numQuestionsAnswered+1,
-              state.existingTest.totalNumQuestions
-            );
-          } else {
-            return TestQuestionReceiver(
-              state.existingTest.currentQuestion.options,
-              state.existingTest.numQuestionsAnswered+1,
-              state.existingTest.totalNumQuestions
-            );
-          }
-          
-        }
-      )
     );
   }   
 }
