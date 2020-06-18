@@ -20,8 +20,6 @@ class SenderScreen extends StatelessWidget {
         StreamBuilder<QuerySnapshot>(
           stream: firestoreDatabaseStream.snapshots(),
           builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            print('... ${snapshot.connectionState}');
-            print(' has data = ${snapshot.hasData} ');
             if (psiTestNotAvailable(snapshot)) return psiTestNotAvailableWidget(snapshot);
             var currentTest = createTestFromFirestore(snapshot.data.documents);
             return _SenderScreen(currentTest);

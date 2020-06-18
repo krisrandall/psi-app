@@ -9,19 +9,28 @@ import 'package:app/screens/testScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+
 class ReceiverScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: firestoreDatabaseStream.snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (psiTestNotAvailable(snapshot)) return psiTestNotAvailableWidget(snapshot);
-        var currentTest = createTestFromFirestore(snapshot.data.documents);
-        return _ReceiverScreen(currentTest);
-      }
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('𝚿 Psi Telepathy Test'),
+      ),
+      body: RightBgWrapper( 
+        StreamBuilder<QuerySnapshot>(
+          stream: firestoreDatabaseStream.snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (psiTestNotAvailable(snapshot)) return psiTestNotAvailableWidget(snapshot);
+            var currentTest = createTestFromFirestore(snapshot.data.documents);
+            return _ReceiverScreen(currentTest);
+          }
+        ),
+      ),
     );
   }
 }
+
 
 class _ReceiverScreen extends StatelessWidget{
 
@@ -45,12 +54,7 @@ class _ReceiverScreen extends StatelessWidget{
     } else {
       actionButton = CopyText("There is a test underway and you are the Sender.\n\nGo back and complete the test.");
     }
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('𝚿 Psi Telepathy Test'),
-      ),
-      body: RightBgWrapper( 
-        Column(
+    return Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 SizedBox(height: 5),
@@ -70,8 +74,6 @@ There will be $DEFAULT_NUM_QUESTIONS sets of images in the test.
 
                 SizedBox(height: 130),
             ]
-          ),
-      ),
     );
   }
         

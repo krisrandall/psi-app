@@ -8,13 +8,20 @@ import 'package:flutter/material.dart';
 class TestScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: firestoreDatabaseStream.snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (psiTestNotAvailable(snapshot)) return psiTestNotAvailableWidget(snapshot);
-        var currentTest = createTestFromFirestore(snapshot.data.documents);
-        return _TestScreen(currentTest);
-      }
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('𝚿 Test Underway'),
+      ),
+      backgroundColor: Colors.white,
+      body:
+        StreamBuilder<QuerySnapshot>(
+          stream: firestoreDatabaseStream.snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (psiTestNotAvailable(snapshot)) return psiTestNotAvailableWidget(snapshot);
+            var currentTest = createTestFromFirestore(snapshot.data.documents);
+            return _TestScreen(currentTest);
+          }
+        ),
     );
   }
 }
@@ -26,24 +33,21 @@ class _TestScreen extends StatelessWidget{
   @override
   Widget build(BuildContext context){
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('𝚿 Test Underway'),
-      ),
-      body: (currentTest.myRole == PsiTestRole.SENDER) ?
-             TestQuestionSender(
+    if (currentTest.myRole == PsiTestRole.SENDER) {
+      return TestQuestionSender(
               currentTest.currentQuestion.options[currentTest.currentQuestion.correctAnswer],
               currentTest.numQuestionsAnswered+1,
               currentTest.totalNumQuestions
-            )
-          :
-           TestQuestionReceiver(
+            );
+    } else if (currentTest.myRole == PsiTestRole.RECEIVER) {
+      return TestQuestionReceiver(
               currentTest.currentQuestion.options,
               currentTest.numQuestionsAnswered+1,
               currentTest.totalNumQuestions
-            ),
-
-    );
+            );
+    } else {
+      return Text('ERROR : You dont have a valid role on this test!');
+    }
   }   
 }
 
