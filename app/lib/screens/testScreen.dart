@@ -1,10 +1,27 @@
 
+import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/models/psiTest.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class TestScreen extends StatelessWidget{
+
+class TestScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: firestoreDatabaseStream.snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (psiTestNotAvailable(snapshot)) return psiTestNotAvailableWidget(snapshot);
+        var currentTest = createTestFromFirestore(snapshot.data.documents);
+        return _TestScreen(currentTest);
+      }
+    );
+  }
+}
+
+class _TestScreen extends StatelessWidget{
   final PsiTest currentTest; 
-  TestScreen( this.currentTest );
+  _TestScreen( this.currentTest );
 
   @override
   Widget build(BuildContext context){

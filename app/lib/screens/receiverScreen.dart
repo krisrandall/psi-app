@@ -1,16 +1,32 @@
 
 import 'package:app/components/button.dart';
+import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/utils.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:app/components/textComponents.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:app/screens/testScreen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class ReceiverScreen extends StatelessWidget{
+class ReceiverScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: firestoreDatabaseStream.snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (psiTestNotAvailable(snapshot)) return psiTestNotAvailableWidget(snapshot);
+        var currentTest = createTestFromFirestore(snapshot.data.documents);
+        return _ReceiverScreen(currentTest);
+      }
+    );
+  }
+}
+
+class _ReceiverScreen extends StatelessWidget{
 
   final PsiTest currentTest;
-  ReceiverScreen( this.currentTest );
+  _ReceiverScreen( this.currentTest );
 
   @override
   Widget build(BuildContext context){
@@ -24,7 +40,7 @@ class ReceiverScreen extends StatelessWidget{
     } else if (currentTest.myRole == PsiTestRole.RECEIVER) {
       actionButton = Button(
                           'Continue Test',
-                          (){ goToScreen(context, TestScreen(currentTest)); },
+                          (){ goToScreen(context, TestScreen()); },
                         );
     } else {
       actionButton = CopyText("There is a test underway and you are the Sender.\n\nGo back and complete the test.");

@@ -30,12 +30,12 @@ class HomePage extends StatelessWidget {
         SizedBox(height: 100),
         Button(
           "Be the Sender",
-          (){ goToScreen(context, SenderScreen(currentTest)); },
+          (){ goToScreen(context, SenderScreen()); },
         ),
         SizedBox(height: 10),
         Button(
           'Be the Receiver',
-          (){ goToScreen(context, ReceiverScreen(currentTest)); },
+          (){ goToScreen(context, ReceiverScreen()); },
         ),
     ];
 
@@ -44,8 +44,8 @@ class HomePage extends StatelessWidget {
         CopyText("You have a test underway \nWith ${currentTest.totalNumQuestions - currentTest.numQuestionsAnswered} questions left to answer   "),
         SizedBox(height: 10),
         Button(
-          'Continue the Test',
-          (){ goToScreen(context, TestScreen(currentTest)); }
+          'Continue Test',
+          (){ goToScreen(context, TestScreen()); }
         ),
         SecondaryButton( // This should be a subtle (Secondary)Button
           'End the Test',

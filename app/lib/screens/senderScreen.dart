@@ -1,17 +1,41 @@
-import 'package:app/bloc/bloc_widgets/bloc_state_builder.dart';
 import 'package:app/components/button.dart';
+import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/utils.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:app/components/textComponents.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:app/screens/testScreen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
 
-class SenderScreen extends StatelessWidget{
+class SenderScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('𝚿 Psi Telepathy Test'),
+      ),
+      body: LeftBgWrapper( 
+        StreamBuilder<QuerySnapshot>(
+          stream: firestoreDatabaseStream.snapshots(),
+          builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            print('... ${snapshot.connectionState}');
+            print(' has data = ${snapshot.hasData} ');
+            if (psiTestNotAvailable(snapshot)) return psiTestNotAvailableWidget(snapshot);
+            var currentTest = createTestFromFirestore(snapshot.data.documents);
+            return _SenderScreen(currentTest);
+          }
+        ),
+      ),
+    );
+  }
+}
 
-  PsiTest currentTest;
-  SenderScreen(this.currentTest);
+class _SenderScreen extends StatelessWidget{
+
+  final PsiTest currentTest;
+  _SenderScreen(this.currentTest);
 
   @override
   Widget build(BuildContext context){
@@ -30,17 +54,13 @@ class SenderScreen extends StatelessWidget{
     } else if (currentTest.myRole == PsiTestRole.SENDER) {
       actionButton = Button(
                           'Continue Test',
-                          (){ goToScreen(context, TestScreen(currentTest)); },
+                          (){ goToScreen(context, TestScreen()); },
                         );
     } else {
       actionButton = CopyText("There is a test underway and you are the Receiver.\n\nGo back and complete the test.");
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('𝚿 Psi Telepathy Test'),
-      ),
-      body: LeftBgWrapper( 
+    return 
          SingleChildScrollView( child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
@@ -58,8 +78,6 @@ class SenderScreen extends StatelessWidget{
 
                 SizedBox(height: 130),
             ])
-            ),
-      ),
     );
   }
 
