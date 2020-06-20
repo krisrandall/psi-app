@@ -1,3 +1,4 @@
+import 'package:app/bloc/psitestsave_bloc.dart';
 import 'package:app/components/button.dart';
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/utils.dart';
@@ -7,11 +8,12 @@ import 'package:app/models/psiTest.dart';
 import 'package:app/screens/testScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:share/share.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SenderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text('𝚿 Psi Telepathy Test'),
@@ -32,7 +34,7 @@ class SenderScreen extends StatelessWidget {
 
 class _SenderScreen extends StatelessWidget{
 
-  final PsiTest currentTest;
+  PsiTest currentTest; // to do - need to pass this by reference .. 
   _SenderScreen(this.currentTest);
 
   @override
@@ -41,19 +43,32 @@ class _SenderScreen extends StatelessWidget{
     Widget actionButton;
     if (currentTest == null) {
       actionButton = Button(
-                          'Begin Test (Invite Friend)',
-                          () async { 
-                            print('TODO - actually CREATE THE TEST ON THE SERVER FIRST !!!');
-                            var shareTestUrl = await dynamicLink('123'); 
-                            // TODO -- shorten this link -- maybe with https://developers.rebrandly.com/docs
-                            Share.share('Take a Telepathy Test with me! $shareTestUrl');
+                          'Create Test',
+                          () { 
+                              currentTest = PsiTest.beginNewTestAsSender();
+                              // DEBUG - this here to test if share comes up .. 
+                              BlocProvider.of<PsiTestSaveBloc>(context)
+                                    .add(SharePsiTest(test: currentTest)); 
+
+                              BlocProvider.of<PsiTestSaveBloc>(context)
+                                    .add(CreatePsiTest(test: currentTest));
                           },
                         );
     } else if (currentTest.myRole == PsiTestRole.SENDER) {
-      actionButton = Button(
-                          'Continue Test',
-                          (){ goToScreen(context, TestScreen()); },
-                        );
+      if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
+        actionButton = Button(
+                            'Continue Test',
+                            (){ goToScreen(context, TestScreen()); },
+                          );
+      } else if (currentTest.testStatus == PsiTestStatus.AWAITING_RECEIVER) {
+        actionButton = Button(
+                    'Invite Friend',
+                    () { 
+                      BlocProvider.of<PsiTestSaveBloc>(context)
+                                    .add(SharePsiTest(test: currentTest)); 
+                    },
+                  );
+      }
     } else {
       actionButton = CopyText("There is a test underway and you are the Receiver.\n\nGo back and complete the test.");
     }

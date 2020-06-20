@@ -1,4 +1,5 @@
 
+import 'package:app/bloc/psitestsave_bloc.dart';
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:app/components/textComponents.dart';
@@ -6,6 +7,7 @@ import 'package:app/screens/homeScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() => runApp(MyApp());
 
@@ -19,13 +21,17 @@ class MyApp extends StatelessWidget {
     ]);
     */
     
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.indigo,
-        scaffoldBackgroundColor: Color.fromRGBO(47, 11, 56, 1),
+    return BlocProvider(
+      create: (context) =>
+          PsiTestSaveBloc(),
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.indigo,
+          scaffoldBackgroundColor: Color.fromRGBO(47, 11, 56, 1),
+        ),
+        home:  LandingPage(),
       ),
-      home: LandingPage(),
     );
   }
 }

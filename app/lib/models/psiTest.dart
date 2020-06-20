@@ -57,16 +57,5 @@ class PsiTest {
     }
   }
 
-/* TO MOVE TO BLoCs .. (and completed) .. 
-  DocumentReference ref = await _databaseReference.collection("test")
-    .add({
-      'title': 'Flutter in Action',
-      'description': 'Complete Programming Guide to learn Flutter'
-    });
 
-    testId = ref.documentID;
-
-  }
-*/
-  
 }

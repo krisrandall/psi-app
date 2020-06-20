@@ -1,7 +1,6 @@
 
 import 'package:app/components/button.dart';
 import 'package:app/components/utils.dart';
-import 'package:app/components/screenBackground.dart';
 import 'package:app/components/secondaryButton.dart';
 import 'package:app/components/textComponents.dart';
 import 'package:app/models/psiTest.dart';
@@ -56,8 +55,7 @@ class HomePage extends StatelessWidget {
     List<Widget> screenOptions = 
       (currentTest==null) ? noActiveTestOptions : activeTestScreen;
 
-    return TableBgWrapper( 
-      Column(
+    return Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           SizedBox(height: 10),
@@ -65,7 +63,7 @@ class HomePage extends StatelessWidget {
           ...screenOptions,
           SizedBox(height: 150),
           FooterButtons(),
-      ],) 
+      ],
     );
   }
 }
