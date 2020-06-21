@@ -31,7 +31,6 @@ class PsiTestSaveShareFailed extends PsiTestSaveState {
   List<Object> get props => [exception];
 }
 
-
 class PsiTestSaveAddQuestionInProgress extends PsiTestSaveState {}
 
 class PsiTestSaveAddQuestionSuccessful extends PsiTestSaveState {}

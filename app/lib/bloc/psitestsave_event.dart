@@ -1,41 +1,35 @@
 part of 'psitestsave_bloc.dart';
 
 abstract class PsiTestSaveEvent extends Equatable {
-  const PsiTestSaveEvent();
+  final PsiTest test;
+  const PsiTestSaveEvent({@required this.test}) : assert(test != null);
+  @override
+  List<Object> get props => [test];
 }
 
 class CreatePsiTest extends PsiTestSaveEvent {
-  final PsiTest test;
-  const CreatePsiTest({@required this.test}) : assert(test != null);
-  @override
-  List<Object> get props => [test];
+  const CreatePsiTest({@required test}) : super(test: test);
 }
 
 class SharePsiTest extends PsiTestSaveEvent {
-  final PsiTest test;
-  const SharePsiTest({@required this.test}) : assert(test != null);
-  @override
-  List<Object> get props => [test];
+  const SharePsiTest({@required test}) : super(test: test);
+}
+
+class CreateAndSharePsiTest extends PsiTestSaveEvent {
+  const CreateAndSharePsiTest({@required test}) : super(test: test);
 }
 
 class AddPsiTestQuestion extends PsiTestSaveEvent {
-  final PsiTest test;
-  const AddPsiTestQuestion({@required this.test}) : assert(test != null); 
-  @override
-  List<Object> get props => [test];
+  const AddPsiTestQuestion({@required test}) : super(test: test);
 }
 
 class AnswerPsiTestQuestion extends PsiTestSaveEvent {
-  final PsiTest test;
   final int answer;
-  const AnswerPsiTestQuestion({@required this.test, @required this.answer}) : assert(test != null && answer>0 && answer<5); 
+  const AnswerPsiTestQuestion({@required test, @required this.answer}) : assert(answer>0 && answer<5), super(test: test); 
   @override
-  List<Object> get props => [test];
+  List<Object> get props => [test, answer];
 }
 
 class CancelPsiTest extends PsiTestSaveEvent {
-  final PsiTest test;
-  const CancelPsiTest({@required this.test}) : assert(test != null);
-  @override
-  List<Object> get props => [test];
+  const CancelPsiTest({@required test}) : super(test: test);
 }

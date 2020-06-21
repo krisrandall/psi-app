@@ -18,15 +18,27 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     PsiTestSaveEvent event,
   ) async* {
 
-    if (event is SharePsiTest)    { yield* _mapSharePsiTestToState(event); }
-    if (event is CreatePsiTest)   { yield* _mapCreatePsiTestToState(event); }
+    if (event is CreatePsiTest)   
+        { yield* _mapCreatePsiTestToState(event); }
+    if (event is SharePsiTest)        
+        { yield* _mapSharePsiTestToState(event); }
+    if (event is CreateAndSharePsiTest)   
+        { yield* _mapCreateAndSharePsiTestToState(event); }
+    
     // TODO add question
     // TODO answer question
     // TODO cancel test
   }
 
+  Stream<PsiTestSaveState> _mapCreateAndSharePsiTestToState(
+    PsiTestSaveEvent event,
+  ) async* {
+    yield* _mapCreatePsiTestToState(event);
+    yield* _mapSharePsiTestToState(event);
+  }
+
   Stream<PsiTestSaveState> _mapSharePsiTestToState(
-    SharePsiTest event,
+    PsiTestSaveEvent event,
   ) async* {
     yield PsiTestSaveShareInProgress();
     try {

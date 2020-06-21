@@ -43,15 +43,13 @@ class _SenderScreen extends StatelessWidget{
     Widget actionButton;
     if (currentTest == null) {
       actionButton = Button(
-                          'Create Test',
+                          'Create Test (Invite Friend)',
                           () { 
-                              currentTest = PsiTest.beginNewTestAsSender();
-                              // DEBUG - this here to test if share comes up .. 
+                              var newlyCreatedTest = PsiTest.beginNewTestAsSender();
+                              var event = CreateAndSharePsiTest(test: newlyCreatedTest);
                               BlocProvider.of<PsiTestSaveBloc>(context)
-                                    .add(SharePsiTest(test: currentTest)); 
-
-                              BlocProvider.of<PsiTestSaveBloc>(context)
-                                    .add(CreatePsiTest(test: currentTest));
+                                    .add(event);
+                              // TODO - need to auto-evoke Share Test once it is saved on the server
                           },
                         );
     } else if (currentTest.myRole == PsiTestRole.SENDER) {
@@ -62,7 +60,7 @@ class _SenderScreen extends StatelessWidget{
                           );
       } else if (currentTest.testStatus == PsiTestStatus.AWAITING_RECEIVER) {
         actionButton = Button(
-                    'Invite Friend',
+                    'RE-Invite Friend',
                     () { 
                       BlocProvider.of<PsiTestSaveBloc>(context)
                                     .add(SharePsiTest(test: currentTest)); 
