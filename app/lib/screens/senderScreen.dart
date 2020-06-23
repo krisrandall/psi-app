@@ -49,7 +49,6 @@ class _SenderScreen extends StatelessWidget{
                               var event = CreateAndSharePsiTest(test: newlyCreatedTest);
                               BlocProvider.of<PsiTestSaveBloc>(context)
                                     .add(event);
-                              // TODO - need to auto-evoke Share Test once it is saved on the server
                           },
                         );
     } else if (currentTest.myRole == PsiTestRole.SENDER) {

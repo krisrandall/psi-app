@@ -1,8 +1,12 @@
 
 
+import 'dart:convert';
+
+import 'package:app/config.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:http/http.dart' as http;
 
 void goToScreen(context, Widget screen) {
   Navigator.push(
@@ -13,6 +17,7 @@ void goToScreen(context, Widget screen) {
     )
   );
 }
+
 
 Future<Uri> dynamicLink(String testId) async {
 
@@ -56,3 +61,24 @@ Future<Uri> dynamicLink(String testId) async {
   */
   
 }
+
+
+Future<String> shortenLink(String url) async {
+
+  var response = await http.post(
+    URL_SHORTENER['end_point'],
+    headers: {
+      'Content-Type' : 'application/json',
+      'apikey' : URL_SHORTENER['api_key'],
+    },
+    body: json.encode({
+      'destination': url,
+      'domain': { 'fullName' : URL_SHORTENER['domain'] },
+    }) 
+  );
+
+  Map data = jsonDecode(response.body);
+  return data['shortUrl'];
+
+}
+

@@ -25,7 +25,7 @@ class PsiTestSaveShareInProgress extends PsiTestSaveState {}
 class PsiTestSaveShareSuccessful extends PsiTestSaveState {}
 
 class PsiTestSaveShareFailed extends PsiTestSaveState {
-  final Exception exception;
+  final StateError exception;  /*got `StateError is not a subset of Exception` error when this was an Exception */
   const PsiTestSaveShareFailed({@required this.exception}) : assert(exception != null);
   @override
   List<Object> get props => [exception];

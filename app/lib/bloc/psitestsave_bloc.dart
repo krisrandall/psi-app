@@ -43,8 +43,9 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     yield PsiTestSaveShareInProgress();
     try {
       var shareTestUrl = await dynamicLink(event.test.testId); 
-      // TODO -- shorten this link -- maybe with https://developers.rebrandly.com/docs
-      Share.share('Take a Telepathy Test with me! $shareTestUrl');
+      var shortUrl = await shortenLink(shareTestUrl.toString());
+      //Share.share('Take a Telepathy Test with me! $shortUrl');
+      Share.share('$shortUrl');
       yield PsiTestSaveShareSuccessful();
     } catch (_) {
       yield PsiTestSaveShareFailed(exception: _);
