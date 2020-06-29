@@ -44,3 +44,11 @@ The service https://developers.rebrandly.com/docs is used for URL shortening, fo
 (The account for this is linked to kris.randall@gmail.com)
 I have also configured at rebrandly link.cocreations.com.au to work as a custom URL (set up at crazydomains, as per : https://app.rebrandly.com/domains)
 
+##### Testinng Android URL links
+
+```
+adb shell monkey -p au.com.cocreations.psiapp  1
+```
+
+... trying to figure out how to specify path ...
+

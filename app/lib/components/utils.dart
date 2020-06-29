@@ -23,7 +23,7 @@ Future<Uri> dynamicLink(String testId) async {
 
   final DynamicLinkParameters parameters = DynamicLinkParameters(
     uriPrefix: 'https://psiapp.page.link/invite',
-    link: Uri.parse('https://cocreations.com.au/psiapp-invite/?id=$testId'),
+    link: Uri.parse('https://cocreations.com.au/psiapp-invite/$testId'),
     androidParameters: AndroidParameters(
         packageName: 'au.com.cocreations.psiapp',
         minimumVersion: 0,

@@ -30,6 +30,13 @@
             {
               "client_id": "297561593260-9jjohutf1i8rrj8o1u4el9qhq0si1npb.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "297561593260-62q0s4libjj3g9hfhepettek99nlid80.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "au.com.cocreationos.psiapp"
+              }
             }
           ]
         }

@@ -34,7 +34,7 @@ class SenderScreen extends StatelessWidget {
 
 class _SenderScreen extends StatelessWidget{
 
-  PsiTest currentTest; // to do - need to pass this by reference .. 
+  final PsiTest currentTest; 
   _SenderScreen(this.currentTest);
 
   @override

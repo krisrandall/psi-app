@@ -46,7 +46,7 @@ class HomePage extends StatelessWidget {
           'Continue Test',
           (){ goToScreen(context, TestScreen()); }
         ),
-        SecondaryButton( // This should be a subtle (Secondary)Button
+        SecondaryButton( 
           'End the Test',
           (){ print('do logic to cancel the test'); }
         ),

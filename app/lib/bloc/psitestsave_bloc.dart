@@ -42,9 +42,11 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
   ) async* {
     yield PsiTestSaveShareInProgress();
     try {
+      event.test.testId = '150';
       var shareTestUrl = await dynamicLink(event.test.testId); 
       var shortUrl = await shortenLink(shareTestUrl.toString());
       //Share.share('Take a Telepathy Test with me! $shortUrl');
+      print('shortUrl $shortUrl');
       Share.share('$shortUrl');
       yield PsiTestSaveShareSuccessful();
     } catch (_) {
