@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/utils.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
@@ -24,7 +26,8 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         { yield* _mapSharePsiTestToState(event); }
     if (event is CreateAndSharePsiTest)   
         { yield* _mapCreateAndSharePsiTestToState(event); }
-    
+    if (event is AddPsiTestQuestion)
+        { yield* _mapAddPsiTestQuesion(event); }
     // TODO add question
     // TODO answer question
     // TODO cancel test
@@ -54,12 +57,32 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     }
   }
 
+  Stream<PsiTestSaveState> _mapAddPsiTestQuesion(
+    PsiTestSaveEvent event,
+  ) async* {
+
+    
+  }
+  
+  
   Stream<PsiTestSaveState> _mapCreatePsiTestToState(
     PsiTestSaveEvent event,
   ) async* {
     yield PsiTestSaveCreateInProgress();
     try {
-      // TODO DB write firebase
+
+      print(event.test);
+      print(globalCurrentUser);
+      
+      final db = Firestore.instance;
+      
+      DocumentReference ref = await db.collection("test")
+      .add({
+        'title': [ 'entry 1', 'entry 2' ],
+        'description': 'Complete Programming Guide to learn Flutter'
+      });
+      event.test.testId = ref.documentID;
+
       yield PsiTestSaveCreateSuccessful();
     } catch (_) {
       yield PsiTestSaveCreateFailed(exception: _);
