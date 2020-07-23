@@ -19,15 +19,18 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
   Stream<PsiTestSaveState> mapEventToState(
     PsiTestSaveEvent event,
   ) async* {
-
-    if (event is CreatePsiTest)   
-        { yield* _mapCreatePsiTestToState(event); }
-    if (event is SharePsiTest)        
-        { yield* _mapSharePsiTestToState(event); }
-    if (event is CreateAndSharePsiTest)   
-        { yield* _mapCreateAndSharePsiTestToState(event); }
-    if (event is AddPsiTestQuestion)
-        { yield* _mapAddPsiTestQuesion(event); }
+    if (event is CreatePsiTest) {
+      yield* _mapCreatePsiTestToState(event);
+    }
+    if (event is SharePsiTest) {
+      yield* _mapSharePsiTestToState(event);
+    }
+    if (event is CreateAndSharePsiTest) {
+      yield* _mapCreateAndSharePsiTestToState(event);
+    }
+    if (event is AddPsiTestQuestion) {
+      yield* _mapAddPsiTestQuesion(event);
+    }
     // TODO add question
     // TODO answer question
     // TODO cancel test
@@ -46,7 +49,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     yield PsiTestSaveShareInProgress();
     try {
       event.test.testId = '150';
-      var shareTestUrl = await dynamicLink(event.test.testId); 
+      var shareTestUrl = await dynamicLink(event.test.testId);
       var shortUrl = await shortenLink(shareTestUrl.toString());
       //Share.share('Take a Telepathy Test with me! $shortUrl');
       print('shortUrl $shortUrl');
@@ -59,27 +62,24 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
 
   Stream<PsiTestSaveState> _mapAddPsiTestQuesion(
     PsiTestSaveEvent event,
-  ) async* {
+  ) async* {}
 
-    
-  }
-  
-  
   Stream<PsiTestSaveState> _mapCreatePsiTestToState(
     PsiTestSaveEvent event,
   ) async* {
     yield PsiTestSaveCreateInProgress();
     try {
-
       print(event.test);
-      print(globalCurrentUser);
-      
+      print(globalCurrentUser.uid);
+
       final db = Firestore.instance;
-      
-      DocumentReference ref = await db.collection("test")
-      .add({
-        'title': [ 'entry 1', 'entry 2' ],
-        'description': 'Complete Programming Guide to learn Flutter'
+
+      DocumentReference ref = await db.collection("test").add({
+        'parties': [globalCurrentUser.uid, 'entry 2'],
+        'correct answer': [3],
+        'questions': [
+          'there are ${event.test.totalNumQuestions} questions in the test'
+        ]
       });
       event.test.testId = ref.documentID;
 
@@ -88,5 +88,4 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       yield PsiTestSaveCreateFailed(exception: _);
     }
   }
-
 }
