@@ -40,7 +40,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     PsiTestSaveEvent event,
   ) async* {
     yield* _mapCreatePsiTestToState(event);
-    yield* _mapSharePsiTestToState(event);
+//    yield* _mapSharePsiTestToState(event);
   }
 
   Stream<PsiTestSaveState> _mapSharePsiTestToState(
@@ -75,11 +75,12 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       final db = Firestore.instance;
 
       DocumentReference ref = await db.collection("test").add({
-        'parties': [globalCurrentUser.uid, 'entry 2'],
+        'parties': [globalCurrentUser.uid],
         'correct answer': [3],
         'questions': [
           'there are ${event.test.totalNumQuestions} questions in the test'
-        ]
+        ],
+        'status': 'underway',
       });
       event.test.testId = ref.documentID;
 

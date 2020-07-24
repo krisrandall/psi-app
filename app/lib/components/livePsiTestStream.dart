@@ -20,38 +20,49 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
 
   if (documents.length==0) return null;
 
-  var data = documents[0];
-  var iAm; 
-  
-  if (data['sender'] == globalCurrentUser.uid) iAm = PsiTestRole.SENDER;
-  else iAm = PsiTestRole.RECEIVER;
+  PsiTest test;
 
-  // create the questions
-  List<PsiTestQuestion> questions = [];
-  data['questions'].forEach( (q) {
-    print(questions);
-    questions.add(PsiTestQuestion(
-      q['options'][0],
-      q['options'][1],
-      q['options'][2],
-      q['options'][3],
-      correctAnswer : q['correctAnswer'],
-      providedAnswer : q['providedAnswer'],
-    ));
-  });
+  try {
+    var data = documents[0];
+    var iAm; 
+    
+    if (data['sender'] == globalCurrentUser.uid) iAm = PsiTestRole.SENDER;
+    else iAm = PsiTestRole.RECEIVER;
 
-  PsiTest test = PsiTest(
-    myRole : iAm,
-    totalNumQuestions : DEFAULT_NUM_QUESTIONS,
-    testStatus : ( 
-          (data['sender']?.isEmpty ?? true) ? PsiTestStatus.AWAITING_SENDER :
-          (data['receiver']?.isEmpty ?? true) ? PsiTestStatus.AWAITING_RECEIVER :
-          PsiTestStatus.UNDERWAY
-    ),
-    numQuestionsAnswered : max(data['questions'].length-1, 0),
-    answeredQuestions : questions,
-    currentQuestion : questions[questions.length-1],
-  );
+    // create the questions
+    List<PsiTestQuestion> questions = [];
+    if (data['questions']!=null) {
+      data['questions'].forEach( (q) {
+        print(questions);
+        questions.add(PsiTestQuestion(
+          q['options'][0],
+          q['options'][1],
+          q['options'][2],
+          q['options'][3],
+          correctAnswer : q['correctAnswer'],
+          providedAnswer : q['providedAnswer'],
+        ));
+      });
+    }
+
+    test = PsiTest(
+      myRole : iAm,
+      totalNumQuestions : DEFAULT_NUM_QUESTIONS,
+      testStatus : ( 
+            (data['sender']?.isEmpty ?? true) ? PsiTestStatus.AWAITING_SENDER :
+            (data['receiver']?.isEmpty ?? true) ? PsiTestStatus.AWAITING_RECEIVER :
+            PsiTestStatus.UNDERWAY
+      ),
+      numQuestionsAnswered : max(questions.length-1, 0),
+      answeredQuestions : questions,
+      currentQuestion : (questions.length>0) ? questions[questions.length-1] : null,
+    );
+  } catch(exception) {
+    // TODO - better global app error handling
+    print('ERROR HAPPENED!');
+    print(exception);
+    test = null;
+  }
 
   return test;
 
