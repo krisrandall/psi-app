@@ -73,13 +73,23 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       print(globalCurrentUser.uid);
 
       final db = Firestore.instance;
+      String senderUid;
+      String receiverUid;
+
+      senderUid =
+          event.test.myRole == PsiTestRole.SENDER ? globalCurrentUser.uid : " ";
+      receiverUid = event.test.myRole == PsiTestRole.RECEIVER
+          ? globalCurrentUser.uid
+          : " ";
 
       DocumentReference ref = await db.collection("test").add({
         'parties': [globalCurrentUser.uid],
-        'correct answer': [3],
-        'questions': [
-          'there are ${event.test.totalNumQuestions} questions in the test'
-        ],
+        'questions': {
+          'correct answer': [3],
+          'options': ['a', 'b', 'c', 'd']
+        },
+        'receiver': [receiverUid],
+        'sender': [senderUid],
         'status': 'underway',
       });
       event.test.testId = ref.documentID;
