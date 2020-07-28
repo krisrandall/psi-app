@@ -40,7 +40,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     PsiTestSaveEvent event,
   ) async* {
     yield* _mapCreatePsiTestToState(event);
-//    yield* _mapSharePsiTestToState(event);
+    yield* _mapSharePsiTestToState(event);
   }
 
   Stream<PsiTestSaveState> _mapSharePsiTestToState(
@@ -84,12 +84,12 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
 
       DocumentReference ref = await db.collection("test").add({
         'parties': [globalCurrentUser.uid],
-        'questions': {
-          'correct answer': [3],
+        'questions': [{
+          'correct answer': 3,
           'options': ['a', 'b', 'c', 'd']
-        },
-        'receiver': [receiverUid],
-        'sender': [senderUid],
+        }],
+        'receiver': receiverUid,
+        'sender': senderUid,
         'status': 'underway',
       });
       event.test.testId = ref.documentID;

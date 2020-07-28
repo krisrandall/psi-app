@@ -46,7 +46,7 @@ class _SenderScreen extends StatelessWidget{
                           'Create Test (Invite Friend)',
                           () { 
                               var newlyCreatedTest = PsiTest.beginNewTestAsSender();
-                              var event = CreateAndSharePsiTest(test: newlyCreatedTest);
+                              var event = CreatePsiTest(test: newlyCreatedTest);
                               BlocProvider.of<PsiTestSaveBloc>(context)
                                     .add(event);
                           },
