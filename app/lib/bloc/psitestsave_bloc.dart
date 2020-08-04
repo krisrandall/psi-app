@@ -31,6 +31,9 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     if (event is AddPsiTestQuestion) {
       yield* _mapAddPsiTestQuesion(event);
     }
+    if (event is CancelPsiTest) {
+      yield* _mapCancelPsiTest(event);
+    }
     // TODO add question
     // TODO answer question
     // TODO cancel test
@@ -77,17 +80,19 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       String receiverUid;
 
       senderUid =
-          event.test.myRole == PsiTestRole.SENDER ? globalCurrentUser.uid : " ";
+          event.test.myRole == PsiTestRole.SENDER ? globalCurrentUser.uid : "";
       receiverUid = event.test.myRole == PsiTestRole.RECEIVER
           ? globalCurrentUser.uid
-          : " ";
+          : "";
 
       DocumentReference ref = await db.collection("test").add({
         'parties': [globalCurrentUser.uid],
-        'questions': [{
-          'correct answer': 3,
-          'options': ['a', 'b', 'c', 'd']
-        }],
+        'questions': [
+          {
+            'correct answer': 3,
+            'options': ['a', 'b', 'c', 'd']
+          }
+        ],
         'receiver': receiverUid,
         'sender': senderUid,
         'status': 'underway',
@@ -97,6 +102,20 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       yield PsiTestSaveCreateSuccessful();
     } catch (_) {
       yield PsiTestSaveCreateFailed(exception: _);
+    }
+  }
+
+  Stream<PsiTestSaveState> _mapCancelPsiTest(
+    PsiTestSaveEvent event,
+  ) async* {
+    yield PsiTestSaveCancelInProgress();
+    try {
+      String testId = event.test.testId;
+      await Firestore.instance.collection('test').document(testId).delete();
+
+      yield PsiTestSaveCancelSuccessful();
+    } catch (_) {
+      yield PsiTestSaveCancelFailed(exception: _);
     }
   }
 }
