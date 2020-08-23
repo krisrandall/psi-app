@@ -9,6 +9,7 @@ import 'package:app/screens/testScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uni_links/uni_links.dart';
 
 class SenderScreen extends StatelessWidget {
   @override
@@ -33,14 +34,41 @@ class SenderScreen extends StatelessWidget {
   }
 }
 
-class _SenderScreen extends StatelessWidget {
+class _SenderScreen extends StatefulWidget {
   final PsiTest currentTest;
   _SenderScreen(this.currentTest);
 
   @override
+  __SenderScreenState createState() => __SenderScreenState();
+}
+
+class __SenderScreenState extends State<_SenderScreen> {
+  String deepLink;
+  void getLink() {
+    setState(() {});
+  }
+
+  @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        print('calling getInitialLink');
+        deepLink = await getInitialLink();
+        getLink();
+        print('link is $deepLink');
+      } catch (e) {
+        print('getInitialLink ERROR');
+        print(e);
+      }
+
+      //initUniLinks();
+      if (deepLink != null) {
+        print('link is $deepLink');
+        //goToScreen(context, OpenedViaLinkWidget(deepLink, 'getInitialUri'));
+      }
+    });
     Widget actionButton;
-    if (currentTest == null) {
+    if (widget.currentTest == null) {
       actionButton = Button(
         'Create Test (Invite Friend)',
         () {
@@ -49,20 +77,21 @@ class _SenderScreen extends StatelessWidget {
           BlocProvider.of<PsiTestSaveBloc>(context).add(event);
         },
       );
-    } else if (currentTest.myRole == PsiTestRole.SENDER) {
-      if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
+    } else if (widget.currentTest.myRole == PsiTestRole.SENDER) {
+      if (widget.currentTest.testStatus == PsiTestStatus.UNDERWAY) {
         actionButton = Button(
           'Continue Test',
           () {
             goToScreen(context, TestScreen());
           },
         );
-      } else if (currentTest.testStatus == PsiTestStatus.AWAITING_RECEIVER) {
+      } else if (widget.currentTest.testStatus ==
+          PsiTestStatus.AWAITING_RECEIVER) {
         actionButton = Button(
           'Invite Friend via a share link',
           () {
             BlocProvider.of<PsiTestSaveBloc>(context)
-                .add(SharePsiTest(test: currentTest));
+                .add(SharePsiTest(test: widget.currentTest));
           },
         );
       }

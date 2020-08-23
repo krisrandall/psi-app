@@ -11,18 +11,34 @@ import 'package:app/screens/senderScreen.dart';
 import 'package:app/screens/testScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uni_links/uni_links.dart';
 
 class HomePage extends StatelessWidget {
   final PsiTest currentTest;
   HomePage(this.currentTest);
-
+  String deepLink;
   @override
   Widget build(BuildContext context) {
     // load other BG images to avoid a flash of white BG when navigating to other pages for the first time
     precacheImage(AssetImage('assets/left.jpg'), context);
     precacheImage(AssetImage('assets/right.jpg'), context);
     precacheImage(AssetImage('assets/gypsie.png'), context);
+    /* WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        print('calling getInitialLink');
+        deepLink = await getInitialLink();
+        print('link is $deepLink');
+      } catch (e) {
+        print('getInitialLink ERROR');
+        print(e);
+      }
 
+      //initUniLinks();
+      if (deepLink != null) {
+        print(deepLink);
+        //goToScreen(context, OpenedViaLinkWidget(deepLink, 'getInitialUri'));
+      }
+    });*/
     List<Widget> noActiveTestOptions = [
       SizedBox(height: 100),
       Button(
@@ -45,7 +61,7 @@ class HomePage extends StatelessWidget {
         : [
             SizedBox(height: 5),
             CopyText(
-                "You have a test underway \nWith ${currentTest.totalNumQuestions - currentTest.numQuestionsAnswered} questions left to answer   "),
+                "$deepLink You have a test underway \nWith ${currentTest.totalNumQuestions - currentTest.numQuestionsAnswered} questions left to answer   "),
             SizedBox(height: 10),
             Button('Continue Test', () {
               goToScreen(context, TestScreen());

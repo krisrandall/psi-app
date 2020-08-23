@@ -63,36 +63,37 @@ class _LandingPageState extends State<LandingPage> {
     FirebaseDynamicLinks.instance.onLink(
       onSuccess: (PendingDynamicLinkData dynamicLink) async {
         final Uri deepLink = dynamicLink?.link;
-*/
+
+
   Future<Null> initUniLinks() async {
     try {
+      Uri deepLink = await getInitialUri();
+      print("finished getting Uri: $deepLink");
+      //goToScreen(context, OpenedViaLinkWidget(deepLink, 'getInitialUri'));
+      //return deepLink;
+
+      /* goToScreen(
+            context,
+            OpenedViaLinkWidget(
+                deepLink, 'Future Uri Object provided by getInitialUri()'));
+
       StreamSubscription _sub;
       _sub = getUriLinksStream().listen((Uri deepLink) {
+        //this never gets called
         print("listener for getUriLinksStream() returned a link: $deepLink");
         return deepLink;
-        //this never gets called
+        /*
         goToScreen(
             context,
             OpenedViaLinkWidget(deepLink,
-                'listener for getUriLinksStream() returned the link'));
+                'listener for getUriLinksStream() returned the link'));*/
       }, onError: (err) {
         print("error with Stream getting deepLink $err");
       });
-
       void dispose(filename) {
         _sub.cancel();
-      }
+      }*/
 
-      Uri deepLink = await getInitialUri().then((deepLink) {
-        print(
-            "Future<Uri> Object was provided by getInitialUri(), and the link is: $deepLink");
-        return deepLink;
-
-        /* goToScreen(
-            context,
-            OpenedViaLinkWidget(
-                deepLink, 'Future Uri Object provided by getInitialUri()'));*/
-      });
       //this never gets called
       if (deepLink != null) {
         goToScreen(context, OpenedViaLinkWidget(deepLink, 'working'));
@@ -112,16 +113,31 @@ class _LandingPageState extends State<LandingPage> {
         print(e.message);
       }
     )
-  }}*/
-
+  }}*/*/
+  String deepLink;
   @override
   Widget build(BuildContext context) {
     Future<void> _signInAnonymously() async {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        try {
+          print('calling getInitialLink');
+          deepLink = await getInitialLink();
+          print('link from main.dart is $deepLink');
+        } catch (e) {
+          print('getInitialLink ERROR');
+          print(e);
+        }
+
+        //initUniLinks();
+        if (deepLink != null) {
+          print(deepLink);
+          goToScreen(context, OpenedViaLinkWidget(deepLink, 'main.dart'));
+        }
+      });
       try {
         await precacheImage(AssetImage('assets/table.jpg'), context);
         await precacheImage(AssetImage('assets/splash.png'), context);
         await FirebaseAuth.instance.signInAnonymously();
-        initUniLinks();
       } catch (e) {
         setState(() {
           signinErrorMessage = "Unable to Sign in\n" +
@@ -183,21 +199,21 @@ class AfterAuthWidget extends StatelessWidget {
 }
 
 class OpenedViaLinkWidget extends StatelessWidget {
-  final Uri deepLink;
+  final String deepLink;
   final String deepLinkOrigin;
   OpenedViaLinkWidget(this.deepLink, this.deepLinkOrigin);
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
+    /*return StreamBuilder<QuerySnapshot>(
         stream: firestoreDatabaseStream
             .snapshots(), // TO CHANNGE TO QUERY BASED ON INPUT PARAM
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (psiTestNotAvailable(snapshot))
             return psiTestNotAvailableWidget(snapshot);
-          var currentTest = createTestFromFirestore(snapshot.data.documents);
-          return CopyText(
-              'Screen for joining a test invitation ... ${deepLink.toString()} ...link from $deepLinkOrigin ');
-        });
+          var currentTest = createTestFromFirestore(snapshot.data.documents);*/
+    return CopyText(
+        'Screen for joining a test invitation ... ${deepLink.toString()} ...link from $deepLinkOrigin ');
+    //  });
   }
 }
