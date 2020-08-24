@@ -9,7 +9,6 @@ import 'package:app/screens/testScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:uni_links/uni_links.dart';
 
 class SenderScreen extends StatelessWidget {
   @override
@@ -50,23 +49,6 @@ class __SenderScreenState extends State<_SenderScreen> {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      try {
-        print('calling getInitialLink');
-        deepLink = await getInitialLink();
-        getLink();
-        print('link is $deepLink');
-      } catch (e) {
-        print('getInitialLink ERROR');
-        print(e);
-      }
-
-      //initUniLinks();
-      if (deepLink != null) {
-        print('link is $deepLink');
-        //goToScreen(context, OpenedViaLinkWidget(deepLink, 'getInitialUri'));
-      }
-    });
     Widget actionButton;
     if (widget.currentTest == null) {
       actionButton = Button(
