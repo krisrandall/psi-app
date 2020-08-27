@@ -11,10 +11,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uni_links/uni_links.dart';
+import 'dart:async';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  String link;
   @override
   Widget build(BuildContext context) {
     /* to prevent device rotation - but not proven yet if works, or needed... 
@@ -44,25 +46,41 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
   String signinErrorMessage = "";
-
+  String link;
   String deepLink;
+  Future<String> initUniLinks() async {
+    deepLink = await getInitialLink();
+    print('link from main.dart is $deepLink');
+    return deepLink;
+  }
+
   @override
   Widget build(BuildContext context) {
     Future<void> _signInAnonymously() async {
+      StreamSubscription _sub;
+
+      // Attach a listener to the stream
+      // WidgetsFlutterBinding.ensureInitialized();
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         try {
-          print('calling getInitialLink');
           deepLink = await getInitialLink();
           print('link from main.dart is $deepLink');
+          _sub = getLinksStream().listen((String link) {
+            print('stream $link');
+            if (link != null) {
+              goToScreen(context, OpenedViaLinkWidget(link));
+            }
+
+            // Use the uri and warn the user, if it is not correct
+          }, onError: (err) {});
         } catch (e) {
           print('getInitialLink ERROR');
           print(e);
-        }
 
-        //initUniLinks();
-        if (deepLink != null) {
-          print(deepLink);
-          goToScreen(context, OpenedViaLinkWidget(deepLink));
+          if (deepLink != null) {
+            print(deepLink);
+            goToScreen(context, OpenedViaLinkWidget(deepLink));
+          }
         }
       });
       //TODO: error handling
@@ -81,7 +99,7 @@ class _LandingPageState extends State<LandingPage> {
     }
 
     _signInAnonymously(); // auto anon signin
-
+    initUniLinks();
     return Scaffold(
       appBar: AppBar(
         title: Text('𝚿 Psi Telepathy Test'),
