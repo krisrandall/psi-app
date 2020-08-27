@@ -65,6 +65,10 @@ class _LandingPageState extends State<LandingPage> {
         try {
           deepLink = await getInitialLink();
           print('link from main.dart is $deepLink');
+          if (deepLink != null) {
+            print(deepLink);
+            goToScreen(context, OpenedViaLinkWidget(deepLink));
+          }
           _sub = getLinksStream().listen((String link) {
             print('stream $link');
             if (link != null) {
@@ -76,11 +80,6 @@ class _LandingPageState extends State<LandingPage> {
         } catch (e) {
           print('getInitialLink ERROR');
           print(e);
-
-          if (deepLink != null) {
-            print(deepLink);
-            goToScreen(context, OpenedViaLinkWidget(deepLink));
-          }
         }
       });
       //TODO: error handling
