@@ -51,7 +51,6 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
   ) async* {
     yield PsiTestSaveShareInProgress();
     try {
-      event.test.testId = '150';
       var shareTestUrl = await dynamicLink(event.test.testId);
       print(shareTestUrl);
       var shortUrl = await shortenLink(shareTestUrl.toString());
