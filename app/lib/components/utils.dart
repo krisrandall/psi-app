@@ -13,8 +13,9 @@ void goToScreen(context, Widget screen) {
 
 Future<Uri> dynamicLink(String testId) async {
   final DynamicLinkParameters parameters = DynamicLinkParameters(
-    uriPrefix: 'https://psiapp.page.link/invite',
-    link: Uri.parse('https://cocreations.com.au/psiapp-invite/$testId'),
+    uriPrefix: 'https://psiapp.page.link/',
+    //link: Uri.parse('https://cocreations.com.au/psiapp-invite/$testId'),
+    link: Uri.parse('https://psiapp.page.link/$testId'),
     androidParameters: AndroidParameters(
       packageName: 'au.com.cocreations.psiapp',
       minimumVersion: 0,

@@ -16,7 +16,6 @@ import 'dart:async';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  String link;
   @override
   Widget build(BuildContext context) {
     /* to prevent device rotation - but not proven yet if works, or needed... 
@@ -46,10 +45,10 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
   String signinErrorMessage = "";
-  String link;
-  String deepLink;
-  Future<String> initUniLinks() async {
-    deepLink = await getInitialLink();
+  Uri link;
+  Uri deepLink;
+  Future<Uri> initUniLinks() async {
+    deepLink = await getInitialUri();
     print('link from main.dart is $deepLink');
     return deepLink;
   }
@@ -63,13 +62,13 @@ class _LandingPageState extends State<LandingPage> {
       // WidgetsFlutterBinding.ensureInitialized();
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         try {
-          deepLink = await getInitialLink();
+          deepLink = await getInitialUri();
           print('link from main.dart is $deepLink');
           if (deepLink != null) {
             print(deepLink);
             goToScreen(context, OpenedViaLinkWidget(deepLink));
           }
-          _sub = getLinksStream().listen((String link) {
+          _sub = getUriLinksStream().listen((Uri link) {
             print('stream $link');
             if (link != null) {
               goToScreen(context, OpenedViaLinkWidget(link));
@@ -149,7 +148,7 @@ class AfterAuthWidget extends StatelessWidget {
 }
 
 class OpenedViaLinkWidget extends StatelessWidget {
-  final String deepLink;
+  final Uri deepLink;
   OpenedViaLinkWidget(this.deepLink);
 
   @override
