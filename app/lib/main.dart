@@ -64,12 +64,14 @@ class _LandingPageState extends State<LandingPage> {
           print('link from main.dart is $deepLink');
           if (deepLink != null) {
             print(deepLink);
-            goToScreen(context, OpenedViaLinkWidget(deepLink));
+            String testId = deepLink.substring(25);
+            goToScreen(context, OpenedViaLinkWidget(testId));
           }
           _sub = getLinksStream().listen((String deepLink) {
             print('stream $deepLink');
             if (deepLink != null) {
-              goToScreen(context, OpenedViaLinkWidget(deepLink));
+              String testId = deepLink.substring(25);
+              goToScreen(context, OpenedViaLinkWidget(testId));
             }
 
             // Use the uri and warn the user, if it is not correct
@@ -146,19 +148,27 @@ class AfterAuthWidget extends StatelessWidget {
 }
 
 class OpenedViaLinkWidget extends StatelessWidget {
-  final String deepLink;
-  OpenedViaLinkWidget(this.deepLink);
+  final String testId;
 
+  OpenedViaLinkWidget(this.testId);
+//TODO...get stream and get myrole
+  /*Query firestoreDatabaseStream = Firestore.instance
+      .collection('test')
+      .where(FieldPath.documentId, isEqualTo: testId);*/
+  //TODO add UID to stream--using JoinPsiTest event
   @override
   Widget build(BuildContext context) {
-    String testId = deepLink.substring(25);
-    /* return StreamBuilder<QuerySnapshot>(
-      stream: firestoreDatabaseStream.snapshots(), // TO CHANNGE TO QUERY BASED ON INPUT PARAM
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (psiTestNotAvailable(snapshot)) return psiTestNotAvailableWidget(snapshot);
-        var currentTest = createTestFromFirestore(snapshot.data.documents);*/
-    return CopyText('Screen for joining a test invitation ... $testId ... ');
+    return StreamBuilder<QuerySnapshot>(
+        stream: firestoreDatabaseStream
+            .snapshots(), // TO CHANNGE TO QUERY BASED ON INPUT PARAM
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (psiTestNotAvailable(snapshot))
+            return psiTestNotAvailableWidget(snapshot);
+          var currentTest = createTestFromFirestore(snapshot.data.documents);
+          return CopyText(
+              'Screen for joining a test invitation ... $testId ... ');
+          ;
+        });
+    // );
   }
-  // );
 }
-//}
