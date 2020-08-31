@@ -25,11 +25,17 @@ class AddPsiTestQuestion extends PsiTestSaveEvent {
 
 class AnswerPsiTestQuestion extends PsiTestSaveEvent {
   final int answer;
-  const AnswerPsiTestQuestion({@required test, @required this.answer}) : assert(answer>0 && answer<5), super(test: test); 
+  const AnswerPsiTestQuestion({@required test, @required this.answer})
+      : assert(answer > 0 && answer < 5),
+        super(test: test);
   @override
   List<Object> get props => [test, answer];
 }
 
 class CancelPsiTest extends PsiTestSaveEvent {
   const CancelPsiTest({@required test}) : super(test: test);
+}
+
+class JoinPsiTest extends PsiTestSaveEvent {
+  const JoinPsiTest({@required test}) : super(test: test);
 }

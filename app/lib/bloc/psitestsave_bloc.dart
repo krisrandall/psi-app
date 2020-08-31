@@ -34,6 +34,9 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     if (event is CancelPsiTest) {
       yield* _mapCancelPsiTest(event);
     }
+    if (event is JoinPsiTest) {
+      yield* _mapCancelPsiTest(event);
+    }
     // TODO add question
     // TODO answer question
     // TODO cancel test
@@ -117,6 +120,20 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       yield PsiTestSaveCancelSuccessful();
     } catch (_) {
       yield PsiTestSaveCancelFailed(exception: _);
+    }
+  }
+
+  Stream<PsiTestSaveState> _mapJoinPsiTest(
+    PsiTestSaveEvent event,
+  ) async* {
+    yield PsiTestJoinInProgress();
+    try {
+      String testId = event.test.testId;
+      await Firestore.instance.collection('test').document(testId);
+
+      yield PsiTestJoinSuccessful();
+    } catch (_) {
+      yield PsiTestJoinFailed(exception: _);
     }
   }
 }

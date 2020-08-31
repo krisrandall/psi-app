@@ -14,19 +14,21 @@ class PsiTestSaveCreateSuccessful extends PsiTestSaveState {}
 
 class PsiTestSaveCreateFailed extends PsiTestSaveState {
   final Exception exception;
-  const PsiTestSaveCreateFailed({@required this.exception}) : assert(exception != null);
+  const PsiTestSaveCreateFailed({@required this.exception})
+      : assert(exception != null);
   @override
   List<Object> get props => [exception];
 }
-
 
 class PsiTestSaveShareInProgress extends PsiTestSaveState {}
 
 class PsiTestSaveShareSuccessful extends PsiTestSaveState {}
 
 class PsiTestSaveShareFailed extends PsiTestSaveState {
-  final StateError exception;  /*got `StateError is not a subset of Exception` error when this was an Exception */
-  const PsiTestSaveShareFailed({@required this.exception}) : assert(exception != null);
+  final StateError
+      exception; /*got `StateError is not a subset of Exception` error when this was an Exception */
+  const PsiTestSaveShareFailed({@required this.exception})
+      : assert(exception != null);
   @override
   List<Object> get props => [exception];
 }
@@ -37,11 +39,11 @@ class PsiTestSaveAddQuestionSuccessful extends PsiTestSaveState {}
 
 class PsiTestSaveAddQuestionFailed extends PsiTestSaveState {
   final Exception exception;
-  const PsiTestSaveAddQuestionFailed({@required this.exception}) : assert(exception != null);
+  const PsiTestSaveAddQuestionFailed({@required this.exception})
+      : assert(exception != null);
   @override
   List<Object> get props => [exception];
 }
-
 
 class PsiTestSaveAnswerQuestionInProgress extends PsiTestSaveState {}
 
@@ -49,11 +51,11 @@ class PsiTestSaveAnswerQuestionSuccessful extends PsiTestSaveState {}
 
 class PsiTestSaveAnswerQuestionFailed extends PsiTestSaveState {
   final Exception exception;
-  const PsiTestSaveAnswerQuestionFailed({@required this.exception}) : assert(exception != null);
+  const PsiTestSaveAnswerQuestionFailed({@required this.exception})
+      : assert(exception != null);
   @override
   List<Object> get props => [exception];
 }
-
 
 class PsiTestSaveCancelInProgress extends PsiTestSaveState {}
 
@@ -61,7 +63,20 @@ class PsiTestSaveCancelSuccessful extends PsiTestSaveState {}
 
 class PsiTestSaveCancelFailed extends PsiTestSaveState {
   final Exception exception;
-  const PsiTestSaveCancelFailed({@required this.exception}) : assert(exception != null);
+  const PsiTestSaveCancelFailed({@required this.exception})
+      : assert(exception != null);
+  @override
+  List<Object> get props => [exception];
+}
+
+class PsiTestJoinInProgress extends PsiTestSaveState {}
+
+class PsiTestJoinSuccessful extends PsiTestSaveState {}
+
+class PsiTestJoinFailed extends PsiTestSaveState {
+  final Exception exception;
+  const PsiTestJoinFailed({@required this.exception})
+      : assert(exception != null);
   @override
   List<Object> get props => [exception];
 }
