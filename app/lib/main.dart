@@ -6,10 +6,8 @@ import 'package:app/components/utils.dart';
 import 'package:app/screens/homeScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uni_links/uni_links.dart';
 import 'dart:async';
 
@@ -45,10 +43,10 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
   String signinErrorMessage = "";
-  Uri link;
-  Uri deepLink;
-  Future<Uri> initUniLinks() async {
-    deepLink = await getInitialUri();
+
+  String deepLink;
+  Future<String> initUniLinks() async {
+    deepLink = await getInitialLink();
     print('link from main.dart is $deepLink');
     return deepLink;
   }
@@ -62,16 +60,16 @@ class _LandingPageState extends State<LandingPage> {
       // WidgetsFlutterBinding.ensureInitialized();
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         try {
-          deepLink = await getInitialUri();
+          deepLink = await getInitialLink();
           print('link from main.dart is $deepLink');
           if (deepLink != null) {
             print(deepLink);
             goToScreen(context, OpenedViaLinkWidget(deepLink));
           }
-          _sub = getUriLinksStream().listen((Uri link) {
-            print('stream $link');
-            if (link != null) {
-              goToScreen(context, OpenedViaLinkWidget(link));
+          _sub = getLinksStream().listen((String deepLink) {
+            print('stream $deepLink');
+            if (deepLink != null) {
+              goToScreen(context, OpenedViaLinkWidget(deepLink));
             }
 
             // Use the uri and warn the user, if it is not correct
@@ -148,18 +146,18 @@ class AfterAuthWidget extends StatelessWidget {
 }
 
 class OpenedViaLinkWidget extends StatelessWidget {
-  final Uri deepLink;
+  final String deepLink;
   OpenedViaLinkWidget(this.deepLink);
 
   @override
   Widget build(BuildContext context) {
+    String testId = deepLink.substring(25);
     /* return StreamBuilder<QuerySnapshot>(
       stream: firestoreDatabaseStream.snapshots(), // TO CHANNGE TO QUERY BASED ON INPUT PARAM
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (psiTestNotAvailable(snapshot)) return psiTestNotAvailableWidget(snapshot);
         var currentTest = createTestFromFirestore(snapshot.data.documents);*/
-    return CopyText(
-        'Screen for joining a test invitation ... ${deepLink.toString()} ... ');
+    return CopyText('Screen for joining a test invitation ... $testId ... ');
   }
   // );
 }
