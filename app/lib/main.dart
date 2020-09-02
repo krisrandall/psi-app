@@ -3,6 +3,8 @@ import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:app/components/textComponents.dart';
 import 'package:app/components/utils.dart';
+import 'package:app/models/psiTest.dart';
+import 'package:app/config.dart';
 import 'package:app/screens/homeScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -43,45 +45,16 @@ class LandingPage extends StatefulWidget {
 
 class _LandingPageState extends State<LandingPage> {
   String signinErrorMessage = "";
-
+  StreamSubscription _sub;
   String deepLink;
-  Future<String> initUniLinks() async {
-    deepLink = await getInitialLink();
-    print('link from main.dart is $deepLink');
-    return deepLink;
+
+  Future<Null> initUniLinks() async {
+    //TODO: error handling
   }
 
   @override
   Widget build(BuildContext context) {
     Future<void> _signInAnonymously() async {
-      StreamSubscription _sub;
-
-      // Attach a listener to the stream
-      // WidgetsFlutterBinding.ensureInitialized();
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        try {
-          deepLink = await getInitialLink();
-          print('link from main.dart is $deepLink');
-          if (deepLink != null) {
-            print(deepLink);
-            String testId = deepLink.substring(25);
-            goToScreen(context, OpenedViaLinkWidget(testId));
-          }
-          _sub = getLinksStream().listen((String deepLink) {
-            print('stream $deepLink');
-            if (deepLink != null) {
-              String testId = deepLink.substring(25);
-              goToScreen(context, OpenedViaLinkWidget(testId));
-            }
-
-            // Use the uri and warn the user, if it is not correct
-          }, onError: (err) {});
-        } catch (e) {
-          print('getInitialLink ERROR');
-          print(e);
-        }
-      });
-      //TODO: error handling
       try {
         await precacheImage(AssetImage('assets/table.jpg'), context);
         await precacheImage(AssetImage('assets/splash.png'), context);
@@ -97,7 +70,28 @@ class _LandingPageState extends State<LandingPage> {
     }
 
     _signInAnonymously(); // auto anon signin
-    initUniLinks();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        deepLink = await getInitialLink();
+        print('link from main.dart is $deepLink');
+        if (deepLink != null) {
+          print(deepLink);
+          // _signInAnonymously();
+          goToScreen(context, OpenedViaLinkWidget(deepLink));
+        }
+        _sub = getLinksStream().listen((String deepLink) {
+          print('stream $deepLink');
+          if (deepLink != null) {
+            goToScreen(context, OpenedViaLinkWidget(deepLink));
+          }
+          // Use the uri and warn the user, if it is not correct
+        }, onError: (err) {});
+      } catch (e) {
+        print('getInitialLink ERROR');
+        print(e);
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: Text('𝚿 Psi Telepathy Test'),
@@ -131,6 +125,12 @@ class _LandingPageState extends State<LandingPage> {
       )),
     );
   }
+
+  @override
+  void dispose() {
+    _sub.cancel();
+    super.dispose();
+  }
 }
 
 class AfterAuthWidget extends StatelessWidget {
@@ -148,27 +148,56 @@ class AfterAuthWidget extends StatelessWidget {
 }
 
 class OpenedViaLinkWidget extends StatelessWidget {
-  final String testId;
+  final String deepLink;
+  OpenedViaLinkWidget(this.deepLink);
 
-  OpenedViaLinkWidget(this.testId);
-//TODO...get stream and get myrole
-  /*Query firestoreDatabaseStream = Firestore.instance
-      .collection('test')
-      .where(FieldPath.documentId, isEqualTo: testId);*/
-  //TODO add UID to stream--using JoinPsiTest event
+  Future<DocumentSnapshot> getSharedPsiTest(testId) async {
+    var docRef = Firestore.instance.collection('test').document(testId);
+    DocumentSnapshot snapshot = await docRef.get();
+    return snapshot;
+  }
+
+  //TODO add UID to stream--using JoinPsiTest event*/
+
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-        stream: firestoreDatabaseStream
-            .snapshots(), // TO CHANNGE TO QUERY BASED ON INPUT PARAM
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (psiTestNotAvailable(snapshot))
-            return psiTestNotAvailableWidget(snapshot);
-          var currentTest = createTestFromFirestore(snapshot.data.documents);
-          return CopyText(
-              'Screen for joining a test invitation ... $testId ... ');
-          ;
-        });
-    // );
+    //extract TestId String from Deep Link
+    String testId = deepLink.replaceAll(new RegExp(ADDRESSPARTOFDEEPLINK), '');
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('Opened Via Link'),
+        ),
+        body: FutureBuilder(
+            future: getSharedPsiTest(testId),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.none) {
+                return Text('no Test found');
+              }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Text('looking for Test');
+              }
+              if (snapshot.connectionState == ConnectionState.active) {
+                return Text('found Test and retrieving data');
+              }
+              if (snapshot.connectionState == ConnectionState.done) {
+                String receiverId = snapshot.data['receiver'];
+                String senderId = snapshot.data['sender'];
+                return Text('receiver ID: $receiverId senderId: $senderId');
+                //  if (receiverId == globalCurrentUser && senderId == '')
+
+              }
+              return Container();
+            }));
   }
 }
+
+// TO CHANNGE TO QUERY BASED ON INPUT PARAM
+
+/*if record not found..
+          if sender or receiver is me...continue test button
+          if sender and receiver are full...(test already full) okay button
+          if status is "underway" (test not currently underway:status is: $status)
+          happy path: button begin test or decline
+
+
+          begin test button*/

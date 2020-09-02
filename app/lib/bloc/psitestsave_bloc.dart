@@ -129,8 +129,10 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     yield PsiTestJoinInProgress();
     try {
       String testId = event.test.testId;
-      await Firestore.instance.collection('test').document(testId);
-
+      //snapshot = await Firestore.instance.collection('test').document(testId);
+//TODO update test with me as sender or receiver
+      // PsiTest existingTest = createTestFromFirestore(snapshot)
+      // return existingTest;
       yield PsiTestJoinSuccessful();
     } catch (_) {
       yield PsiTestJoinFailed(exception: _);
