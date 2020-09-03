@@ -47,10 +47,6 @@ class _LandingPageState extends State<LandingPage> {
   StreamSubscription _sub;
   String deepLink;
 
-  Future<Null> initUniLinks() async {
-    //TODO: error handling
-  }
-
   @override
   Widget build(BuildContext context) {
     Future<void> _signInAnonymously() async {
@@ -58,7 +54,6 @@ class _LandingPageState extends State<LandingPage> {
         await precacheImage(AssetImage('assets/table.jpg'), context);
         await precacheImage(AssetImage('assets/splash.png'), context);
         await FirebaseAuth.instance.signInAnonymously();
-        //initDynamicLinks();
       } catch (e) {
         setState(() {
           signinErrorMessage = "Unable to Sign in\n" +

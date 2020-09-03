@@ -1,4 +1,5 @@
 import 'dart:async';
+//import 'dart:html';
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/utils.dart';
 import 'package:app/models/psiTest.dart';
@@ -129,7 +130,8 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     yield PsiTestJoinInProgress();
     try {
       String testId = event.test.testId;
-      //snapshot = await Firestore.instance.collection('test').document(testId);
+
+      // await Firestore.instance.collection('test').document(testId).updateData(['receiver'])
 //TODO update test with me as sender or receiver
       // PsiTest existingTest = createTestFromFirestore(snapshot)
       // return existingTest;
