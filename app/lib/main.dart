@@ -3,8 +3,6 @@ import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:app/components/textComponents.dart';
 import 'package:app/components/utils.dart';
-import 'package:app/models/psiTest.dart';
-import 'package:app/config.dart';
 import 'package:app/screens/homeScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uni_links/uni_links.dart';
 import 'dart:async';
+import 'package:app/screens/joinScreen.dart';
 
 void main() => runApp(MyApp());
 
@@ -84,7 +83,7 @@ class _LandingPageState extends State<LandingPage> {
           if (deepLink != null) {
             goToScreen(context, OpenedViaLinkWidget(deepLink));
           }
-          // Use the uri and warn the user, if it is not correct
+          // Use the Link and warn the user, if it is not correct
         }, onError: (err) {});
       } catch (e) {
         print('getInitialLink ERROR');
@@ -146,58 +145,3 @@ class AfterAuthWidget extends StatelessWidget {
         });
   }
 }
-
-class OpenedViaLinkWidget extends StatelessWidget {
-  final String deepLink;
-  OpenedViaLinkWidget(this.deepLink);
-
-  Future<DocumentSnapshot> getSharedPsiTest(testId) async {
-    var docRef = Firestore.instance.collection('test').document(testId);
-    DocumentSnapshot snapshot = await docRef.get();
-    return snapshot;
-  }
-
-  //TODO add UID to stream--using JoinPsiTest event*/
-
-  @override
-  Widget build(BuildContext context) {
-    //extract TestId String from Deep Link
-    String testId = deepLink.replaceAll(new RegExp(ADDRESSPARTOFDEEPLINK), '');
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('Opened Via Link'),
-        ),
-        body: FutureBuilder(
-            future: getSharedPsiTest(testId),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.none) {
-                return Text('no Test found');
-              }
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Text('looking for Test');
-              }
-              if (snapshot.connectionState == ConnectionState.active) {
-                return Text('found Test and retrieving data');
-              }
-              if (snapshot.connectionState == ConnectionState.done) {
-                String receiverId = snapshot.data['receiver'];
-                String senderId = snapshot.data['sender'];
-                return Text('receiver ID: $receiverId senderId: $senderId');
-                //  if (receiverId == globalCurrentUser && senderId == '')
-
-              }
-              return Container();
-            }));
-  }
-}
-
-// TO CHANNGE TO QUERY BASED ON INPUT PARAM
-
-/*if record not found..
-          if sender or receiver is me...continue test button
-          if sender and receiver are full...(test already full) okay button
-          if status is "underway" (test not currently underway:status is: $status)
-          happy path: button begin test or decline
-
-
-          begin test button*/
