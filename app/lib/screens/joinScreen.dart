@@ -19,9 +19,9 @@ class OpenedViaLinkWidget extends StatelessWidget {
 
   Future<DocumentSnapshot> getSharedPsiTest(testId) async {
     var docRef = Firestore.instance.collection('test').document(testId);
-    DocumentSnapshot sharedTest = await docRef.get();
+    DocumentSnapshot sharedTestSnapshot = await docRef.get();
 
-    return sharedTest;
+    return sharedTestSnapshot;
   }
 
   //TODO add UID to stream--using JoinPsiTest event*/
@@ -36,8 +36,8 @@ class OpenedViaLinkWidget extends StatelessWidget {
         ),
         body: FutureBuilder(
             future: getSharedPsiTest(testId),
-            builder: (context, sharedTest) {
-              switch (sharedTest.connectionState) {
+            builder: (context, sharedTestSnapshot) {
+              switch (sharedTestSnapshot.connectionState) {
                 case ConnectionState.none:
                   return CopyText('no Test found');
                   //TODO: a button to handle this case
@@ -51,9 +51,10 @@ class OpenedViaLinkWidget extends StatelessWidget {
                   break;
                 case ConnectionState.done:
                   //String receiverId = sharedTest.data['receiver'];
-                  String senderId = sharedTest.data['sender'];
+                  String senderId = sharedTestSnapshot.data['sender'];
                   //PsiTest sharedPsiTest = createTestFromFirestore(sharedTest.data.document);
-                  return TableBgWrapper(_OpenedViaLinkWidget(sharedTest));
+                  return TableBgWrapper(
+                      _OpenedViaLinkWidget(sharedTestSnapshot));
                   //   CopyText('receiver ID: $receiverId senderId: $senderId'));
                   //  if (receiverId == globalCurrentUser && senderId == '')
 
@@ -66,13 +67,13 @@ class OpenedViaLinkWidget extends StatelessWidget {
 }
 
 class _OpenedViaLinkWidget extends StatelessWidget {
-  final testToJoinOnFirestore;
-  _OpenedViaLinkWidget(this.testToJoinOnFirestore);
+  final sharedTestSnapshot;
+  _OpenedViaLinkWidget(this.sharedTestSnapshot);
   @override
   Widget build(BuildContext context) {
-    String receiverId = testToJoinOnFirestore.data['receiver'];
-    String senderId = testToJoinOnFirestore.data['sender'];
-    String status = testToJoinOnFirestore.data['status'];
+    String receiverId = sharedTestSnapshot.data['receiver'];
+    String senderId = sharedTestSnapshot.data['sender'];
+    String status = sharedTestSnapshot.data['status'];
     List<Widget> screenOptions;
     List<Widget> triedToJoinOwnTest = [
       // Column(children: [
@@ -80,11 +81,14 @@ class _OpenedViaLinkWidget extends StatelessWidget {
           'You tried to join your own test! Please send the link to a friend instead'),
       CopyText('Press this button and choose and app to send the link'),
       CopyText(
-          'Try using a messaging app or email not Firefox, Chrome or Safari'),
+          'Try using a messaging app, an SMS or email (not Firefox, Chrome or Safari)'),
       Button(
         'share test with a friend',
         () {
-          var testToJoin = createTestFromFirestore(testToJoinOnFirestore.data);
+          List<DocumentSnapshot> sharedTestList;
+          sharedTestList[0] = sharedTestSnapshot;
+          var testToJoin = createTestFromFirestore(sharedTestList);
+          //var testToJoin = createTestFromFirestore(sharedTestSnapshot.data);
           BlocProvider.of<PsiTestSaveBloc>(context)
               .add(SharePsiTest(test: testToJoin));
         },
@@ -116,8 +120,10 @@ class _OpenedViaLinkWidget extends StatelessWidget {
       Button(
         'Start Psi Test',
         () {
-          var testToJoin =
-              createTestFromFirestore(testToJoinOnFirestore.data.document);
+          List<DocumentSnapshot> sharedTestList;
+          sharedTestList[0] = sharedTestSnapshot;
+          var testToJoin = createTestFromFirestore(sharedTestList);
+
           BlocProvider.of<PsiTestSaveBloc>(context)
               .add(JoinPsiTest(test: testToJoin));
         },
