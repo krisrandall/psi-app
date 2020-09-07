@@ -17,11 +17,16 @@ import 'package:app/models/psiTest.dart';
 class OpenedViaLinkWidget extends StatelessWidget {
   final String deepLink;
   OpenedViaLinkWidget(this.deepLink);
+  bool testExists = true;
 
   Future<DocumentSnapshot> getSharedPsiTest(testId) async {
     var docRef = Firestore.instance.collection('test').document(testId);
     DocumentSnapshot sharedTestSnapshot = await docRef.get();
-
+    //var docRefdata = sharedTestSnapshot.data;
+    if (!sharedTestSnapshot.exists) {
+      testExists = false;
+      // return null;
+    } //else
     return sharedTestSnapshot;
   }
 
@@ -56,8 +61,12 @@ class OpenedViaLinkWidget extends StatelessWidget {
                   break;
                 case ConnectionState.done:
                   //PsiTest sharedPsiTest = createTestFromFirestore(sharedTest.data.document);
-                  return TableBgWrapper(
-                      _OpenedViaLinkWidget(sharedTestSnapshot, testId));
+
+                  if (!testExists) {
+                    return TableBgWrapper(LinkDoesntExistWidget());
+                  } else
+                    return TableBgWrapper(
+                        _OpenedViaLinkWidget(sharedTestSnapshot, testId));
                   break;
               }
               return Container();
@@ -72,25 +81,31 @@ class _OpenedViaLinkWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String receiverId = sharedTestSnapshot.data['receiver'];
+
     String senderId = sharedTestSnapshot.data['sender'];
+
     String status = sharedTestSnapshot.data['status'];
 
     List<Widget> screenOptions;
     List<Widget> triedToJoinOwnTest = [
       TitleText('Oops! You tried to join your own test!'),
+      SizedBox(height: 10),
       // Column(children: [
       CopyText('Please send the link to a friend instead.'),
-      CopyText('Press this button and then choose an app to send the link:'),
+      SizedBox(height: 30),
+      //CopyText('Press this button and then choose an app to send the link:'),
+      SizedBox(height: 10),
       Button(
-        'Share test with a friend',
+        'Invite friend via share link',
         () {
           var dummyTestForReshare = PsiTest(testId: testId);
           BlocProvider.of<PsiTestSaveBloc>(context)
               .add(ResharePsiTest(test: dummyTestForReshare));
         },
       ),
+      SizedBox(height: 10),
       CopyText(
-          'hint: Try using a messaging app, an SMS or an email (not Firefox, Chrome or Safari)'),
+          'hint: Try sharing with a messaging app, an SMS or an email (not Firefox, Chrome or Safari)'),
     ];
 
     List<Widget> testAlreadyFull = [
@@ -114,12 +129,14 @@ class _OpenedViaLinkWidget extends StatelessWidget {
     List<Widget> happyPath = [
       // Column(children: [
       CopyText('You have been invited to join a Psi Test'),
-      CopyText('your user id is $globalCurrentUser or $globalCurrentUser.uid'),
       Button(
         'Start Psi Test',
         () {
+          var dummyTestForJoining = PsiTest(testId: testId);
+          dummyTestForJoining.myRole =
+              (receiverId == null ? PsiTestRole.SENDER : PsiTestRole.RECEIVER);
           BlocProvider.of<PsiTestSaveBloc>(context)
-              .add(JoinPsiTest(testId: testId));
+              .add(JoinPsiTest(test: dummyTestForJoining));
         },
       )
     ];
@@ -127,6 +144,10 @@ class _OpenedViaLinkWidget extends StatelessWidget {
     if (globalCurrentUser.uid == receiverId ||
         globalCurrentUser.uid == senderId) {
       screenOptions = triedToJoinOwnTest;
+
+      //if globalCurrentUser.uid contains "reshare"
+      //{screenoptions = triedToJoinOwnTestForASecondTime}
+
     } else if (receiverId != '' && senderId != '') {
       screenOptions = testAlreadyFull;
     } else if (status != 'underway') {
@@ -135,13 +156,29 @@ class _OpenedViaLinkWidget extends StatelessWidget {
       screenOptions = happyPath;
     }
 
-    return Column(
-        //mainAxisAlignment: MainAxisAlignment.center,
-        //crossAxisAlignment: CrossAxisAlignment.center,
-        children: screenOptions);
+    return SingleChildScrollView(
+        child: Column(
+            //      mainAxisAlignment: MainAxisAlignment.center,
+            //     crossAxisAlignment: CrossAxisAlignment.center,
+            children: screenOptions));
   }
 }
 
+class LinkDoesntExistWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+        child: Column(
+      children: [
+        TitleText('Test not found'),
+        CopyText("The test you were invited to doesn't seem to exist anymore"),
+        Button('Go back to start', () {
+          goToScreen(context, TableBgWrapper(AfterAuthWidget()));
+        })
+      ],
+    ));
+  }
+}
 /*if record not found..
           if sender or receiver is me...continue test button
           if sender and receiver are full...(test already full) okay button

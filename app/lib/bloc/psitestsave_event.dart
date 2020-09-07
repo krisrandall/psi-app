@@ -5,7 +5,6 @@ abstract class PsiTestSaveEvent extends Equatable {
   const PsiTestSaveEvent({@required this.test}) : assert(test != null);
   @override
   List<Object> get props => [test];
-  String get testId => test.testId;
 }
 
 class CreatePsiTest extends PsiTestSaveEvent {
@@ -43,6 +42,5 @@ class ResharePsiTest extends PsiTestSaveEvent {
 }
 
 class JoinPsiTest extends PsiTestSaveEvent {
-  @override
-  const JoinPsiTest({@required testId});
+  const JoinPsiTest({@required test});
 }

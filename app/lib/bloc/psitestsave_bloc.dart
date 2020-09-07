@@ -132,14 +132,22 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
   Stream<PsiTestSaveState> _mapJoinPsiTest(
     PsiTestSaveEvent event,
   ) async* {
+    final db = Firestore.instance;
     yield PsiTestJoinInProgress();
     try {
-      String testId = event.testId;
+      String testId = event.test.testId;
 
-      // await Firestore.instance.collection('test').document(testId).updateData(['receiver'])
-//TODO update test with me as sender or receiver
-      // PsiTest existingTest = createTestFromFirestore(snapshot)
-      // return existingTest;
+      if (event.test.myRole == PsiTestRole.SENDER) {
+        await db
+            .collection('test')
+            .document(testId)
+            .updateData({'sender': globalCurrentUser.uid});
+      } else if (event.test.myRole == PsiTestRole.RECEIVER) {
+        await db
+            .collection('test')
+            .document(testId)
+            .updateData({'receiver': globalCurrentUser.uid});
+      }
       yield PsiTestJoinSuccessful();
     } catch (_) {
       yield PsiTestJoinFailed(exception: _);
@@ -152,7 +160,7 @@ Stream<PsiTestSaveState> _mapReSharePsiTest(
 ) async* {
   yield PsiTestSaveShareInProgress();
   try {
-    var shareTestUrl = await dynamicLink(event.testId);
+    var shareTestUrl = await dynamicLink(event.test.testId);
     print(shareTestUrl);
     var shortUrl = await shortenLink(shareTestUrl.toString());
     print(shortUrl);
