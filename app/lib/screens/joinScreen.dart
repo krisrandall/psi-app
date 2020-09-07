@@ -33,7 +33,10 @@ class OpenedViaLinkWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //extract TestId String from Deep Link
-    String testId = deepLink.replaceAll(new RegExp(ADDRESSPARTOFDEEPLINK), '');
+    String testIdWithReShareParameter =
+        deepLink.replaceAll(new RegExp(ADDRESSPARTOFDEEPLINK), '');
+    String testId =
+        testIdWithReShareParameter.replaceAll(new RegExp('reshare'), '');
     return TableBgWrapper(Scaffold(
         appBar: AppBar(
           title: Text('Opened Via Link'),
@@ -65,8 +68,8 @@ class OpenedViaLinkWidget extends StatelessWidget {
                   if (!testExists) {
                     return TableBgWrapper(LinkDoesntExistWidget());
                   } else
-                    return TableBgWrapper(
-                        _OpenedViaLinkWidget(sharedTestSnapshot, testId));
+                    return TableBgWrapper(_OpenedViaLinkWidget(
+                        sharedTestSnapshot, testIdWithReShareParameter));
                   break;
               }
               return Container();
@@ -76,10 +79,15 @@ class OpenedViaLinkWidget extends StatelessWidget {
 
 class _OpenedViaLinkWidget extends StatelessWidget {
   final AsyncSnapshot sharedTestSnapshot;
-  final String testId;
-  _OpenedViaLinkWidget(this.sharedTestSnapshot, this.testId);
+  final String testIdWithReshareParameter;
+  _OpenedViaLinkWidget(
+      this.sharedTestSnapshot, this.testIdWithReshareParameter);
+
   @override
   Widget build(BuildContext context) {
+    String testId =
+        testIdWithReshareParameter.replaceAll(new RegExp('reshare'), '');
+
     String receiverId = sharedTestSnapshot.data['receiver'];
 
     String senderId = sharedTestSnapshot.data['sender'];
@@ -98,14 +106,40 @@ class _OpenedViaLinkWidget extends StatelessWidget {
       Button(
         'Invite friend via share link',
         () {
-          var dummyTestForReshare = PsiTest(testId: testId);
+          String reShareTestId = testId + ('reshare');
+          var dummyTestForReshare = PsiTest(testId: reShareTestId);
           BlocProvider.of<PsiTestSaveBloc>(context)
               .add(ResharePsiTest(test: dummyTestForReshare));
         },
       ),
       SizedBox(height: 10),
-      CopyText(
-          'hint: Try sharing with a messaging app, an SMS or an email (not Firefox, Chrome or Safari)'),
+    ];
+
+    List<Widget> triedToJoinOwnTestForASecondTime = [
+      TitleText('Oops! You tried to join your own test again!'),
+      SizedBox(height: 10),
+      // Column(children: [
+      CopyText('Having trouble inviting a friend to your test?'),
+      SizedBox(height: 30),
+      CopyText('''Try this:
+      Press the button below.
+      A lot of options for different apps will appear.
+      Choose an app that can send the link.
+      The link will be sent to your friend
+      and he or she will click on it.
+      Hint: Try sharing with a messaging app, an SMS or an email (not Firefox, Chrome or Safari)') '''),
+      SizedBox(height: 10),
+      Button(
+        'Invite friend via share link',
+        () {
+          var dummyTestForReshare = PsiTest(testId: testIdWithReshareParameter);
+          BlocProvider.of<PsiTestSaveBloc>(context)
+              .add(ResharePsiTest(test: dummyTestForReshare));
+        },
+      ),
+      SizedBox(height: 10),
+      // CopyText(
+      //   'hint: Try sharing with a messaging app, an SMS or an email (not Firefox, Chrome or Safari)'),
     ];
 
     List<Widget> testAlreadyFull = [
@@ -145,9 +179,9 @@ class _OpenedViaLinkWidget extends StatelessWidget {
         globalCurrentUser.uid == senderId) {
       screenOptions = triedToJoinOwnTest;
 
-      //if globalCurrentUser.uid contains "reshare"
-      //{screenoptions = triedToJoinOwnTestForASecondTime}
-
+      if (testIdWithReshareParameter.contains('reshare')) {
+        screenOptions = triedToJoinOwnTestForASecondTime;
+      }
     } else if (receiverId != '' && senderId != '') {
       screenOptions = testAlreadyFull;
     } else if (status != 'underway') {
@@ -184,6 +218,5 @@ class LinkDoesntExistWidget extends StatelessWidget {
           if sender and receiver are full...(test already full) okay button
           if status is "underway" (test not currently underway:status is: $status)
           happy path: button begin test or decline
-
 
           begin test button*/
