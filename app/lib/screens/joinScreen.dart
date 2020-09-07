@@ -60,8 +60,6 @@ class OpenedViaLinkWidget extends StatelessWidget {
                   return CopyText('found Test and retrieving data');
                   break;
                 case ConnectionState.done:
-                  //PsiTest sharedPsiTest = createTestFromFirestore(sharedTest.data.document);
-
                   if (!testExists) {
                     return TableBgWrapper(LinkDoesntExistWidget());
                   } else
@@ -134,13 +132,13 @@ class _OpenedViaLinkWidget extends StatelessWidget {
         () {
           var dummyTestForJoining = PsiTest(testId: testId);
           dummyTestForJoining.myRole =
-              (receiverId == null ? PsiTestRole.SENDER : PsiTestRole.RECEIVER);
+              (receiverId == '' ? PsiTestRole.SENDER : PsiTestRole.RECEIVER);
           BlocProvider.of<PsiTestSaveBloc>(context)
               .add(JoinPsiTest(test: dummyTestForJoining));
         },
       )
     ];
-
+//on most recent test  was taken here....
     if (globalCurrentUser.uid == receiverId ||
         globalCurrentUser.uid == senderId) {
       screenOptions = triedToJoinOwnTest;

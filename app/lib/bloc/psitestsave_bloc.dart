@@ -136,6 +136,8 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     yield PsiTestJoinInProgress();
     try {
       String testId = event.test.testId;
+      print(testId);
+      print(event.test.myRole);
 
       if (event.test.myRole == PsiTestRole.SENDER) {
         await db
