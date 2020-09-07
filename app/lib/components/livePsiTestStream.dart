@@ -68,6 +68,20 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
   return test;
 }
 
+/*PsiTest createTestToJoinFromFirestore(DocumentSnapshot sharedTestSnapshot) {
+  
+  var data = sharedTestSnapshot.data;
+
+  String receiverId = data['receiver'];
+  String senderId = data['sender'];
+  String status = data['status'];
+
+   test = PsiTest(
+      testId: data.documentID,
+
+
+}*/
+
 /// PsiTest not available conditions
 ///
 bool psiTestNotAvailable(AsyncSnapshot<QuerySnapshot> snapshot) {

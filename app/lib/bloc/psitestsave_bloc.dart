@@ -2,11 +2,13 @@ import 'dart:async';
 //import 'dart:html';
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/utils.dart';
+import 'package:app/config.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:share/share.dart';
 
 part 'psitestsave_event.dart';
@@ -36,7 +38,10 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       yield* _mapCancelPsiTest(event);
     }
     if (event is JoinPsiTest) {
-      yield* _mapCancelPsiTest(event);
+      yield* _mapJoinPsiTest(event);
+    }
+    if (event is ResharePsiTest) {
+      yield* _mapReSharePsiTest(event);
     }
     // TODO add question
     // TODO answer question
@@ -129,7 +134,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
   ) async* {
     yield PsiTestJoinInProgress();
     try {
-      String testId = event.test.testId;
+      String testId = event.testId;
 
       // await Firestore.instance.collection('test').document(testId).updateData(['receiver'])
 //TODO update test with me as sender or receiver
@@ -139,5 +144,24 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     } catch (_) {
       yield PsiTestJoinFailed(exception: _);
     }
+  }
+}
+
+Stream<PsiTestSaveState> _mapReSharePsiTest(
+  PsiTestSaveEvent event,
+) async* {
+  yield PsiTestSaveShareInProgress();
+  try {
+    var shareTestUrl = await dynamicLink(event.testId);
+    print(shareTestUrl);
+    var shortUrl = await shortenLink(shareTestUrl.toString());
+    print(shortUrl);
+
+    //Share.share('Take a Telepathy Test with me! $shortUrl');
+    print('shortUrl $shortUrl');
+    Share.share('$shortUrl');
+    yield PsiTestSaveShareSuccessful();
+  } catch (_) {
+    yield PsiTestSaveShareFailed(exception: _);
   }
 }

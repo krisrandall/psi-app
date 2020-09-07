@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
 import 'package:app/components/button.dart';
+import 'package:app/models/psiTest.dart';
 
 class OpenedViaLinkWidget extends StatelessWidget {
   final String deepLink;
@@ -23,8 +24,6 @@ class OpenedViaLinkWidget extends StatelessWidget {
 
     return sharedTestSnapshot;
   }
-
-  //TODO add UID to stream--using JoinPsiTest event*/
 
   @override
   Widget build(BuildContext context) {
@@ -39,8 +38,14 @@ class OpenedViaLinkWidget extends StatelessWidget {
             builder: (context, sharedTestSnapshot) {
               switch (sharedTestSnapshot.connectionState) {
                 case ConnectionState.none:
-                  return CopyText('no Test found');
-                  //TODO: a button to handle this case
+                  return Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        CopyText('no Test found'),
+                        // TODO:  Button('start a new test' , () ==>logic to start new test);
+                      ]);
+
                   break;
                 case ConnectionState.waiting:
                   return CopyText(
@@ -50,15 +55,9 @@ class OpenedViaLinkWidget extends StatelessWidget {
                   return CopyText('found Test and retrieving data');
                   break;
                 case ConnectionState.done:
-                  //String receiverId = sharedTest.data['receiver'];
-                  String senderId = sharedTestSnapshot.data['sender'];
                   //PsiTest sharedPsiTest = createTestFromFirestore(sharedTest.data.document);
                   return TableBgWrapper(
-                      _OpenedViaLinkWidget(sharedTestSnapshot));
-                  //   CopyText('receiver ID: $receiverId senderId: $senderId'));
-                  //  if (receiverId == globalCurrentUser && senderId == '')
-
-                  // return _OpenedViaLinkWidget(testToJoinOnFirestore);
+                      _OpenedViaLinkWidget(sharedTestSnapshot, testId));
                   break;
               }
               return Container();
@@ -67,32 +66,31 @@ class OpenedViaLinkWidget extends StatelessWidget {
 }
 
 class _OpenedViaLinkWidget extends StatelessWidget {
-  final sharedTestSnapshot;
-  _OpenedViaLinkWidget(this.sharedTestSnapshot);
+  final AsyncSnapshot sharedTestSnapshot;
+  final String testId;
+  _OpenedViaLinkWidget(this.sharedTestSnapshot, this.testId);
   @override
   Widget build(BuildContext context) {
     String receiverId = sharedTestSnapshot.data['receiver'];
     String senderId = sharedTestSnapshot.data['sender'];
     String status = sharedTestSnapshot.data['status'];
+
     List<Widget> screenOptions;
     List<Widget> triedToJoinOwnTest = [
+      TitleText('Oops! You tried to join your own test!'),
       // Column(children: [
-      CopyText(
-          'You tried to join your own test! Please send the link to a friend instead'),
-      CopyText('Press this button and choose and app to send the link'),
-      CopyText(
-          'Try using a messaging app, an SMS or email (not Firefox, Chrome or Safari)'),
+      CopyText('Please send the link to a friend instead.'),
+      CopyText('Press this button and then choose an app to send the link:'),
       Button(
-        'share test with a friend',
+        'Share test with a friend',
         () {
-          List<DocumentSnapshot> sharedTestList;
-          sharedTestList[0] = sharedTestSnapshot;
-          var testToJoin = createTestFromFirestore(sharedTestList);
-          //var testToJoin = createTestFromFirestore(sharedTestSnapshot.data);
+          var dummyTestForReshare = PsiTest(testId: testId);
           BlocProvider.of<PsiTestSaveBloc>(context)
-              .add(SharePsiTest(test: testToJoin));
+              .add(ResharePsiTest(test: dummyTestForReshare));
         },
-      )
+      ),
+      CopyText(
+          'hint: Try using a messaging app, an SMS or an email (not Firefox, Chrome or Safari)'),
     ];
 
     List<Widget> testAlreadyFull = [
@@ -120,12 +118,8 @@ class _OpenedViaLinkWidget extends StatelessWidget {
       Button(
         'Start Psi Test',
         () {
-          List<DocumentSnapshot> sharedTestList;
-          sharedTestList[0] = sharedTestSnapshot;
-          var testToJoin = createTestFromFirestore(sharedTestList);
-
           BlocProvider.of<PsiTestSaveBloc>(context)
-              .add(JoinPsiTest(test: testToJoin));
+              .add(JoinPsiTest(testId: testId));
         },
       )
     ];
@@ -141,10 +135,12 @@ class _OpenedViaLinkWidget extends StatelessWidget {
       screenOptions = happyPath;
     }
 
-    return Column(children: screenOptions);
+    return Column(
+        //mainAxisAlignment: MainAxisAlignment.center,
+        //crossAxisAlignment: CrossAxisAlignment.center,
+        children: screenOptions);
   }
 }
-// TO CHANNGE TO QUERY BASED ON INPUT PARAM
 
 /*if record not found..
           if sender or receiver is me...continue test button
