@@ -76,7 +76,7 @@ class _OpenedViaLinkWidget extends StatelessWidget {
           var testToJoin = createTestFromFirestore([sharedTestSnapshot]);
           BlocProvider.of<PsiTestSaveBloc>(context)
               .add(ResharePsiTest(test: testToJoin));
-          goToScreen(context, TableBgWrapper(AfterAuthWidget()));
+          //goToScreen(context, TableBgWrapper(AfterAuthWidget()));
         },
       ),
       SizedBox(height: 10),
