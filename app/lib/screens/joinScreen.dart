@@ -7,27 +7,20 @@ import 'package:app/config.dart';
 import 'package:app/main.dart';
 import 'package:app/screens/homeScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
 import 'package:app/components/button.dart';
-import 'package:app/models/psiTest.dart';
 
 class OpenedViaLinkWidget extends StatelessWidget {
   final String deepLink;
   OpenedViaLinkWidget(this.deepLink);
-  bool testExists = true;
 
   Future<DocumentSnapshot> getSharedPsiTest(testId) async {
     var docRef = Firestore.instance.collection('test').document(testId);
-    DocumentSnapshot sharedTestSnapshot = await docRef.get();
-    //var docRefdata = sharedTestSnapshot.data;
-    if (!sharedTestSnapshot.exists) {
-      testExists = false;
-      // return null;
-    } //else
-    return sharedTestSnapshot;
+    DocumentSnapshot sharedTestDocumentSnapshot = await docRef.get();
+
+    return sharedTestDocumentSnapshot;
   }
 
   @override
@@ -40,32 +33,15 @@ class OpenedViaLinkWidget extends StatelessWidget {
         ),
         body: FutureBuilder(
             future: getSharedPsiTest(testId),
-            builder: (context, sharedTestSnapshot) {
-              switch (sharedTestSnapshot.connectionState) {
-                case ConnectionState.none:
-                  return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        CopyText('no Test found'),
-                        // TODO:  Button('start a new test' , () ==>logic to start new test);
-                      ]);
-
-                  break;
-                case ConnectionState.waiting:
-                  return CopyText(
-                      'looking for Test'); // TODO: Handle this case.
-                  break;
-                case ConnectionState.active:
-                  return CopyText('found Test and retrieving data');
-                  break;
-                case ConnectionState.done:
-                  if (!testExists) {
-                    return TableBgWrapper(LinkDoesntExistWidget());
-                  } else
-                    return TableBgWrapper(
-                        _OpenedViaLinkWidget(sharedTestSnapshot, testId));
-                  break;
+            builder: (context, AsyncSnapshot<dynamic> snapshot) {
+              if (!snapshot.hasData) {
+                return TableBgWrapper(
+                    Center(child: CopyText('looking for test')));
+              } else if (snapshot.hasData) {
+                return TableBgWrapper(_OpenedViaLinkWidget(snapshot.data));
+              } else if (snapshot.hasError) {
+                print('snapshot has error');
+                return TableBgWrapper(LinkDoesntExistWidget());
               }
               return Container();
             })));
@@ -73,16 +49,16 @@ class OpenedViaLinkWidget extends StatelessWidget {
 }
 
 class _OpenedViaLinkWidget extends StatelessWidget {
-  final AsyncSnapshot sharedTestSnapshot;
-  final String testId;
-  _OpenedViaLinkWidget(this.sharedTestSnapshot, this.testId);
+  final DocumentSnapshot sharedTestSnapshot;
+  //final String testId;
+  _OpenedViaLinkWidget(this.sharedTestSnapshot);
   @override
   Widget build(BuildContext context) {
-    String receiverId = sharedTestSnapshot.data['receiver'];
+    String receiverId = sharedTestSnapshot['receiver'];
+    print(receiverId);
+    String senderId = sharedTestSnapshot['sender'];
 
-    String senderId = sharedTestSnapshot.data['sender'];
-
-    String status = sharedTestSnapshot.data['status'];
+    String status = sharedTestSnapshot['status'];
 
     List<Widget> screenOptions;
     List<Widget> triedToJoinOwnTest = [
@@ -96,9 +72,10 @@ class _OpenedViaLinkWidget extends StatelessWidget {
       Button(
         'Invite friend via share link',
         () {
-          var dummyTestForReshare = PsiTest(testId: testId);
+          var testToJoin = createTestFromFirestore([sharedTestSnapshot]);
           BlocProvider.of<PsiTestSaveBloc>(context)
-              .add(ResharePsiTest(test: dummyTestForReshare));
+              .add(ResharePsiTest(test: testToJoin));
+          goToScreen(context, TableBgWrapper(AfterAuthWidget()));
         },
       ),
       SizedBox(height: 10),
@@ -130,11 +107,10 @@ class _OpenedViaLinkWidget extends StatelessWidget {
       Button(
         'Start Psi Test',
         () {
-          var dummyTestForJoining = PsiTest(testId: testId);
-          dummyTestForJoining.myRole =
-              (receiverId == '' ? PsiTestRole.SENDER : PsiTestRole.RECEIVER);
+          var testToJoin = createTestFromFirestore([sharedTestSnapshot]);
           BlocProvider.of<PsiTestSaveBloc>(context)
-              .add(JoinPsiTest(test: dummyTestForJoining));
+              .add(JoinPsiTest(test: testToJoin));
+          goToScreen(context, TableBgWrapper(AfterAuthWidget()));
         },
       )
     ];
@@ -142,10 +118,6 @@ class _OpenedViaLinkWidget extends StatelessWidget {
     if (globalCurrentUser.uid == receiverId ||
         globalCurrentUser.uid == senderId) {
       screenOptions = triedToJoinOwnTest;
-
-      //if globalCurrentUser.uid contains "reshare"
-      //{screenoptions = triedToJoinOwnTestForASecondTime}
-
     } else if (receiverId != '' && senderId != '') {
       screenOptions = testAlreadyFull;
     } else if (status != 'underway') {
