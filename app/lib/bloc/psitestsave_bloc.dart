@@ -136,19 +136,24 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     yield PsiTestJoinInProgress();
     try {
       String testId = event.test.testId;
-      print(testId);
-      print(event.test.myRole);
+      var myRole = event.test.myRole;
 
-      if (event.test.myRole == PsiTestRole.SENDER) {
-        await db
-            .collection('test')
-            .document(testId)
-            .updateData({'sender': globalCurrentUser.uid});
-      } else if (event.test.myRole == PsiTestRole.RECEIVER) {
-        await db
-            .collection('test')
-            .document(testId)
-            .updateData({'receiver': globalCurrentUser.uid});
+      var testOnFirestore = await db.collection('test').document(testId).get();
+
+      String inviterId = myRole == PsiTestRole.SENDER
+          ? testOnFirestore['receiver']
+          : testOnFirestore['sender'];
+
+      if (myRole == PsiTestRole.SENDER) {
+        await db.collection('test').document(testId).updateData({
+          'parties': [inviterId, globalCurrentUser.uid],
+          'sender': globalCurrentUser.uid
+        });
+      } else if (myRole == PsiTestRole.RECEIVER) {
+        await db.collection('test').document(testId).updateData({
+          'parties': [inviterId, globalCurrentUser.uid],
+          'receiver': globalCurrentUser.uid
+        });
       }
       yield PsiTestJoinSuccessful();
     } catch (_) {

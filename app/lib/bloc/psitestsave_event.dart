@@ -37,7 +37,6 @@ class CancelPsiTest extends PsiTestSaveEvent {
 }
 
 class ResharePsiTest extends PsiTestSaveEvent {
-  // final String testId;
   const ResharePsiTest({@required test}) : super(test: test);
 }
 

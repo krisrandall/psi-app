@@ -6,6 +6,7 @@ import 'package:app/components/utils.dart';
 import 'package:app/config.dart';
 import 'package:app/main.dart';
 import 'package:app/screens/homeScreen.dart';
+import 'package:app/screens/testScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -79,14 +80,15 @@ class _OpenedViaLinkWidget extends StatelessWidget {
         },
       ),
       SizedBox(height: 10),
-      CopyText(
-          'hint: Try sharing with a messaging app, an SMS or an email (not Firefox, Chrome or Safari)'),
+      //SecondaryButton('for help click here', () {
+      // goToScreen(context, TableBgWrapper(HelpWithSharing()));
+      //}),
     ];
     List<Widget> linkIsYourActiveTest = [
       //Column(children: [
       CopyText('You are already part of this test'),
-      Button('Go back', () {
-        goToScreen(context, AfterAuthWidget());
+      Button('Continue Test', () {
+        goToScreen(context, TableBgWrapper(TestScreen()));
       })
     ];
 
@@ -95,7 +97,7 @@ class _OpenedViaLinkWidget extends StatelessWidget {
       CopyText('You are unable to join this test'),
       CopyText('It already has a sender and a receiver'),
       Button('Go back', () {
-        goToScreen(context, AfterAuthWidget());
+        goToScreen(context, TableBgWrapper(AfterAuthWidget()));
       })
     ];
 
@@ -104,13 +106,16 @@ class _OpenedViaLinkWidget extends StatelessWidget {
       CopyText('The test is no longer active'),
       CopyText('The status of the test is $status'),
       Button('Go back', () {
-        goToScreen(context, AfterAuthWidget());
+        goToScreen(context, TableBgWrapper(AfterAuthWidget()));
       })
     ];
 
     List<Widget> happyPath = [
       // Column(children: [
       CopyText('You have been invited to join a Psi Test'),
+      SizedBox(
+        height: 10,
+      ),
       Button(
         'Start Psi Test',
         () {
@@ -121,7 +126,7 @@ class _OpenedViaLinkWidget extends StatelessWidget {
         },
       )
     ];
-//on most recent test  was taken here....
+
     if (receiverId != '' && senderId != '') {
       if (globalCurrentUser.uid == receiverId ||
           globalCurrentUser.uid == senderId) {
@@ -160,6 +165,7 @@ class LinkDoesntExistWidget extends StatelessWidget {
     ));
   }
 }
+
 /*if record not found..
           if sender or receiver is me...continue test button
           if sender and receiver are full...(test already full) okay button
