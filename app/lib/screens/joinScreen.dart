@@ -1,11 +1,11 @@
 import 'package:app/bloc/psitestsave_bloc.dart';
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/screenBackground.dart';
+import 'package:app/components/secondaryButton.dart';
 import 'package:app/components/textComponents.dart';
 import 'package:app/components/utils.dart';
 import 'package:app/config.dart';
 import 'package:app/main.dart';
-import 'package:app/screens/homeScreen.dart';
 import 'package:app/screens/testScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +37,7 @@ class OpenedViaLinkWidget extends StatelessWidget {
             builder: (context, AsyncSnapshot<dynamic> snapshot) {
               if (!snapshot.hasData) {
                 return TableBgWrapper(
-                    Center(child: CopyText('looking for test')));
+                    Center(child: CopyText('looking for test...')));
               } else if (snapshot.hasData) {
                 return TableBgWrapper(_OpenedViaLinkWidget(snapshot.data));
               } else if (snapshot.hasError) {
@@ -70,22 +70,24 @@ class _OpenedViaLinkWidget extends StatelessWidget {
       SizedBox(height: 30),
       //CopyText('Press this button and then choose an app to send the link:'),
       SizedBox(height: 10),
-      Button(
+      /*Button(
         'Invite friend via share link',
         () {
           var testToJoin = createTestFromFirestore([sharedTestSnapshot]);
           BlocProvider.of<PsiTestSaveBloc>(context)
               .add(ResharePsiTest(test: testToJoin));
-          //goToScreen(context, TableBgWrapper(AfterAuthWidget()));
+          goToScreen(context, TableBgWrapper(AfterAuthWidget()));
         },
-      ),
+      ), */
+      Button('Go back and try again', () {
+        goToScreen(context, TableBgWrapper(AfterAuthWidget()));
+      }),
       SizedBox(height: 10),
       //SecondaryButton('for help click here', () {
       // goToScreen(context, TableBgWrapper(HelpWithSharing()));
-      //}),
+      //}),*/
     ];
     List<Widget> linkIsYourActiveTest = [
-      //Column(children: [
       CopyText('You are already part of this test'),
       Button('Continue Test', () {
         goToScreen(context, TableBgWrapper(TestScreen()));
@@ -93,7 +95,6 @@ class _OpenedViaLinkWidget extends StatelessWidget {
     ];
 
     List<Widget> testAlreadyFull = [
-      //Column(children: [
       CopyText('You are unable to join this test'),
       CopyText('It already has a sender and a receiver'),
       Button('Go back', () {
@@ -102,7 +103,6 @@ class _OpenedViaLinkWidget extends StatelessWidget {
     ];
 
     List<Widget> testNotUnderway = [
-      //  Column(children: [
       CopyText('The test is no longer active'),
       CopyText('The status of the test is $status'),
       Button('Go back', () {
@@ -111,7 +111,7 @@ class _OpenedViaLinkWidget extends StatelessWidget {
     ];
 
     List<Widget> happyPath = [
-      // Column(children: [
+      TitleText('Join Psi Test'),
       CopyText('You have been invited to join a Psi Test'),
       SizedBox(
         height: 10,
@@ -124,7 +124,13 @@ class _OpenedViaLinkWidget extends StatelessWidget {
               .add(JoinPsiTest(test: testToJoin));
           goToScreen(context, TableBgWrapper(AfterAuthWidget()));
         },
-      )
+      ),
+      SizedBox(
+        height: 10,
+      ),
+      SecondaryButton("No thanks. I don't want to join", () {
+        goToScreen(context, TableBgWrapper(AfterAuthWidget()));
+      })
     ];
 
     if (receiverId != '' && senderId != '') {
