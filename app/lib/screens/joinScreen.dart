@@ -82,6 +82,13 @@ class _OpenedViaLinkWidget extends StatelessWidget {
       CopyText(
           'hint: Try sharing with a messaging app, an SMS or an email (not Firefox, Chrome or Safari)'),
     ];
+    List<Widget> linkIsYourActiveTest = [
+      //Column(children: [
+      CopyText('You are already part of this test'),
+      Button('Go back', () {
+        goToScreen(context, AfterAuthWidget());
+      })
+    ];
 
     List<Widget> testAlreadyFull = [
       //Column(children: [
@@ -115,11 +122,15 @@ class _OpenedViaLinkWidget extends StatelessWidget {
       )
     ];
 //on most recent test  was taken here....
-    if (globalCurrentUser.uid == receiverId ||
+    if (receiverId != '' && senderId != '') {
+      if (globalCurrentUser.uid == receiverId ||
+          globalCurrentUser.uid == senderId) {
+        screenOptions = linkIsYourActiveTest;
+      } else
+        screenOptions = testAlreadyFull;
+    } else if (globalCurrentUser.uid == receiverId ||
         globalCurrentUser.uid == senderId) {
       screenOptions = triedToJoinOwnTest;
-    } else if (receiverId != '' && senderId != '') {
-      screenOptions = testAlreadyFull;
     } else if (status != 'underway') {
       screenOptions = testNotUnderway;
     } else {
