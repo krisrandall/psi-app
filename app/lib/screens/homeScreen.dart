@@ -11,6 +11,8 @@ import 'package:app/screens/senderScreen.dart';
 import 'package:app/screens/testScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:app/main.dart';
+import 'package:app/components/screenBackground.dart';
 
 class HomePage extends StatelessWidget {
   final PsiTest currentTest;
@@ -69,25 +71,39 @@ class HomePage extends StatelessWidget {
     ];
 */
     List<Widget> awaitingReceiver = [
-      TitleText('you are waiting for the receiver to join'),
+      CopyText('You have created a test and you are the Sender'),
+      CopyText('Try inviting a friend to join your test.'),
       Button(
-        'Re-Invite Friend via a share link',
+        'Invite Friend via a share link',
         () {
           BlocProvider.of<PsiTestSaveBloc>(context)
               .add(SharePsiTest(test: currentTest));
         },
-      )
+      ),
+      SecondaryButton('End the Test', () {
+        print('do logic to cancel the test');
+        var event = CancelPsiTest(test: currentTest);
+        BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+        goToScreen(context, TableBgWrapper(AfterAuthWidget()));
+      }),
     ];
 
     List<Widget> awaitingSender = [
-      TitleText('you are waiting for the sender to join'),
+      CopyText('You have created a test and you are the Receiver.'),
+      CopyText('Try inviting a friend to join your test.'),
       Button(
-        'Re-Invite Friend via a share link',
+        'Invite Friend via a share link',
         () {
           BlocProvider.of<PsiTestSaveBloc>(context)
               .add(SharePsiTest(test: currentTest));
         },
-      )
+      ),
+      SecondaryButton('End the Test', () {
+        print('do logic to cancel the test');
+        var event = CancelPsiTest(test: currentTest);
+        BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+        goToScreen(context, TableBgWrapper(AfterAuthWidget()));
+      }),
     ];
 
     List<Widget> screenOptions = [];
