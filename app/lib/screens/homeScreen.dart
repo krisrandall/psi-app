@@ -57,8 +57,49 @@ class HomePage extends StatelessWidget {
             }),
           ];
 
-    List<Widget> screenOptions =
-        (currentTest == null) ? noActiveTestOptions : activeTestScreen;
+    /*List<Widget> testUnderway = [
+      CopyText(
+          "There is a test underway and you are the $currentTest.myRole.\n\nGo back and complete the test."),
+      Button(
+        'Continue Test',
+        () {
+          goToScreen(context, TestScreen());
+        },
+      )
+    ];
+*/
+    List<Widget> awaitingReceiver = [
+      TitleText('you are waiting for the receiver to join'),
+      Button(
+        'Re-Invite Friend via a share link',
+        () {
+          BlocProvider.of<PsiTestSaveBloc>(context)
+              .add(SharePsiTest(test: currentTest));
+        },
+      )
+    ];
+
+    List<Widget> awaitingSender = [
+      TitleText('you are waiting for the sender to join'),
+      Button(
+        'Re-Invite Friend via a share link',
+        () {
+          BlocProvider.of<PsiTestSaveBloc>(context)
+              .add(SharePsiTest(test: currentTest));
+        },
+      )
+    ];
+
+    List<Widget> screenOptions = [];
+    if (currentTest == null) {
+      screenOptions = noActiveTestOptions;
+    } else if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
+      screenOptions = activeTestScreen;
+    } else if (currentTest.testStatus == PsiTestStatus.AWAITING_SENDER) {
+      screenOptions = awaitingSender;
+    } else if (currentTest.testStatus == PsiTestStatus.AWAITING_RECEIVER) {
+      screenOptions = awaitingReceiver;
+    }
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
