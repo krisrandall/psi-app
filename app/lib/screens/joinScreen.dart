@@ -39,11 +39,16 @@ class OpenedViaLinkWidget extends StatelessWidget {
                 return TableBgWrapper(
                     Center(child: CopyText('looking for test...')));
               } else if (snapshot.hasData) {
-                return TableBgWrapper(_OpenedViaLinkWidget(snapshot.data));
+                if (!snapshot.data.exists) {
+                  return TableBgWrapper(LinkDoesntExistWidget());
+                } else {
+                  return TableBgWrapper(_OpenedViaLinkWidget(snapshot.data));
+                }
               } else if (snapshot.hasError) {
                 print('snapshot has error');
                 return TableBgWrapper(LinkDoesntExistWidget());
               }
+
               return Container();
             })));
   }
