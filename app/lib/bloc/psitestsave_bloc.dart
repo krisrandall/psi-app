@@ -106,6 +106,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         'receiver': receiverUid,
         'sender': senderUid,
         'status': 'underway',
+        //'status': 'awaiting ...'
       });
       event.test.testId = ref.documentID;
 
@@ -138,20 +139,14 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       String testId = event.test.testId;
       var myRole = event.test.myRole;
 
-      var testOnFirestore = await db.collection('test').document(testId).get();
-
-      String inviterId = myRole == PsiTestRole.SENDER
-          ? testOnFirestore['receiver']
-          : testOnFirestore['sender'];
-
       if (myRole == PsiTestRole.SENDER) {
-        await db.collection('test').document(testId).updateData({
-          'parties': [inviterId, globalCurrentUser.uid],
+        db.collection('test').document(testId).updateData({
+          'parties': FieldValue.arrayUnion([globalCurrentUser.uid]),
           'sender': globalCurrentUser.uid
         });
       } else if (myRole == PsiTestRole.RECEIVER) {
-        await db.collection('test').document(testId).updateData({
-          'parties': [inviterId, globalCurrentUser.uid],
+        db.collection('test').document(testId).updateData({
+          'parties': FieldValue.arrayUnion([globalCurrentUser.uid]),
           'receiver': globalCurrentUser.uid
         });
       }
