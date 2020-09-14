@@ -59,19 +59,8 @@ class HomePage extends StatelessWidget {
             }),
           ];
 
-    /*List<Widget> testUnderway = [
-      CopyText(
-          "There is a test underway and you are the $currentTest.myRole.\n\nGo back and complete the test."),
-      Button(
-        'Continue Test',
-        () {
-          goToScreen(context, TestScreen());
-        },
-      )
-    ];
-*/
     List<Widget> awaitingReceiver = [
-      CopyText('You have created a test and you are the Sender'),
+      CopyText('You have created a test and you are the Sender.'),
       CopyText('Try inviting a friend to join your test.'),
       Button(
         'Invite Friend via a share link',
