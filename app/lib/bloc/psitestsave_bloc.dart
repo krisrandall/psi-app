@@ -1,15 +1,13 @@
 import 'dart:async';
-//import 'dart:html';
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/utils.dart';
-import 'package:app/config.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:share/share.dart';
+import 'package:http/http.dart' as http;
 
 part 'psitestsave_event.dart';
 part 'psitestsave_state.dart';
@@ -66,7 +64,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       print(shortUrl);
       //Share.share('Take a Telepathy Test with me! $shortUrl');
       print('shortUrl $shortUrl');
-      Share.share('$shortUrl');
+      Share.share('$shareTestUrl');
       yield PsiTestSaveShareSuccessful();
     } catch (_) {
       yield PsiTestSaveShareFailed(exception: _);
@@ -75,7 +73,18 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
 
   Stream<PsiTestSaveState> _mapAddPsiTestQuesion(
     PsiTestSaveEvent event,
-  ) async* {}
+  ) async* {
+    var path = ('https://picsum.photos/200');
+    var response = await http.get(path);
+    var imageId = (response.headers['picsum-id']);
+    String testId = event.test.testId;
+    final db = Firestore.instance;
+
+    db.collection('test').document(testId).updateData({
+      'options':
+          FieldValue.arrayUnion(['https://picsum.photos/id/$imageId/200']),
+    });
+  }
 
   Stream<PsiTestSaveState> _mapCreatePsiTestToState(
     PsiTestSaveEvent event,
