@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
+import 'package:app/config.dart';
 import 'package:http/http.dart' as http;
 
 part 'psitestsave_event.dart';
@@ -106,18 +107,28 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
 
       DocumentReference ref = await db.collection("test").add({
         'parties': [globalCurrentUser.uid],
-        'questions': [
-          {
-            'correct answer': 3,
-            'options': ['a', 'b', 'c', 'd']
-          }
-        ],
+        'questions': {
+          'correct answer': 3,
+          'options': ['a', 'b', 'c', 'd']
+        },
         'receiver': receiverUid,
         'sender': senderUid,
         'status': 'underway',
-        //'status': 'awaiting ...'
       });
+
       event.test.testId = ref.documentID;
+      //add questions
+      String testId = event.test.testId;
+      var path = ('https://picsum.photos/200');
+      for (int i = 0; i < DEFAULT_NUM_QUESTIONS - 1; i++) {
+        var response = await http.get(path);
+        var imageId = (response.headers['picsum-id']);
+
+        db.collection('test').document(testId).updateData({
+          'questions.options.$i':
+              'https://picsum.photos/id/$imageId/$IMAGESIZE',
+        });
+      }
 
       yield PsiTestSaveCreateSuccessful();
     } catch (_) {

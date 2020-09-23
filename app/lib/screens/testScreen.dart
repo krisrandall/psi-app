@@ -32,7 +32,6 @@ class _TestScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int counter = 0;
     if (currentTest.myRole == PsiTestRole.SENDER) {
       return TestQuestionSender(
           currentTest.currentQuestion
@@ -40,12 +39,6 @@ class _TestScreen extends StatelessWidget {
           currentTest.numQuestionsAnswered + 1,
           currentTest.totalNumQuestions);
     } else if (currentTest.myRole == PsiTestRole.RECEIVER) {
-      counter++;
-      print(counter);
-      if (counter < 4) {
-        var event = AddPsiTestQuestion(test: currentTest);
-        BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-      }
       return TestQuestionReceiver(currentTest.currentQuestion.options,
           currentTest.numQuestionsAnswered + 1, currentTest.totalNumQuestions);
     } else {

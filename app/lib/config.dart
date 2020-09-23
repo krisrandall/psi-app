@@ -5,3 +5,5 @@ const URL_SHORTENER = {
 };
 
 const String ADDRESSPARTOFDEEPLINK = ('https://psiapp.page.link/');
+
+const int IMAGESIZE = 200;
