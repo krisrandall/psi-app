@@ -75,16 +75,19 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
   Stream<PsiTestSaveState> _mapAddPsiTestQuesion(
     PsiTestSaveEvent event,
   ) async* {
-    var path = ('https://picsum.photos/200');
-    var response = await http.get(path);
-    var imageId = (response.headers['picsum-id']);
-    String testId = event.test.testId;
+    //add questions
     final db = Firestore.instance;
+    String testId = event.test.testId;
+    var path = ('https://picsum.photos/200');
+    for (int i = 0; i < DEFAULT_NUM_QUESTIONS - 1; i++) {
+      var response = await http.get(path);
+      var imageId = (response.headers['picsum-id']);
 
-    db.collection('test').document(testId).updateData({
-      'options':
-          FieldValue.arrayUnion(['https://picsum.photos/id/$imageId/200']),
-    });
+      db.collection('test').document(testId).updateData({
+        'questions.0.options.$i':
+            'https://picsum.photos/id/$imageId/$IMAGESIZE',
+      });
+    }
   }
 
   Stream<PsiTestSaveState> _mapCreatePsiTestToState(
@@ -92,7 +95,6 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
   ) async* {
     yield PsiTestSaveCreateInProgress();
     try {
-      print(event.test);
       print(globalCurrentUser.uid);
 
       final db = Firestore.instance;
@@ -107,28 +109,18 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
 
       DocumentReference ref = await db.collection("test").add({
         'parties': [globalCurrentUser.uid],
-        'questions': {
-          'correct answer': 3,
-          'options': ['a', 'b', 'c', 'd']
-        },
+        'questions': [
+          {
+            'correct answer': 3,
+            'options': ['a', 'b', 'c', 'd']
+          }
+        ],
         'receiver': receiverUid,
         'sender': senderUid,
         'status': 'underway',
       });
 
       event.test.testId = ref.documentID;
-      //add questions
-      String testId = event.test.testId;
-      var path = ('https://picsum.photos/200');
-      for (int i = 0; i < DEFAULT_NUM_QUESTIONS - 1; i++) {
-        var response = await http.get(path);
-        var imageId = (response.headers['picsum-id']);
-
-        db.collection('test').document(testId).updateData({
-          'questions.options.$i':
-              'https://picsum.photos/id/$imageId/$IMAGESIZE',
-        });
-      }
 
       yield PsiTestSaveCreateSuccessful();
     } catch (_) {

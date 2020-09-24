@@ -29,19 +29,26 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
       iAm = PsiTestRole.RECEIVER;
 
     // create the questions
+
     List<PsiTestQuestion> questions = [];
-    if (data['questions'] != null) {
-      data['questions'].forEach((q) {
-        print(questions);
-        questions.add(PsiTestQuestion(
-          q['options'][0],
-          q['options'][1],
-          q['options'][2],
-          q['options'][3],
-          correctAnswer: q['correctAnswer'],
-          providedAnswer: q['providedAnswer'],
-        ));
-      });
+    try {
+      if (data['questions'] != null) {
+        data['questions'].forEach((q) {
+          print(questions);
+          questions.add(PsiTestQuestion(
+            q['options'][0],
+            q['options'][1],
+            q['options'][2],
+            q['options'][3],
+            correctAnswer: q['correctAnswer'],
+            providedAnswer: q['providedAnswer'],
+          ));
+        });
+      } else {
+        print('questions on firestore = null');
+      }
+    } catch (e) {
+      print('error while creating questions: $e');
     }
 
     test = PsiTest(
@@ -60,7 +67,7 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
     );
   } catch (exception) {
     // TODO - better global app error handling
-    print('ERROR HAPPENED!');
+    print('Error happened during createTestFromFirestore');
     print(exception);
     test = null;
   }

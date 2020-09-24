@@ -117,6 +117,7 @@ class _OpenedViaLinkWidget extends StatelessWidget {
 
     List<Widget> happyPath = [
       TitleText('Join Psi Test'),
+      SizedBox(height: 20),
       CopyText('You have been invited to join a Psi Test'),
       SizedBox(
         height: 10,
