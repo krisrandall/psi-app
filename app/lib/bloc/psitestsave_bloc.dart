@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:share/share.dart';
 import 'package:app/config.dart';
 import 'package:http/http.dart' as http;
+import 'dart:math';
 
 part 'psitestsave_event.dart';
 part 'psitestsave_state.dart';
@@ -30,8 +31,8 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     if (event is CreateAndSharePsiTest) {
       yield* _mapCreateAndSharePsiTestToState(event);
     }
-    if (event is AddPsiTestQuestion) {
-      yield* _mapAddPsiTestQuesion(event);
+    if (event is AddPsiTestQuestions) {
+      yield* _mapAddPsiTestQuestions(event);
     }
     if (event is CancelPsiTest) {
       yield* _mapCancelPsiTest(event);
@@ -72,7 +73,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     }
   }
 
-  Stream<PsiTestSaveState> _mapAddPsiTestQuesion(
+  Stream<PsiTestSaveState> _mapAddPsiTestQuestions(
     PsiTestSaveEvent event,
   ) async* {
     //add questions
@@ -80,13 +81,22 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     String testId = event.test.testId;
     var path = ('https://picsum.photos/200');
     for (int i = 0; i < DEFAULT_NUM_QUESTIONS - 1; i++) {
-      var response = await http.get(path);
-      var imageId = (response.headers['picsum-id']);
+      for (int j = 0; j < DEFAULT_NUM_QUESTIONS - 1; j++) {
+        var response = await http.get(path);
+        var imageId = (response.headers['picsum-id']);
 
-      db.collection('test').document(testId).updateData({
-        'questions.0.options.$i':
-            'https://picsum.photos/id/$imageId/$IMAGESIZE',
-      });
+        db.collection('test').document(testId).updateData({
+          'questions.$i.options.$j':
+              'https://picsum.photos/id/$imageId/$IMAGESIZE',
+        });
+      }
+      var rng = new Random();
+      int correctAnswer = rng.nextInt(3);
+
+      db
+          .collection('test')
+          .document(testId)
+          .updateData({'questions.$i.correctAnswer': correctAnswer});
     }
   }
 

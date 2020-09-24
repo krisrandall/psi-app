@@ -48,7 +48,7 @@ class _SenderScreen extends StatelessWidget {
           var newlyCreatedTest = PsiTest.beginNewTestAsSender();
           var event = CreatePsiTest(test: newlyCreatedTest);
           BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-          var event2 = AddPsiTestQuestion(test: newlyCreatedTest);
+          var event2 = AddPsiTestQuestions(test: newlyCreatedTest);
           BlocProvider.of<PsiTestSaveBloc>(context).add(event2);
         },
       );

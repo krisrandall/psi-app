@@ -19,8 +19,8 @@ class CreateAndSharePsiTest extends PsiTestSaveEvent {
   const CreateAndSharePsiTest({@required test}) : super(test: test);
 }
 
-class AddPsiTestQuestion extends PsiTestSaveEvent {
-  const AddPsiTestQuestion({@required test}) : super(test: test);
+class AddPsiTestQuestions extends PsiTestSaveEvent {
+  const AddPsiTestQuestions({@required test}) : super(test: test);
 }
 
 class AnswerPsiTestQuestion extends PsiTestSaveEvent {
