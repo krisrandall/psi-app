@@ -31,9 +31,11 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
     // create the questions
 
     List<PsiTestQuestion> questions = [];
+    //print(data['questions'][0]['options'][0]);
+    print(data[(['questions'])[0]]);
     try {
       if (data['questions'] != null) {
-        data['questions'][0].forEach((q) {
+        data['questions'].forEach((q) {
           print(questions);
           questions.add(PsiTestQuestion(
             q['options'][0],
