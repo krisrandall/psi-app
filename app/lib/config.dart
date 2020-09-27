@@ -6,4 +6,4 @@ const URL_SHORTENER = {
 
 const String ADDRESSPARTOFDEEPLINK = ('https://psiapp.page.link/');
 
-const int IMAGESIZE = 200;
+const int DEFAULT_IMAGE_SIZE = 200;

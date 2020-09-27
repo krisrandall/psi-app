@@ -79,7 +79,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     //add questions
     final db = Firestore.instance;
     String testId = event.test.testId;
-    var path = ('https://picsum.photos/200');
+    var path = ('https://picsum.photos/$DEFAULT_IMAGE_SIZE');
     for (int i = 0; i < DEFAULT_NUM_QUESTIONS - 1; i++) {
       for (int j = 0; j < DEFAULT_NUM_QUESTIONS - 1; j++) {
         var response = await http.get(path);
@@ -87,7 +87,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
 
         db.collection('test').document(testId).updateData({
           'questions.$i.options.$j':
-              'https://picsum.photos/id/$imageId/$IMAGESIZE',
+              'https://picsum.photos/id/$imageId/$DEFAULT_IMAGE_SIZE',
         });
       }
       var rng = new Random();

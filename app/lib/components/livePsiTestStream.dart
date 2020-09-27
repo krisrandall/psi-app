@@ -32,7 +32,9 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
 
     List<PsiTestQuestion> questions = [];
     //print(data['questions'][0]['options'][0]);
-    print(data[(['questions'])[0]]);
+    //print(data[(['questions'])[0]]);
+    print(data);
+    print(data['questions']);
     try {
       if (data['questions'] != null) {
         data['questions'].forEach((q) {
