@@ -76,28 +76,29 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
   Stream<PsiTestSaveState> _mapAddPsiTestQuestions(
     PsiTestSaveEvent event,
   ) async* {
-    //add questions
     final db = Firestore.instance;
     String testId = event.test.testId;
-    var path = ('https://picsum.photos/$DEFAULT_IMAGE_SIZE');
-    for (int i = 0; i < DEFAULT_NUM_QUESTIONS - 1; i++) {
-      for (int j = 0; j < DEFAULT_NUM_QUESTIONS - 1; j++) {
-        var response = await http.get(path);
-        var imageId = (response.headers['picsum-id']);
+    var path = ('https://picsum.photos');
 
-        db.collection('test').document(testId).updateData({
-          'questions.$i.options.$j':
-              'https://picsum.photos/id/$imageId/$DEFAULT_IMAGE_SIZE',
-        });
-      }
+    var questions = new List<Map>();
+    var question = new Map<String, dynamic>();
+
+    for (int i = 0; i < DEFAULT_NUM_QUESTIONS; i++) {
       var rng = new Random();
       int correctAnswer = rng.nextInt(3);
 
-      db
-          .collection('test')
-          .document(testId)
-          .updateData({'questions.$i.correctAnswer': correctAnswer});
+      var options = List<String>();
+
+      for (int j = 0; j < 4; j++) {
+        var response = await http.get('$path/$DEFAULT_IMAGE_SIZE');
+        var imageId = (response.headers['picsum-id']);
+        options.add('$path/id/$imageId/$DEFAULT_IMAGE_SIZE');
+      }
+      question = {'options': options, 'correctAnswer': correctAnswer};
+      questions.add(question);
     }
+
+    db.collection('test').document(testId).updateData({'questions': questions});
   }
 
   Stream<PsiTestSaveState> _mapCreatePsiTestToState(
