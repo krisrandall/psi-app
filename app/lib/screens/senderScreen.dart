@@ -14,11 +14,10 @@ class SenderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('𝚿 Psi Telepathy Test'),
-      ),
-      body: LeftBgWrapper(
-        StreamBuilder<QuerySnapshot>(
+        appBar: AppBar(
+          title: Text('𝚿 Psi Telepathy Test'),
+        ),
+        body: LeftBgWrapper(StreamBuilder<QuerySnapshot>(
             stream: firestoreDatabaseStream.snapshots(),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -28,19 +27,19 @@ class SenderScreen extends StatelessWidget {
                   createTestFromFirestore(snapshot.data.documents);
               print(currentTest);
               return _SenderScreen(currentTest);
-            }),
-      ),
-    );
+            })));
   }
 }
 
 class _SenderScreen extends StatelessWidget {
   final PsiTest currentTest;
+
   _SenderScreen(this.currentTest);
 
   @override
   Widget build(BuildContext context) {
     Widget actionButton;
+
     if (currentTest == null) {
       actionButton = Button(
         'Create Test (Invite Friend)',
@@ -88,7 +87,18 @@ class _SenderScreen extends StatelessWidget {
     There will be $DEFAULT_NUM_QUESTIONS images in the test.
     '''),
           SizedBox(height: 10),
-          actionButton,
+          BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
+              builder: (context, state) {
+            print(state);
+            if (state is PsiTestSaveCreateInProgress)
+              return CopyText('creating test...');
+            else if (state is PsiTestSaveAddQuestionsInProgress)
+              return CopyText('loading questions...');
+            else if (state is PsiTestSaveShareInProgress)
+              return CopyText('loading apps for sharing...');
+            else
+              return actionButton;
+          }),
           SizedBox(height: 130),
         ]));
   }

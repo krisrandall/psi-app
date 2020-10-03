@@ -40,9 +40,9 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     if (event is JoinPsiTest) {
       yield* _mapJoinPsiTest(event);
     }
-    if (event is ResharePsiTest) {
+    /*if (event is ResharePsiTest) {
       yield* _mapReSharePsiTest(event);
-    }
+    }*/
     // TODO add question
     // TODO answer question
     // TODO cancel test
@@ -76,29 +76,38 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
   Stream<PsiTestSaveState> _mapAddPsiTestQuestions(
     PsiTestSaveEvent event,
   ) async* {
-    final db = Firestore.instance;
-    String testId = event.test.testId;
-    var path = ('https://picsum.photos');
+    yield PsiTestSaveAddQuestionsInProgress();
+    try {
+      final db = Firestore.instance;
+      String testId = event.test.testId;
+      var path = ('https://picsum.photos');
 
-    var questions = new List<Map>();
-    var question = new Map<String, dynamic>();
+      var questions = new List<Map>();
+      var question = new Map<String, dynamic>();
 
-    for (int i = 0; i < DEFAULT_NUM_QUESTIONS; i++) {
-      var rng = new Random();
-      int correctAnswer = rng.nextInt(3);
+      for (int i = 0; i < DEFAULT_NUM_QUESTIONS; i++) {
+        var rng = new Random();
+        int correctAnswer = rng.nextInt(3);
 
-      var options = List<String>();
+        var options = List<String>();
 
-      for (int j = 0; j < 4; j++) {
-        var response = await http.get('$path/$DEFAULT_IMAGE_SIZE');
-        var imageId = (response.headers['picsum-id']);
-        options.add('$path/id/$imageId/$DEFAULT_IMAGE_SIZE');
+        for (int j = 0; j < 4; j++) {
+          var response = await http.get('$path/$DEFAULT_IMAGE_SIZE');
+          var imageId = (response.headers['picsum-id']);
+          options.add('$path/id/$imageId/$DEFAULT_IMAGE_SIZE');
+        }
+        question = {'options': options, 'correctAnswer': correctAnswer};
+        questions.add(question);
       }
-      question = {'options': options, 'correctAnswer': correctAnswer};
-      questions.add(question);
-    }
 
-    db.collection('test').document(testId).updateData({'questions': questions});
+      db
+          .collection('test')
+          .document(testId)
+          .updateData({'questions': questions});
+      yield PsiTestSaveAddQuestionsSuccessful();
+    } catch (_) {
+      yield PsiTestSaveAddQuestionsFailed(exception: _);
+    }
   }
 
   Stream<PsiTestSaveState> _mapCreatePsiTestToState(
@@ -179,7 +188,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     }
   }
 }
-
+/*
 Stream<PsiTestSaveState> _mapReSharePsiTest(
   PsiTestSaveEvent event,
 ) async* {
@@ -198,3 +207,4 @@ Stream<PsiTestSaveState> _mapReSharePsiTest(
     yield PsiTestSaveShareFailed(exception: _);
   }
 }
+*/
