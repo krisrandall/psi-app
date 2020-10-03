@@ -80,27 +80,31 @@ class _SenderScreen extends StatelessWidget {
       if (state is PsiTestSaveCreateInProgress)
         return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           CopyText('creating test...'),
-          SpinKitPouringHourglass(
+          LinearProgressIndicator(minHeight: 10)
+          /*SpinKitPouringHourglass(
             color: Colors.white,
             size: 50.0,
-          )
+          )*/
         ]);
       else if (state is PsiTestSaveAddQuestionsInProgress)
         return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           //CopyText('loading test questions...'),
           CopyText('creating test...'),
-          SpinKitPouringHourglass(
+          LinearProgressIndicator(minHeight: 10)
+        ]);
+      /*SpinKitPouringHourglass(
             color: Colors.white,
             size: 50.0,
           )
-        ]);
+        ]);*/
       else if (state is PsiTestSaveShareInProgress)
         return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           CopyText('loading apps for sharing...'),
-          SpinKitPouringHourglass(
+          LinearProgressIndicator(minHeight: 10)
+          /*SpinKitPouringHourglass(
             color: Colors.white,
             size: 50.0,
-          )
+          )*/
         ]);
       else
         return SingleChildScrollView(
