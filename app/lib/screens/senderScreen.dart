@@ -9,6 +9,7 @@ import 'package:app/screens/testScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class SenderScreen extends StatelessWidget {
   @override
@@ -73,33 +74,52 @@ class _SenderScreen extends StatelessWidget {
           "There is a test underway and you are the Receiver.\n\nGo back and complete the test.");
     }
 
-    return SingleChildScrollView(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-          SizedBox(height: 5),
-          TitleText('Sender'),
-          CopyText(
-              '''As the Sender, your job is to send a mental image of what you see to the Receiver.  You will be presented with a series of images, one at a time.  Focus on each one and imagine describing that image to the Receiver.
+    return BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
+        builder: (context, state) {
+      print(state);
+      if (state is PsiTestSaveCreateInProgress)
+        return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          CopyText('creating test...'),
+          SpinKitPouringHourglass(
+            color: Colors.white,
+            size: 50.0,
+          )
+        ]);
+      else if (state is PsiTestSaveAddQuestionsInProgress)
+        return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          //CopyText('loading test questions...'),
+          CopyText('creating test...'),
+          SpinKitPouringHourglass(
+            color: Colors.white,
+            size: 50.0,
+          )
+        ]);
+      else if (state is PsiTestSaveShareInProgress)
+        return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          CopyText('loading apps for sharing...'),
+          SpinKitPouringHourglass(
+            color: Colors.white,
+            size: 50.0,
+          )
+        ]);
+      else
+        return SingleChildScrollView(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+              SizedBox(height: 5),
+              TitleText('Sender'),
+              CopyText(
+                  '''As the Sender, your job is to send a mental image of what you see to the Receiver.  You will be presented with a series of images, one at a time.  Focus on each one and imagine describing that image to the Receiver.
 
     The Receiver should not be able to physically see or hear you, they need to receive the mental image you project to them telepathically and pick which image you are Sending.
 
     There will be $DEFAULT_NUM_QUESTIONS images in the test.
     '''),
-          SizedBox(height: 10),
-          BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
-              builder: (context, state) {
-            print(state);
-            if (state is PsiTestSaveCreateInProgress)
-              return CopyText('creating test...');
-            else if (state is PsiTestSaveAddQuestionsInProgress)
-              return CopyText('loading questions...');
-            else if (state is PsiTestSaveShareInProgress)
-              return CopyText('loading apps for sharing...');
-            else
-              return actionButton;
-          }),
-          SizedBox(height: 130),
-        ]));
+              SizedBox(height: 10),
+              actionButton,
+              SizedBox(height: 130),
+            ]));
+    });
   }
 }
