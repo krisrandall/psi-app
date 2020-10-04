@@ -8,7 +8,11 @@ abstract class PsiTestSaveState extends Equatable {
 
 class PsiTestSaveInitial extends PsiTestSaveState {}
 
-class PsiTestSaveCreateInProgress extends PsiTestSaveState {}
+class PsiTestSaveCreateInProgress extends PsiTestSaveState {
+  final double _progress;
+  PsiTestSaveCreateInProgress(this._progress);
+  double getProgress() => _progress;
+}
 
 class PsiTestSaveCreateSuccessful extends PsiTestSaveState {}
 
@@ -33,7 +37,11 @@ class PsiTestSaveShareFailed extends PsiTestSaveState {
   List<Object> get props => [exception];
 }
 
-class PsiTestSaveAddQuestionsInProgress extends PsiTestSaveState {}
+class PsiTestSaveAddQuestionsInProgress extends PsiTestSaveState {
+  final double _progress;
+  PsiTestSaveAddQuestionsInProgress(this._progress);
+  double getProgress() => _progress;
+}
 
 class PsiTestSaveAddQuestionsSuccessful extends PsiTestSaveState {}
 

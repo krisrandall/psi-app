@@ -76,7 +76,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
   Stream<PsiTestSaveState> _mapAddPsiTestQuestions(
     PsiTestSaveEvent event,
   ) async* {
-    yield PsiTestSaveAddQuestionsInProgress();
+    yield PsiTestSaveAddQuestionsInProgress(0.2);
     try {
       final db = Firestore.instance;
       String testId = event.test.testId;
@@ -98,8 +98,10 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         }
         question = {'options': options, 'correctAnswer': correctAnswer};
         questions.add(question);
+        yield PsiTestSaveAddQuestionsSuccessful();
+        yield PsiTestSaveAddQuestionsInProgress(i * 0.2 + 0.4);
       }
-
+      //yield PsiTestSaveAddQuestionsInProgress(1);
       db
           .collection('test')
           .document(testId)
@@ -113,7 +115,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
   Stream<PsiTestSaveState> _mapCreatePsiTestToState(
     PsiTestSaveEvent event,
   ) async* {
-    yield PsiTestSaveCreateInProgress();
+    yield PsiTestSaveCreateInProgress(0);
     try {
       print(globalCurrentUser.uid);
 
@@ -126,7 +128,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       receiverUid = event.test.myRole == PsiTestRole.RECEIVER
           ? globalCurrentUser.uid
           : "";
-
+      yield PsiTestSaveCreateInProgress(0.2);
       DocumentReference ref = await db.collection("test").add({
         'parties': [globalCurrentUser.uid],
         'questions': [

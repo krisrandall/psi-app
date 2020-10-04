@@ -106,17 +106,32 @@ class HomePage extends StatelessWidget {
       screenOptions = awaitingReceiver;
     }
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <Widget>[
-        SizedBox(height: 10),
-        TitleText(
-            'The Psi Telepathy Test App lets you discover your telepathic abilities with a friend.'),
-        ...screenOptions,
-        SizedBox(height: 150),
-        FooterButtons(),
-      ],
-    );
+    return BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
+        builder: (context, state) {
+      print(state);
+      if (state is PsiTestSaveShareInProgress)
+        return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          CopyText('loading apps for sharing...'),
+          // CircularProgressIndicator()
+        ]);
+      if (state is PsiTestSaveCancelInProgress)
+        return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          CopyText('ending test...'),
+          // CircularProgressIndicator()
+        ]);
+      else
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            SizedBox(height: 10),
+            TitleText(
+                'The Psi Telepathy Test App lets you discover your telepathic abilities with a friend.'),
+            ...screenOptions,
+            SizedBox(height: 150),
+            FooterButtons(),
+          ],
+        );
+    });
   }
 }
 
