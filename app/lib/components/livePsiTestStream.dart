@@ -79,20 +79,6 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
   return test;
 }
 
-/*PsiTest createTestToJoinFromFirestore(DocumentSnapshot sharedTestSnapshot) {
-  
-  var data = sharedTestSnapshot.data;
-
-  String receiverId = data['receiver'];
-  String senderId = data['sender'];
-  String status = data['status'];
-
-   test = PsiTest(
-      testId: data.documentID,
-
-
-}*/
-
 /// PsiTest not available conditions
 ///
 bool psiTestNotAvailable(AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -106,6 +92,7 @@ bool psiTestNotAvailable(AsyncSnapshot<QuerySnapshot> snapshot) {
 Widget psiTestNotAvailableWidget(
     BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
   List<DocumentSnapshot> documents = snapshot.data.documents;
+  DocumentSnapshot document;
   if (snapshot.hasError) {
     return new Text('Error: ${snapshot.error}');
   } else if (snapshot.connectionState == ConnectionState.waiting) {
@@ -121,7 +108,6 @@ Widget psiTestNotAvailableWidget(
     return CopyText("joining test");
     //TODO -- decide how to handle this bettter
   } else if (documents.length == 2) {
-    DocumentSnapshot document;
     return Column(children: [
       CopyText("More than one active test"),
       Button('Start over', () {
