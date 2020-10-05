@@ -75,15 +75,6 @@ class _OpenedViaLinkWidget extends StatelessWidget {
       SizedBox(height: 30),
       //CopyText('Press this button and then choose an app to send the link:'),
       SizedBox(height: 10),
-      /*Button(
-        'Invite friend via share link',
-        () {
-          var testToJoin = createTestFromFirestore([sharedTestSnapshot]);
-          BlocProvider.of<PsiTestSaveBloc>(context)
-              .add(ResharePsiTest(test: testToJoin));
-          goToScreen(context, TableBgWrapper(AfterAuthWidget()));
-        },
-      ), */
       Button('Go back and try again', () {
         goToScreen(context, TableBgWrapper(AfterAuthWidget()));
       }),
@@ -177,12 +168,3 @@ class LinkDoesntExistWidget extends StatelessWidget {
     ));
   }
 }
-
-/*if record not found..
-          if sender or receiver is me...continue test button
-          if sender and receiver are full...(test already full) okay button
-          if status is "underway" (test not currently underway:status is: $status)
-          happy path: button begin test or decline
-
-
-          begin test button*/

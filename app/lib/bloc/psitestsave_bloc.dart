@@ -40,12 +40,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     if (event is JoinPsiTest) {
       yield* _mapJoinPsiTest(event);
     }
-    /*if (event is ResharePsiTest) {
-      yield* _mapReSharePsiTest(event);
-    }*/
-    // TODO add question
     // TODO answer question
-    // TODO cancel test
   }
 
   Stream<PsiTestSaveState> _mapCreateAndSharePsiTestToState(
@@ -101,7 +96,6 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         yield PsiTestSaveAddQuestionsSuccessful();
         yield PsiTestSaveAddQuestionsInProgress(i * 0.2 + 0.4);
       }
-      //yield PsiTestSaveAddQuestionsInProgress(1);
       db
           .collection('test')
           .document(testId)
@@ -190,23 +184,3 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     }
   }
 }
-/*
-Stream<PsiTestSaveState> _mapReSharePsiTest(
-  PsiTestSaveEvent event,
-) async* {
-  yield PsiTestSaveShareInProgress();
-  try {
-    var shareTestUrl = await dynamicLink(event.test.testId);
-    print(shareTestUrl);
-    var shortUrl = await shortenLink(shareTestUrl.toString());
-    print(shortUrl);
-
-    //Share.share('Take a Telepathy Test with me! $shortUrl');
-    print('shortUrl $shortUrl');
-    Share.share('$shortUrl');
-    yield PsiTestSaveShareSuccessful();
-  } catch (_) {
-    yield PsiTestSaveShareFailed(exception: _);
-  }
-}
-*/
