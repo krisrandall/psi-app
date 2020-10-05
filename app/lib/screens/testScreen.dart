@@ -18,7 +18,7 @@ class TestScreen extends StatelessWidget {
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (psiTestNotAvailable(snapshot))
-              return psiTestNotAvailableWidget(snapshot);
+              return psiTestNotAvailableWidget(context, snapshot);
             var currentTest = createTestFromFirestore(snapshot.data.documents);
             return _TestScreen(currentTest);
           }),

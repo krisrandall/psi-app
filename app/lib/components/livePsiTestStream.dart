@@ -4,6 +4,9 @@ import 'package:app/models/psiTest.dart';
 import 'package:app/models/psiTestQuestion.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:app/bloc/psitestsave_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:app/components/button.dart';
 
 var globalCurrentUser;
 
@@ -100,14 +103,36 @@ bool psiTestNotAvailable(AsyncSnapshot<QuerySnapshot> snapshot) {
 
 /// PsiTest not available Widgets
 ///
-Widget psiTestNotAvailableWidget(AsyncSnapshot<QuerySnapshot> snapshot) {
+Widget psiTestNotAvailableWidget(
+    BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+  List<DocumentSnapshot> documents = snapshot.data.documents;
   if (snapshot.hasError) {
     return new Text('Error: ${snapshot.error}');
   } else if (snapshot.connectionState == ConnectionState.waiting) {
     return CopyText("Fetching existing test data ..");
-  } else if (snapshot.data.documents.length > 1) {
-    // TODO -- decide how to handle this bettter
-    return CopyText("More than one active test");
+  } else if (documents.length == 2) {
+    //if one of the tests has sender and receiver, keep it and delete the other
+    var testToDelete = documents[0]['parties'].length == 1
+        ? createTestFromFirestore([documents[0]])
+        : createTestFromFirestore([documents[1]]);
+    var event = CancelPsiTest(test: testToDelete);
+    BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+    print('deleting test');
+    return CopyText("joining test");
+    //TODO -- decide how to handle this bettter
+  } else if (documents.length == 2) {
+    DocumentSnapshot document;
+    return Column(children: [
+      CopyText("More than one active test"),
+      Button('Start over', () {
+        for (document in documents) {
+          var testToDelete = createTestFromFirestore([document]);
+          var event = CancelPsiTest(test: testToDelete);
+          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+          print('deleting test');
+        }
+      })
+    ]);
   } else {
     return CopyText("Whoops!  Unexpected thing happened !?!?");
   }

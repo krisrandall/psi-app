@@ -9,7 +9,6 @@ import 'package:app/screens/testScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class SenderScreen extends StatelessWidget {
   @override
@@ -23,7 +22,7 @@ class SenderScreen extends StatelessWidget {
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
               if (psiTestNotAvailable(snapshot))
-                return psiTestNotAvailableWidget(snapshot);
+                return psiTestNotAvailableWidget(context, snapshot);
               var currentTest =
                   createTestFromFirestore(snapshot.data.documents);
               print(currentTest);

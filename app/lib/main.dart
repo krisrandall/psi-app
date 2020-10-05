@@ -134,7 +134,7 @@ class AfterAuthWidget extends StatelessWidget {
         stream: firestoreDatabaseStream.snapshots(),
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (psiTestNotAvailable(snapshot))
-            return psiTestNotAvailableWidget(snapshot);
+            return psiTestNotAvailableWidget(context, snapshot);
           var currentTest = createTestFromFirestore(snapshot.data.documents);
           return HomePage(currentTest);
         });
