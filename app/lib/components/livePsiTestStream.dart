@@ -91,35 +91,38 @@ bool psiTestNotAvailable(AsyncSnapshot<QuerySnapshot> snapshot) {
 ///
 Widget psiTestNotAvailableWidget(
     BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-  List<DocumentSnapshot> documents = snapshot.data.documents;
-  DocumentSnapshot document;
   if (snapshot.hasError) {
     return new Text('Error: ${snapshot.error}');
   } else if (snapshot.connectionState == ConnectionState.waiting) {
     return CopyText("Fetching existing test data ..");
-  } else if (documents.length == 2) {
-    //if one of the tests has sender and receiver, keep it and delete the other
-    var testToDelete = documents[0]['parties'].length == 1
-        ? createTestFromFirestore([documents[0]])
-        : createTestFromFirestore([documents[1]]);
-    var event = CancelPsiTest(test: testToDelete);
-    BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-    print('deleting test');
-    return CopyText("joining test");
-    //TODO -- decide how to handle this bettter
-  } else if (documents.length == 2) {
-    return Column(children: [
-      CopyText("More than one active test"),
-      Button('Start over', () {
-        for (document in documents) {
-          var testToDelete = createTestFromFirestore([document]);
-          var event = CancelPsiTest(test: testToDelete);
-          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-          print('deleting test');
-        }
-      })
-    ]);
   } else {
-    return CopyText("Whoops!  Unexpected thing happened !?!?");
+    List<DocumentSnapshot> documents = snapshot.data.documents;
+    DocumentSnapshot document;
+    if (documents.length == 2) {
+      //if one of the tests has sender and receiver, keep it and delete the other
+
+      var testToDelete = documents[0]['parties'].length == 1
+          ? createTestFromFirestore([documents[0]])
+          : createTestFromFirestore([documents[1]]);
+      var event = CancelPsiTest(test: testToDelete);
+      BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+      print('deleting test');
+      return CopyText("joining test");
+      //TODO -- decide how to handle this bettter
+    } else if (documents.length == 2) {
+      return Column(children: [
+        CopyText("More than one active test"),
+        Button('Start over', () {
+          for (document in documents) {
+            var testToDelete = createTestFromFirestore([document]);
+            var event = CancelPsiTest(test: testToDelete);
+            BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+            print('deleting test');
+          }
+        })
+      ]);
+    } else {
+      return CopyText("Whoops!  Unexpected thing happened !?!?");
+    }
   }
 }
