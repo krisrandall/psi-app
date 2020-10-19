@@ -1,5 +1,6 @@
 import 'package:app/bloc/psitestsave_bloc.dart';
 import 'package:app/components/livePsiTestStream.dart';
+import 'package:app/config.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -33,11 +34,12 @@ class _TestScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (currentTest.myRole == PsiTestRole.SENDER) {
-      return TestQuestionSender(
-          currentTest.currentQuestion
-              .options[currentTest.currentQuestion.correctAnswer],
-          currentTest.numQuestionsAnswered + 1,
-          currentTest.totalNumQuestions);
+      String imageUrl = currentTest
+          .currentQuestion.options[currentTest.currentQuestion.correctAnswer];
+      String imageUrlBig =
+          imageUrl.replaceAll(new RegExp(DEFAULT_IMAGE_SIZE), '500');
+      return TestQuestionSender(imageUrlBig,
+          currentTest.numQuestionsAnswered + 1, currentTest.totalNumQuestions);
     } else if (currentTest.myRole == PsiTestRole.RECEIVER) {
       return TestQuestionReceiver(currentTest.currentQuestion.options,
           currentTest.numQuestionsAnswered + 1, currentTest.totalNumQuestions);
