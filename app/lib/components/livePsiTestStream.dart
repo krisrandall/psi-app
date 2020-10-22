@@ -98,18 +98,25 @@ Widget psiTestNotAvailableWidget(
   } else {
     List<DocumentSnapshot> documents = snapshot.data.documents;
     DocumentSnapshot document;
-    if (documents.length == 2) {
+    if (documents.length > 1) {
+      var testToDelete;
       //if one of the tests has sender and receiver, keep it and delete the other
+      for (document in documents) {
+        if (document.data.isEmpty)
+          testToDelete = createTestFromFirestore([document]);
+      }
+      if (testToDelete == null)
+        for (document in documents) {
+          if (document['parties'].length == 1)
+            testToDelete = createTestFromFirestore([document]);
+        }
 
-      var testToDelete = documents[0]['parties'].length == 1
-          ? createTestFromFirestore([documents[0]])
-          : createTestFromFirestore([documents[1]]);
       var event = CancelPsiTest(test: testToDelete);
       BlocProvider.of<PsiTestSaveBloc>(context).add(event);
       print('deleting test');
       return CopyText("joining test");
       //TODO -- decide how to handle this bettter
-    } else if (documents.length == 2) {
+    } /*else if (documents.length == 2) {
       return Column(children: [
         CopyText("More than one active test"),
         Button('Start over', () {
@@ -121,7 +128,8 @@ Widget psiTestNotAvailableWidget(
           }
         })
       ]);
-    } else {
+    }*/
+    else {
       return CopyText("Whoops!  Unexpected thing happened !?!?");
     }
   }

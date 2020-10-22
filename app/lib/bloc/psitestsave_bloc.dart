@@ -62,8 +62,10 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       //Share.share('Take a Telepathy Test with me! $shortUrl');
       print('shortUrl $shortUrl');
       Share.share('$shortUrl');
+      print('shared');
       yield PsiTestSaveShareSuccessful();
     } catch (_) {
+      print('share failed');
       yield PsiTestSaveShareFailed(exception: _);
     }
   }
