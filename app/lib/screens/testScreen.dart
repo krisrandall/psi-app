@@ -1,5 +1,6 @@
 import 'package:app/bloc/psitestsave_bloc.dart';
 import 'package:app/components/livePsiTestStream.dart';
+import 'package:app/components/pictureButton.dart';
 import 'package:app/config.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -21,6 +22,7 @@ class TestScreen extends StatelessWidget {
             if (psiTestNotAvailable(snapshot))
               return psiTestNotAvailableWidget(context, snapshot);
             var currentTest = createTestFromFirestore(snapshot.data.documents);
+
             return _TestScreen(currentTest);
           }),
     );
@@ -86,10 +88,12 @@ class TestQuestionReceiver extends StatelessWidget {
         mainAxisSpacing: 4.0,
         crossAxisSpacing: 4.0,
         children: [
-          Image.network(imageUrls[0], fit: BoxFit.cover),
-          Image.network(imageUrls[1], fit: BoxFit.cover),
-          Image.network(imageUrls[2], fit: BoxFit.cover),
-          Image.network(imageUrls[3], fit: BoxFit.cover),
+          PictureButton(imageUrls[0], () {
+            print('0');
+          }),
+          PictureButton(imageUrls[1], () {}),
+          PictureButton(imageUrls[2], () {}),
+          PictureButton(imageUrls[3], () {}),
           Padding(
             padding: EdgeInsets.all(30.0),
             child: Text('\n\nClick to choose'),

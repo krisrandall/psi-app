@@ -100,11 +100,12 @@ Widget psiTestNotAvailableWidget(
     DocumentSnapshot document;
     if (documents.length > 1) {
       var testToDelete;
-      //if one of the tests has sender and receiver, keep it and delete the other
+
       for (document in documents) {
         if (document.data.isEmpty)
           testToDelete = createTestFromFirestore([document]);
       }
+      //if one of the tests has sender and receiver, keep it and delete the other
       if (testToDelete == null)
         for (document in documents) {
           if (document['parties'].length == 1)
