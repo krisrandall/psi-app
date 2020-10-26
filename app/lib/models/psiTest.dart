@@ -1,4 +1,3 @@
-
 import 'package:app/models/psiTestQuestion.dart';
 
 enum PsiTestStatus {
@@ -17,7 +16,6 @@ enum PsiTestRole {
 const DEFAULT_NUM_QUESTIONS = 5;
 
 class PsiTest {
-
   String testId;
   PsiTestStatus testStatus;
   PsiTestRole myRole;
@@ -26,16 +24,17 @@ class PsiTest {
   PsiTestQuestion currentQuestion;
 
   List<PsiTestQuestion> answeredQuestions;
+  List<PsiTestQuestion> questions;
 
-  PsiTest({ 
-    this.testId, 
-    this.testStatus, 
-    this.myRole,
-    this.totalNumQuestions,
-    this.numQuestionsAnswered,
-    this.answeredQuestions,
-    this.currentQuestion,
-  });
+  PsiTest(
+      {this.testId,
+      this.testStatus,
+      this.myRole,
+      this.totalNumQuestions,
+      this.numQuestionsAnswered,
+      this.answeredQuestions,
+      this.currentQuestion,
+      this.questions});
 
   PsiTest.beginNewTestAsSender() {
     myRole = PsiTestRole.SENDER;
@@ -52,10 +51,9 @@ class PsiTest {
   }
 
   void createNewTestOnServer() async {
-    if (testStatus!=PsiTestStatus.AWAITING_RECEIVER && testStatus!=PsiTestStatus.AWAITING_SENDER) {
+    if (testStatus != PsiTestStatus.AWAITING_RECEIVER &&
+        testStatus != PsiTestStatus.AWAITING_SENDER) {
       throw "Can't save new test unless status is AWAITING_RECEIVER or AWAITING_SENDER";
     }
   }
-
-
 }

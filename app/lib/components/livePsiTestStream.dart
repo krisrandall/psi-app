@@ -38,7 +38,6 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
     try {
       if (data['questions'] != null) {
         data['questions'].forEach((q) {
-          print(questions);
           questions.add(PsiTestQuestion(
             q['options'][0],
             q['options'][1],
@@ -55,6 +54,16 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
       print('error while creating questions: $e');
     }
 
+    List<PsiTestQuestion> answeredQuestions;
+    int numQuestionsAnswered = 0;
+
+    for (PsiTestQuestion question in questions) {
+      if (question.providedAnswer != null) {
+        //answeredQuestions.add(question);
+        numQuestionsAnswered++;
+      }
+    }
+    print('$numQuestionsAnswered questions answered');
     test = PsiTest(
       testId: data.documentID,
       myRole: iAm,
@@ -64,10 +73,11 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
           : (data['receiver']?.isEmpty ?? true)
               ? PsiTestStatus.AWAITING_RECEIVER
               : PsiTestStatus.UNDERWAY),
-      numQuestionsAnswered: max(questions.length - 1, 0),
-      answeredQuestions: questions,
-      currentQuestion:
-          (questions.length > 0) ? questions[questions.length - 1] : null,
+      numQuestionsAnswered: numQuestionsAnswered,
+      answeredQuestions: answeredQuestions,
+      currentQuestion: questions[numQuestionsAnswered],
+      //(questions.length > 0) ? questions[questions.length - 1] : null,
+      questions: questions,
     );
   } catch (exception) {
     // TODO - better global app error handling

@@ -26,7 +26,7 @@ class AddPsiTestQuestions extends PsiTestSaveEvent {
 class AnswerPsiTestQuestion extends PsiTestSaveEvent {
   final int answer;
   const AnswerPsiTestQuestion({@required test, @required this.answer})
-      : assert(answer > 0 && answer < 5),
+      : assert(answer > -1 && answer < 5),
         super(test: test);
   @override
   List<Object> get props => [test, answer];

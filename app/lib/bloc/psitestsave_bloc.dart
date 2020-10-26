@@ -40,7 +40,9 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     if (event is JoinPsiTest) {
       yield* _mapJoinPsiTest(event);
     }
-    // TODO answer question
+    if (event is AnswerPsiTestQuestion) {
+      yield* _mapAnswerPsiTestQuestionToState(event);
+    }
   }
 
   Stream<PsiTestSaveState> _mapCreateAndSharePsiTestToState(
@@ -183,6 +185,37 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       yield PsiTestJoinSuccessful();
     } catch (_) {
       yield PsiTestJoinFailed(exception: _);
+    }
+  }
+
+  Stream<PsiTestSaveState> _mapAnswerPsiTestQuestionToState(
+      PsiTestSaveEvent event) async* {
+    final db = Firestore.instance;
+    yield PsiTestSaveAnswerQuestionInProgress();
+    try {
+      String testId = event.test.testId;
+      int answerProvided = event.test.currentQuestion.providedAnswer;
+      int numCurrentQuestion = event.test.numQuestionsAnswered - 1;
+      print('answerProvided is $answerProvided');
+      print('numCurrentQuestion is $numCurrentQuestion');
+      var questions = new List<Map>();
+      for (int i = 0; i < 5; i++) {
+        print(i);
+        Map question = event.test.questions[i].question;
+        if (i == numCurrentQuestion) {
+          print(
+              'adding question num ${i + 1} with provided answer ${question["providedAnswer"]}');
+          question = event.test.currentQuestion.question;
+        }
+        questions.add(question);
+      }
+      db
+          .collection('test')
+          .document(testId)
+          .updateData({'questions': questions});
+      yield PsiTestSaveAnswerQuestionSuccessful();
+    } catch (_) {
+      yield PsiTestSaveAnswerQuestionFailed(exception: _);
     }
   }
 }
