@@ -8,6 +8,7 @@ import 'package:app/models/psiTest.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:app/components/screenBackground.dart';
 
 class TestScreen extends StatelessWidget {
   @override
@@ -23,6 +24,7 @@ class TestScreen extends StatelessWidget {
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (psiTestNotAvailable(snapshot))
               return psiTestNotAvailableWidget(context, snapshot);
+            //if (snapshot.data.documents.)
             var currentTest = createTestFromFirestore(snapshot.data.documents);
 
             return _TestScreen(currentTest);
@@ -38,11 +40,11 @@ class _TestScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (currentTest.numQuestionsAnswered == 5) {
-      currentTest.testStatus = PsiTestStatus.COMPLETED;
-      //update testStatus on Firebase to completeted
-      goToScreen(context, AfterAuthWidget());
-    }
-    if (currentTest.myRole == PsiTestRole.SENDER) {
+      //currentTest.testStatus = PsiTestStatus.COMPLETED;
+      BlocProvider.of<PsiTestSaveBloc>(context)
+          .add(CompletePsiTest(test: currentTest));
+      goToScreen(context, TableBgWrapper(AfterAuthWidget()));
+    } else if (currentTest.myRole == PsiTestRole.SENDER) {
       String imageUrl = currentTest
           .currentQuestion.options[currentTest.currentQuestion.correctAnswer];
       String imageUrlBig =
@@ -112,10 +114,10 @@ class TestQuestionReceiver extends StatelessWidget {
         mainAxisSpacing: 4.0,
         crossAxisSpacing: 4.0,
         children: [
-          PictureButton(imageUrls[0], () => answerQuestion(context, choice: 1)),
-          PictureButton(imageUrls[1], () => answerQuestion(context, choice: 2)),
-          PictureButton(imageUrls[2], () => answerQuestion(context, choice: 3)),
-          PictureButton(imageUrls[3], () => answerQuestion(context, choice: 4)),
+          PictureButton(imageUrls[0], () => answerQuestion(context, choice: 0)),
+          PictureButton(imageUrls[1], () => answerQuestion(context, choice: 1)),
+          PictureButton(imageUrls[2], () => answerQuestion(context, choice: 2)),
+          PictureButton(imageUrls[3], () => answerQuestion(context, choice: 3)),
           Padding(
             padding: EdgeInsets.all(30.0),
             child: Text('\n\nClick to choose'),

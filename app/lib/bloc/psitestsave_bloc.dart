@@ -43,6 +43,9 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     if (event is AnswerPsiTestQuestion) {
       yield* _mapAnswerPsiTestQuestionToState(event);
     }
+    if (event is CompletePsiTest) {
+      yield* _mapCompletePsiTest(event);
+    }
   }
 
   Stream<PsiTestSaveState> _mapCreateAndSharePsiTestToState(
@@ -199,7 +202,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       print('answerProvided is $answerProvided');
       print('numCurrentQuestion is $numCurrentQuestion');
       var questions = new List<Map>();
-      for (int i = 0; i < 5; i++) {
+      for (int i = 0; i < DEFAULT_NUM_QUESTIONS; i++) {
         print(i);
         Map question = event.test.questions[i].question;
         if (i == numCurrentQuestion) {
@@ -217,5 +220,16 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     } catch (_) {
       yield PsiTestSaveAnswerQuestionFailed(exception: _);
     }
+  }
+}
+
+Stream<PsiTestSaveState> _mapCompletePsiTest(PsiTestSaveEvent event) async* {
+  final db = Firestore.instance;
+  yield PsiTestCompleteInProgress();
+  try {
+    String testId = event.test.testId;
+    db.collection('test').document(testId).updateData({'status': 'completed'});
+  } catch (_) {
+    yield PsiTestCompleteFailed(exception: _);
   }
 }

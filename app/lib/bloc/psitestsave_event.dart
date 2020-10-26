@@ -43,3 +43,7 @@ class ResharePsiTest extends PsiTestSaveEvent {
 class JoinPsiTest extends PsiTestSaveEvent {
   const JoinPsiTest({@required test}) : super(test: test);
 }
+
+class CompletePsiTest extends PsiTestSaveEvent {
+  const CompletePsiTest({@required test}) : super(test: test);
+}

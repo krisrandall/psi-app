@@ -100,3 +100,15 @@ class PsiTestReshareFailed extends PsiTestSaveState {
   @override
   List<Object> get props => [exception];
 }
+
+class PsiTestCompleteInProgress extends PsiTestSaveState {}
+
+class PsiTestCompleteSuccessful extends PsiTestSaveState {}
+
+class PsiTestCompleteFailed extends PsiTestSaveState {
+  final Exception exception;
+  const PsiTestCompleteFailed({@required this.exception})
+      : assert(exception != null);
+  @override
+  List<Object> get props => [exception];
+}
