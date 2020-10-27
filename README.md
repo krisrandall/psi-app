@@ -1,12 +1,14 @@
 # 𝚿 Psi App
 
+![](./app/assets/630.jpg)
+
 The psychic connectedness app is a Flutter mobile app which allows friends to test their telepathic abilities.
 
 A "sender" stares at an image and the "receiver" needs to pick from a list of 4 possible images which one the sender is looking at and thinking of.
 
-The backend is Firebase (`/functions`).
+~~The backend is Firebase (`/functions`).~~ **NOT USED**
 
-The frontend is Flutter (`/app`).
+The [frontend](./app/README.md) is Flutter (`/app`).
 
 ## Getting Started - Run the App
 
