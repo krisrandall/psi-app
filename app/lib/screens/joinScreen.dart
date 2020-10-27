@@ -86,7 +86,7 @@ class _OpenedViaLinkWidget extends StatelessWidget {
     List<Widget> linkIsYourActiveTest = [
       CopyText('You are already part of this test'),
       Button('Continue Test', () {
-        goToScreen(context, TableBgWrapper(TestScreen()));
+        goToScreen(context, TableBgWrapper(TestScreen(sharedTestSnapshot.documentID)));
       })
     ];
 

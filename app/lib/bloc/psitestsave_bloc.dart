@@ -216,11 +216,17 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         }
         questions.add(question);
       }
-      db
+      await db
           .collection('test')
           .document(testId)
           .updateData({'questions': questions});
       yield PsiTestSaveAnswerQuestionSuccessful();
+
+      if (event.test.numQuestionsAnswered == questions.length) {
+        // flag the test as done
+        yield* _mapCompletePsiTest(event);
+      }
+
     } catch (_) {
       yield PsiTestSaveAnswerQuestionFailed(exception: _);
     }
@@ -232,7 +238,8 @@ Stream<PsiTestSaveState> _mapCompletePsiTest(PsiTestSaveEvent event) async* {
   yield PsiTestCompleteInProgress();
   try {
     String testId = event.test.testId;
-    db.collection('test').document(testId).updateData({'status': 'completed'});
+    await db.collection('test').document(testId).updateData({'status': 'completed'});
+    yield PsiTestCompleteSuccessful();
   } catch (_) {
     yield PsiTestCompleteFailed(exception: _);
   }

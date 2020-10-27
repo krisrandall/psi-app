@@ -1,16 +1,23 @@
 import 'package:app/bloc/psitestsave_bloc.dart';
+import 'package:app/components/button.dart';
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/pictureButton.dart';
+import 'package:app/components/screenBackground.dart';
 import 'package:app/components/utils.dart';
 import 'package:app/config.dart';
-import 'package:app/main.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app/components/screenBackground.dart';
+
+import '../main.dart';
+
 
 class TestScreen extends StatelessWidget {
+  final String testId;
+  
+  TestScreen(this.testId);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +26,8 @@ class TestScreen extends StatelessWidget {
       ),
       backgroundColor: Colors.white,
       body: StreamBuilder<QuerySnapshot>(
-          stream: firestoreDatabaseStream.snapshots(),
+          stream: Firestore.instance
+              .collection('test').where(FieldPath.documentId, isEqualTo: testId).snapshots(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (psiTestNotAvailable(snapshot))
@@ -27,8 +35,36 @@ class TestScreen extends StatelessWidget {
             //if (snapshot.data.documents.)
             var currentTest = createTestFromFirestore(snapshot.data.documents);
 
-            return _TestScreen(currentTest);
+            if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
+              return _TestScreen(currentTest);
+            } else if (currentTest.testStatus == PsiTestStatus.COMPLETED) {
+              return _TestCompleteScreen(currentTest);
+            } else {
+              return Text('Unexpected status of test -- ${currentTest.testStatus}');
+            }
+            
           }),
+    );
+  }
+}
+
+
+class _TestCompleteScreen extends StatelessWidget {
+  final PsiTest currentTest;
+  _TestCompleteScreen(this.currentTest);
+
+  @override
+  Widget build(BuildContext context) {
+
+    var numCorrect = 0;
+    currentTest.questions.forEach( (q){ if (q.answeredCorrectly()) numCorrect++; } );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text('Test complete, you got $numCorrect right out of ${currentTest.numQuestionsAnswered}'),
+        Button('OK', () { goToScreen(context, TableBgWrapper(AfterAuthWidget()) ); } )
+      ]
     );
   }
 }
@@ -39,11 +75,8 @@ class _TestScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (currentTest.numQuestionsAnswered == 5) {
-      //currentTest.testStatus = PsiTestStatus.COMPLETED;
-      BlocProvider.of<PsiTestSaveBloc>(context)
-          .add(CompletePsiTest(test: currentTest));
-      goToScreen(context, TableBgWrapper(AfterAuthWidget()));
+    if (currentTest.numQuestionsAnswered == currentTest.questions.length) {
+      return Text('Test complete .. calculating telepathic ability score ..');
     } else if (currentTest.myRole == PsiTestRole.SENDER) {
       String imageUrl = currentTest
           .currentQuestion.options[currentTest.currentQuestion.correctAnswer];

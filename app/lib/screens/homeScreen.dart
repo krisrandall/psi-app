@@ -50,7 +50,7 @@ class HomePage extends StatelessWidget {
                 "You have a test underway \nWith ${currentTest.totalNumQuestions - currentTest.numQuestionsAnswered} questions left to answer   "),
             SizedBox(height: 10),
             Button('Continue Test', () {
-              goToScreen(context, TestScreen());
+              goToScreen(context, TestScreen(currentTest.testId));
             }),
             SecondaryButton('End the Test', () {
               print('do logic to cancel the test');

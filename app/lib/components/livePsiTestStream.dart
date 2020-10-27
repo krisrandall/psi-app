@@ -1,4 +1,4 @@
-import 'dart:math';
+
 import 'package:app/components/textComponents.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:app/models/psiTestQuestion.dart';
@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:app/bloc/psitestsave_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app/components/button.dart';
 
 var globalCurrentUser;
 
@@ -68,19 +67,23 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
       print('error while counting numQuestionsAnswered: $e');
     }
     print('$numQuestionsAnswered questions answered');
+
+    PsiTestStatus status;
+    if (data['receiver']?.isEmpty == true) status = PsiTestStatus.AWAITING_RECEIVER;
+    else if (data['sender']?.isEmpty == true) status = PsiTestStatus.AWAITING_SENDER;
+    else if (data['status'] == 'underway') status = PsiTestStatus.UNDERWAY;
+    else if (data['status'] == 'completed') status = PsiTestStatus.COMPLETED;
+    else status = PsiTestStatus.UNKNOWN;
+
     test = PsiTest(
       testId: data.documentID,
       myRole: iAm,
       totalNumQuestions: DEFAULT_NUM_QUESTIONS,
-      testStatus: ((data['sender']?.isEmpty ?? true)
-          ? PsiTestStatus.AWAITING_SENDER
-          : (data['receiver']?.isEmpty ?? true)
-              ? PsiTestStatus.AWAITING_RECEIVER
-              : PsiTestStatus.UNDERWAY),
+      testStatus: status,
       numQuestionsAnswered: numQuestionsAnswered,
       answeredQuestions: answeredQuestions,
       currentQuestion:
-          numQuestionsAnswered < 5 ? questions[numQuestionsAnswered] : null,
+          numQuestionsAnswered < questions.length ? questions[numQuestionsAnswered] : null,
       //(questions.length > 0) ? questions[questions.length - 1] : null,
       questions: questions,
     );

@@ -6,6 +6,7 @@ enum PsiTestStatus {
   UNDERWAY,
   COMPLETED,
   CANCELLED,
+  UNKNOWN   // an unexpected value from the Firestore database -- should be treated as an error
 }
 
 enum PsiTestRole {

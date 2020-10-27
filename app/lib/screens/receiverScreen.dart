@@ -49,7 +49,7 @@ class _ReceiverScreen extends StatelessWidget {
       actionButton = Button(
         'Continue Test',
         () {
-          goToScreen(context, TestScreen());
+          goToScreen(context, TestScreen(currentTest.testId));
         },
       );
     } else {

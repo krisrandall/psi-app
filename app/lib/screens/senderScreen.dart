@@ -57,7 +57,7 @@ class _SenderScreen extends StatelessWidget {
         actionButton = Button(
           'Continue Test',
           () {
-            goToScreen(context, TestScreen());
+            goToScreen(context, TestScreen(currentTest.testId));
           },
         );
       } else if (currentTest.testStatus == PsiTestStatus.AWAITING_RECEIVER) {
