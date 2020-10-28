@@ -25,7 +25,7 @@ class PsiTestQuestion {
   }
 
   provideAnswer(int answer) {
-    if (answer < 1 || answer > 4) {
+    if (answer < 0 || answer > 3) {
       throw "Answer outside of bounds";
     }
     _providedAnswer = answer;
