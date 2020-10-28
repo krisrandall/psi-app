@@ -18,6 +18,21 @@ class HomePage extends StatelessWidget {
   final PsiTest currentTest;
   HomePage(this.currentTest);
 
+  void goToTestScreen(BuildContext context, PsiTest currentTest) async {
+    await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => TestScreen(currentTest.testId)));
+  }
+
+  void loadTestScreenIfTestReady(BuildContext context, PsiTest currentTest) {
+    Future.microtask(() {
+      if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
+        goToTestScreen(context, currentTest);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // load other BG images to avoid a flash of white BG when navigating to other pages for the first time
@@ -25,8 +40,10 @@ class HomePage extends StatelessWidget {
     precacheImage(AssetImage('assets/right.jpg'), context);
     precacheImage(AssetImage('assets/gypsie.png'), context);
 
-    if (currentTest != null) if (currentTest.testStatus ==
-        PsiTestStatus.UNDERWAY) return TestScreen(currentTest.testId);
+    /*if (currentTest != null) if (currentTest.testStatus ==
+        PsiTestStatus.UNDERWAY) return TestScreen(currentTest.testId);*/
+
+    loadTestScreenIfTestReady(context, currentTest);
 
     List<Widget> noActiveTestOptions = [
       SizedBox(height: 100),

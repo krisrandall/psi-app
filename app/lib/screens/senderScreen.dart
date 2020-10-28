@@ -35,10 +35,27 @@ class SenderScreen extends StatelessWidget {
 class _SenderScreen extends StatelessWidget {
   final PsiTest currentTest;
 
+  void goToTestScreen(BuildContext context, PsiTest currentTest) async {
+    await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => TestScreen(currentTest.testId)));
+  }
+
+  void loadTestScreenIfTestReady(BuildContext context, PsiTest currentTest) {
+    Future.microtask(() {
+      if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
+        goToTestScreen(context, currentTest);
+      }
+    });
+  }
+
   _SenderScreen(this.currentTest);
 
   @override
   Widget build(BuildContext context) {
+    loadTestScreenIfTestReady(context, currentTest);
+
     Widget actionButton;
     if (currentTest != null) if (currentTest.testStatus ==
         PsiTestStatus.UNDERWAY) return TestScreen(currentTest.testId);
