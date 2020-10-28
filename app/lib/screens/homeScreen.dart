@@ -25,6 +25,9 @@ class HomePage extends StatelessWidget {
     precacheImage(AssetImage('assets/right.jpg'), context);
     precacheImage(AssetImage('assets/gypsie.png'), context);
 
+    if (currentTest != null) if (currentTest.testStatus ==
+        PsiTestStatus.UNDERWAY) return TestScreen(currentTest.testId);
+
     List<Widget> noActiveTestOptions = [
       SizedBox(height: 100),
       Button(

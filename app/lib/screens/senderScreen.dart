@@ -40,6 +40,8 @@ class _SenderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget actionButton;
+    if (currentTest != null) if (currentTest.testStatus ==
+        PsiTestStatus.UNDERWAY) return TestScreen(currentTest.testId);
 
     if (currentTest == null) {
       actionButton = Button(
@@ -54,6 +56,7 @@ class _SenderScreen extends StatelessWidget {
       );
     } else if (currentTest.myRole == PsiTestRole.SENDER) {
       if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
+        //return TestScreen(currentTest.testId);
         actionButton = Button(
           'Continue Test',
           () {
