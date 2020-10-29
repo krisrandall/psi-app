@@ -11,10 +11,14 @@ class PictureButton extends StatelessWidget {
         child: GestureDetector(
       onTap: onPressed,
       child: Container(
-          child: Image.network(
+        child: FadeInImage.assetNetwork(
+            placeholder: 'assets/purple_box.png',
+            image:
+                pictureUrl), /*Image.network(
         pictureUrl,
         fit: BoxFit.cover,
-      )),
+      )*/
+      ),
     ));
   }
 }

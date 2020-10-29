@@ -86,7 +86,8 @@ flutter:
     - assets/gypsie.png
     - assets/cocreations.png
     - assets/splash.png
-
+    - assets/purple_box.png
+    - assets/white_box.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

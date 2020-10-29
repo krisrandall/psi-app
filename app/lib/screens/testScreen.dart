@@ -12,10 +12,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../main.dart';
 
-
 class TestScreen extends StatelessWidget {
   final String testId;
-  
+
   TestScreen(this.testId);
 
   @override
@@ -27,7 +26,9 @@ class TestScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: StreamBuilder<QuerySnapshot>(
           stream: Firestore.instance
-              .collection('test').where(FieldPath.documentId, isEqualTo: testId).snapshots(),
+              .collection('test')
+              .where(FieldPath.documentId, isEqualTo: testId)
+              .snapshots(),
           builder:
               (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
             if (psiTestNotAvailable(snapshot))
@@ -40,14 +41,13 @@ class TestScreen extends StatelessWidget {
             } else if (currentTest.testStatus == PsiTestStatus.COMPLETED) {
               return _TestCompleteScreen(currentTest);
             } else {
-              return Text('Unexpected status of test -- ${currentTest.testStatus}');
+              return Text(
+                  'Unexpected status of test -- ${currentTest.testStatus}');
             }
-            
           }),
     );
   }
 }
-
 
 class _TestCompleteScreen extends StatelessWidget {
   final PsiTest currentTest;
@@ -55,17 +55,18 @@ class _TestCompleteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     var numCorrect = 0;
-    currentTest.questions.forEach( (q){ if (q.answeredCorrectly()) numCorrect++; } );
+    currentTest.questions.forEach((q) {
+      if (q.answeredCorrectly()) numCorrect++;
+    });
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text('Test complete, you got $numCorrect right out of ${currentTest.numQuestionsAnswered}'),
-        Button('OK', () { goToScreen(context, TableBgWrapper(AfterAuthWidget()) ); } )
-      ]
-    );
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      Text(
+          'Test complete, you got $numCorrect right out of ${currentTest.numQuestionsAnswered}'),
+      Button('OK', () {
+        goToScreen(context, TableBgWrapper(AfterAuthWidget()));
+      })
+    ]);
   }
 }
 
@@ -75,7 +76,15 @@ class _TestScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool completing = false;
     if (currentTest.numQuestionsAnswered == currentTest.questions.length) {
+      if (completing = false)
+        BlocProvider.of<PsiTestSaveBloc>(context)
+            .add(CompletePsiTest(test: currentTest));
+      completing = true;
+
+      // flag the test as done
+
       return Text('Test complete .. calculating telepathic ability score ..');
     } else if (currentTest.myRole == PsiTestRole.SENDER) {
       String imageUrl = currentTest
@@ -109,7 +118,9 @@ class TestQuestionSender extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Image.network(imageUrl),
+        FadeInImage.assetNetwork(
+            placeholder: 'assets/white_box.png', image: imageUrl),
+        //Image.network(imageUrl),
         Padding(
           padding: EdgeInsets.all(30.0),
           child: Text('Concentrate on this image\n\n\n' +
