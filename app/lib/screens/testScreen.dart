@@ -1,4 +1,5 @@
 import 'package:app/bloc/psitestsave_bloc.dart';
+
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/pictureButton.dart';
 import 'package:app/config.dart';
@@ -107,7 +108,7 @@ class TestQuestionSender extends StatelessWidget {
   }
 }
 
-class TestQuestionReceiver extends StatelessWidget {
+class TestQuestionReceiver extends StatefulWidget {
   final List<String> imageUrls;
   final int currentQuestionNumber;
   final int totalNumberQuestions;
@@ -118,12 +119,30 @@ class TestQuestionReceiver extends StatelessWidget {
       this.totalNumberQuestions,
       this.currentTest});
 
+  @override
+  _TestQuestionReceiverState createState() => _TestQuestionReceiverState();
+}
+
+class _TestQuestionReceiverState extends State<TestQuestionReceiver> {
   void answerQuestion(BuildContext context, {int choice}) {
-    currentTest.currentQuestion.provideAnswer(choice);
-    currentTest.numQuestionsAnswered++;
-    BlocProvider.of<PsiTestSaveBloc>(context)
-        .add(AnswerPsiTestQuestion(test: currentTest, answer: choice));
+    setState(() {
+      for (int i = 0; i < 4; i++) {
+        if (choice == i)
+          opacity[i] = 1.0;
+        else
+          opacity[i] = 0.0;
+        print(opacity[i]);
+      }
+    });
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      widget.currentTest.currentQuestion.provideAnswer(choice);
+      widget.currentTest.numQuestionsAnswered++;
+      BlocProvider.of<PsiTestSaveBloc>(context)
+          .add(AnswerPsiTestQuestion(test: widget.currentTest, answer: choice));
+    });
   }
+
+  List<double> opacity = [1.0, 1.0, 1.0, 1.0];
 
   @override
   Widget build(BuildContext context) {
@@ -134,10 +153,18 @@ class TestQuestionReceiver extends StatelessWidget {
         mainAxisSpacing: 4.0,
         crossAxisSpacing: 4.0,
         children: [
-          PictureButton(imageUrls[0], () => answerQuestion(context, choice: 0)),
-          PictureButton(imageUrls[1], () => answerQuestion(context, choice: 1)),
-          PictureButton(imageUrls[2], () => answerQuestion(context, choice: 2)),
-          PictureButton(imageUrls[3], () => answerQuestion(context, choice: 3)),
+          PictureButton(
+              widget.imageUrls[0], () => answerQuestion(context, choice: 0),
+              fadeOut: opacity[0]),
+          PictureButton(
+              widget.imageUrls[1], () => answerQuestion(context, choice: 1),
+              fadeOut: opacity[1]),
+          PictureButton(
+              widget.imageUrls[2], () => answerQuestion(context, choice: 2),
+              fadeOut: opacity[2]),
+          PictureButton(
+              widget.imageUrls[3], () => answerQuestion(context, choice: 3),
+              fadeOut: opacity[3]),
           Padding(
             padding: EdgeInsets.all(30.0),
             child: Text('\n\nClick to choose'),
@@ -145,7 +172,7 @@ class TestQuestionReceiver extends StatelessWidget {
           Padding(
             padding: EdgeInsets.all(30.0),
             child: Text(
-                '\n\nQuestion $currentQuestionNumber of $totalNumberQuestions'),
+                '\n\nQuestion ${widget.currentQuestionNumber} of ${widget.totalNumberQuestions}'),
           ),
         ]
         /*
