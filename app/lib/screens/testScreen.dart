@@ -1,15 +1,12 @@
 import 'package:app/bloc/psitestsave_bloc.dart';
-import 'package:app/components/button.dart';
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/pictureButton.dart';
-import 'package:app/components/screenBackground.dart';
-import 'package:app/components/utils.dart';
 import 'package:app/config.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../main.dart';
+import 'package:app/screens/testCompleteScreen.dart';
 
 class TestScreen extends StatelessWidget {
   final String testId;
@@ -39,39 +36,6 @@ class TestScreen extends StatelessWidget {
   }
 }
 
-class _TestCompleteScreen extends StatelessWidget {
-  final PsiTest currentTest;
-  _TestCompleteScreen(this.currentTest);
-
-  @override
-  Widget build(BuildContext context) {
-    bool completed = false;
-    if (completed == false) {
-      BlocProvider.of<PsiTestSaveBloc>(context)
-          .add(CompletePsiTest(test: currentTest));
-      completed = true;
-    }
-
-    var numCorrect = 0;
-    currentTest.questions.forEach((q) {
-      if (q.answeredCorrectly()) numCorrect++;
-    });
-
-    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-      Text(
-          'Test complete, you got $numCorrect right out of ${currentTest.numQuestionsAnswered}'),
-      BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(builder: (context, state) {
-        if (state is PsiTestCompleteInProgress)
-          return Container(child: CircularProgressIndicator());
-        else
-          return Button('OK', () {
-            goToScreen(context, TableBgWrapper(AfterAuthWidget()));
-          });
-      })
-    ]);
-  }
-}
-
 class _TestScreen extends StatelessWidget {
   final PsiTest currentTest;
   _TestScreen(this.currentTest);
@@ -80,7 +44,7 @@ class _TestScreen extends StatelessWidget {
     await Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => _TestCompleteScreen(currentTest)));
+            builder: (context) => TestCompleteScreen(currentTest)));
   }
 
   void loadTestCompleteScreenIfTestComplete(
