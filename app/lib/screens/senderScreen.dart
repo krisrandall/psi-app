@@ -73,7 +73,7 @@ class _SenderScreen extends StatelessWidget {
       );
     } else if (currentTest.myRole == PsiTestRole.SENDER) {
       if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
-        actionButton = TitleText('Test starting now!');
+        actionButton = TitleText('Test starting now...');
         /*Button(
           'Continue Test',
           () {

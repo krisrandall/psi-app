@@ -125,16 +125,16 @@ class TestQuestionReceiver extends StatefulWidget {
 
 class _TestQuestionReceiverState extends State<TestQuestionReceiver> {
   void answerQuestion(BuildContext context, {int choice}) {
+    //fade out all pictures except selection...
+    //
     setState(() {
-      for (int i = 0; i < 4; i++) {
-        if (choice == i)
-          opacity[i] = 1.0;
-        else
-          opacity[i] = 0.0;
-        print(opacity[i]);
-      }
+      for (int i = 0; i < 4; i++) opacity[i] = 0.0;
+      opacity[choice] = 1.0;
     });
-    Future.delayed(const Duration(milliseconds: 1000), () {
+
+    //...then update database
+    //
+    Future.delayed(const Duration(milliseconds: 2000), () {
       widget.currentTest.currentQuestion.provideAnswer(choice);
       widget.currentTest.numQuestionsAnswered++;
       BlocProvider.of<PsiTestSaveBloc>(context)
@@ -155,16 +155,16 @@ class _TestQuestionReceiverState extends State<TestQuestionReceiver> {
         children: [
           PictureButton(
               widget.imageUrls[0], () => answerQuestion(context, choice: 0),
-              fadeOut: opacity[0]),
+              opacity: opacity[0]),
           PictureButton(
               widget.imageUrls[1], () => answerQuestion(context, choice: 1),
-              fadeOut: opacity[1]),
+              opacity: opacity[1]),
           PictureButton(
               widget.imageUrls[2], () => answerQuestion(context, choice: 2),
-              fadeOut: opacity[2]),
+              opacity: opacity[2]),
           PictureButton(
               widget.imageUrls[3], () => answerQuestion(context, choice: 3),
-              fadeOut: opacity[3]),
+              opacity: opacity[3]),
           Padding(
             padding: EdgeInsets.all(30.0),
             child: Text('\n\nClick to choose'),

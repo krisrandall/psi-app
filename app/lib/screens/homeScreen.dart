@@ -65,18 +65,19 @@ class HomePage extends StatelessWidget {
     List<Widget> activeTestScreen = (currentTest == null)
         ? []
         : [
-            SizedBox(height: 5),
+            SizedBox(height: 40),
             CopyText(
                 "You have a test underway \nWith ${currentTest.totalNumQuestions - currentTest.numQuestionsAnswered} questions left to answer   "),
+            CopyText("Test starting now...."),
             SizedBox(height: 10),
-            Button('Continue Test', () {
+            /*Button('Continue Test', () {
               goToScreen(context, TestScreen(currentTest.testId));
             }),
             SecondaryButton('End the Test', () {
               print('do logic to cancel the test');
               var event = CancelPsiTest(test: currentTest);
               BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-            }),
+            }),*/
           ];
 
     List<Widget> awaitingReceiver = [
