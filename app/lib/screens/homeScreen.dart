@@ -65,9 +65,9 @@ class HomePage extends StatelessWidget {
     List<Widget> activeTestScreen = (currentTest == null)
         ? []
         : [
-            SizedBox(height: 40),
-            CopyText(
-                "You have a test underway \nWith ${currentTest.totalNumQuestions - currentTest.numQuestionsAnswered} questions left to answer   "),
+            SizedBox(height: 60),
+            /*CopyText(
+                "You have a test underway \nWith ${currentTest.totalNumQuestions - currentTest.numQuestionsAnswered} questions left to answer   "),*/
             CopyText("Test starting now...."),
             SizedBox(height: 10),
             /*Button('Continue Test', () {

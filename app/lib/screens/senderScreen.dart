@@ -74,12 +74,12 @@ class _SenderScreen extends StatelessWidget {
     } else if (currentTest.myRole == PsiTestRole.SENDER) {
       if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
         actionButton = TitleText('Test starting now...');
-        /*Button(
+        Button(
           'Continue Test',
           () {
             goToScreen(context, TestScreen(currentTest.testId));
           },
-        );*/
+        );
       } else if (currentTest.testStatus == PsiTestStatus.AWAITING_RECEIVER) {
         actionButton = Button(
           'Invite Friend via a share link',

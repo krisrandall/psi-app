@@ -1,4 +1,3 @@
-
 import 'package:app/components/textComponents.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:app/models/psiTestQuestion.dart';
@@ -69,11 +68,16 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
     print('$numQuestionsAnswered questions answered');
 
     PsiTestStatus status;
-    if (data['receiver']?.isEmpty == true) status = PsiTestStatus.AWAITING_RECEIVER;
-    else if (data['sender']?.isEmpty == true) status = PsiTestStatus.AWAITING_SENDER;
-    else if (data['status'] == 'underway') status = PsiTestStatus.UNDERWAY;
-    else if (data['status'] == 'completed') status = PsiTestStatus.COMPLETED;
-    else status = PsiTestStatus.UNKNOWN;
+    if (data['receiver']?.isEmpty == true)
+      status = PsiTestStatus.AWAITING_RECEIVER;
+    else if (data['sender']?.isEmpty == true)
+      status = PsiTestStatus.AWAITING_SENDER;
+    else if (data['status'] == 'underway')
+      status = PsiTestStatus.UNDERWAY;
+    else if (data['status'] == 'completed')
+      status = PsiTestStatus.COMPLETED;
+    else
+      status = PsiTestStatus.UNKNOWN;
 
     test = PsiTest(
       testId: data.documentID,
@@ -82,8 +86,9 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
       testStatus: status,
       numQuestionsAnswered: numQuestionsAnswered,
       answeredQuestions: answeredQuestions,
-      currentQuestion:
-          numQuestionsAnswered < questions.length ? questions[numQuestionsAnswered] : null,
+      currentQuestion: numQuestionsAnswered < questions.length
+          ? questions[numQuestionsAnswered]
+          : null,
       //(questions.length > 0) ? questions[questions.length - 1] : null,
       questions: questions,
     );
@@ -112,7 +117,11 @@ Widget psiTestNotAvailableWidget(
   if (snapshot.hasError) {
     return new Text('Error: ${snapshot.error}');
   } else if (snapshot.connectionState == ConnectionState.waiting) {
-    return CopyText("Fetching existing test data ..");
+    //short delay to stop fetching message appearing while loading questions during test
+
+    Future.delayed(Duration(milliseconds: 300))
+        .then((value) => CopyText("Fetching existing test data .."));
+    return Container();
   } else {
     List<DocumentSnapshot> documents = snapshot.data.documents;
     DocumentSnapshot document;
