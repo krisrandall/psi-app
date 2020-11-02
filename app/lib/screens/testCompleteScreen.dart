@@ -39,32 +39,43 @@ class TestCompleteScreen extends StatelessWidget {
       String providedAnswerUrl =
           currentTest.questions[i].options[providedAnswer];
       //providedAnswerImages.add(Image.network(imageUrl));
-      images.add(Text('Question ${i + 1}'));
+
       images.add(FittedBox(
           fit: BoxFit.contain,
           child: Row(
             children: [
-              Stack(children: [
-                Container(
-                    margin: EdgeInsets.only(bottom: 20.0),
-                    child: FadeInImage.assetNetwork(
-                        placeholder: 'assets/white_box.png',
-                        image: providedAnswerUrl)),
-                Center(child: Text('Sender'))
-              ]),
+              Center(
+                  child: Stack(
+                      alignment: AlignmentDirectional.bottomCenter,
+                      children: [
+                    Container(
+                        //margin: EdgeInsets.only(b20.0),
+                        child: FadeInImage.assetNetwork(
+                            placeholder: 'assets/purple_box.png',
+                            image: providedAnswerUrl)),
+                    Container(
+                        alignment: Alignment.center,
+                        color: Colors.white,
+                        child: Text('Sender'))
+                  ])),
               SizedBox(
                 width: 10,
               ),
-              Stack(children: [
-                Container(
-                    margin: EdgeInsets.all(20.0),
-                    child: FadeInImage.assetNetwork(
-                        placeholder: 'assets/white_box.png',
-                        image: correctAnswerUrl)),
-                Center(child: Text('Receiver'))
-              ]),
+              Center(
+                child: Stack(
+                    alignment: AlignmentDirectional.bottomCenter,
+                    children: [
+                      Container(
+                          //margin: EdgeInsets.all(20.0),
+                          child: FadeInImage.assetNetwork(
+                              placeholder: 'assets/purple_box.png',
+                              image: correctAnswerUrl)),
+                      Container(color: Colors.white, child: Text('Receiver'))
+                    ]),
+              )
             ],
           )));
+      images.add(Text('Question ${i + 1}'));
     }
 
     return Scaffold(
@@ -76,10 +87,10 @@ class TestCompleteScreen extends StatelessWidget {
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+              /*Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
                 Container(child: Text('Sender sent')),
                 Container(child: (Text('Receiver received')))
-              ]),
+              ]),*/
               ...images,
               CopyText(
                   'Test complete, you got $numCorrect right out of ${currentTest.numQuestionsAnswered}'),
