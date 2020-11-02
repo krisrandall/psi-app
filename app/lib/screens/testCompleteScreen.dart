@@ -5,8 +5,8 @@ import 'package:app/components/screenBackground.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app/main.dart';
 import 'package:app/components/textComponents.dart';
+import 'package:app/screens/homeScreen.dart';
 
 class TestCompleteScreen extends StatelessWidget {
   final PsiTest currentTest;
@@ -44,19 +44,25 @@ class TestCompleteScreen extends StatelessWidget {
           fit: BoxFit.contain,
           child: Row(
             children: [
-              Container(
-                  margin: EdgeInsets.only(bottom: 20.0),
-                  child: FadeInImage.assetNetwork(
-                      placeholder: 'assets/white_box.png',
-                      image: providedAnswerUrl)),
+              Stack(children: [
+                Container(
+                    margin: EdgeInsets.only(bottom: 20.0),
+                    child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/white_box.png',
+                        image: providedAnswerUrl)),
+                Center(child: Text('Sender'))
+              ]),
               SizedBox(
                 width: 10,
               ),
-              Container(
-                  margin: EdgeInsets.all(20.0),
-                  child: FadeInImage.assetNetwork(
-                      placeholder: 'assets/white_box.png',
-                      image: correctAnswerUrl)),
+              Stack(children: [
+                Container(
+                    margin: EdgeInsets.all(20.0),
+                    child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/white_box.png',
+                        image: correctAnswerUrl)),
+                Center(child: Text('Receiver'))
+              ]),
             ],
           )));
     }
@@ -83,7 +89,7 @@ class TestCompleteScreen extends StatelessWidget {
                   return Container(child: CircularProgressIndicator());
                 else
                   return Button('OK', () {
-                    goToScreen(context, TableBgWrapper(AfterAuthWidget()));
+                    goToScreen(context, TableBgWrapper(HomeScreen()));
                   });
               })
             ])));

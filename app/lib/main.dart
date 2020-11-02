@@ -4,7 +4,6 @@ import 'package:app/components/screenBackground.dart';
 import 'package:app/components/textComponents.dart';
 import 'package:app/components/utils.dart';
 import 'package:app/screens/homeScreen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -106,7 +105,7 @@ class _LandingPageState extends State<LandingPage> {
             return TitleText(signinErrorMessage);
           } else {
             globalCurrentUser = user;
-            return AfterAuthWidget();
+            return HomeScreen();
           }
         } else {
           return Column(
@@ -124,19 +123,5 @@ class _LandingPageState extends State<LandingPage> {
   void dispose() {
     _sub.cancel();
     super.dispose();
-  }
-}
-
-class AfterAuthWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-        stream: firestoreDatabaseStream.snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (psiTestNotAvailable(snapshot))
-            return psiTestNotAvailableWidget(context, snapshot);
-          var currentTest = createTestFromFirestore(snapshot.data.documents);
-          return HomePage(currentTest);
-        });
   }
 }

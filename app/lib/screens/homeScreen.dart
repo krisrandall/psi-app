@@ -11,12 +11,27 @@ import 'package:app/screens/senderScreen.dart';
 import 'package:app/screens/testScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app/main.dart';
+import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/screenBackground.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class HomePage extends StatelessWidget {
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+        stream: firestoreDatabaseStream.snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (psiTestNotAvailable(snapshot))
+            return psiTestNotAvailableWidget(context, snapshot);
+          var currentTest = createTestFromFirestore(snapshot.data.documents);
+          return _HomeScreen(currentTest);
+        });
+  }
+}
+
+class _HomeScreen extends StatelessWidget {
   final PsiTest currentTest;
-  HomePage(this.currentTest);
+  _HomeScreen(this.currentTest);
 
   void goToTestScreen(BuildContext context, PsiTest currentTest) async {
     await Navigator.push(
@@ -94,7 +109,7 @@ class HomePage extends StatelessWidget {
         print('do logic to cancel the test');
         var event = CancelPsiTest(test: currentTest);
         BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-        goToScreen(context, TableBgWrapper(AfterAuthWidget()));
+        goToScreen(context, TableBgWrapper(HomeScreen()));
       }),
     ];
 
@@ -112,7 +127,7 @@ class HomePage extends StatelessWidget {
         print('do logic to cancel the test');
         var event = CancelPsiTest(test: currentTest);
         BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-        goToScreen(context, TableBgWrapper(AfterAuthWidget()));
+        goToScreen(context, TableBgWrapper(HomeScreen()));
       }),
     ];
 

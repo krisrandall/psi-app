@@ -5,13 +5,13 @@ import 'package:app/components/secondaryButton.dart';
 import 'package:app/components/textComponents.dart';
 import 'package:app/components/utils.dart';
 import 'package:app/config.dart';
-import 'package:app/main.dart';
 import 'package:app/screens/testScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
 import 'package:app/components/button.dart';
+import 'package:app/screens/homeScreen.dart';
 
 class OpenedViaLinkWidget extends StatelessWidget {
   final String deepLink;
@@ -76,7 +76,7 @@ class _OpenedViaLinkWidget extends StatelessWidget {
       //CopyText('Press this button and then choose an app to send the link:'),
       SizedBox(height: 10),
       Button('Go back and try again', () {
-        goToScreen(context, TableBgWrapper(AfterAuthWidget()));
+        goToScreen(context, TableBgWrapper(HomeScreen()));
       }),
       SizedBox(height: 10),
       //SecondaryButton('for help click here', () {
@@ -86,7 +86,8 @@ class _OpenedViaLinkWidget extends StatelessWidget {
     List<Widget> linkIsYourActiveTest = [
       CopyText('You are already part of this test'),
       Button('Continue Test', () {
-        goToScreen(context, TableBgWrapper(TestScreen(sharedTestSnapshot.documentID)));
+        goToScreen(
+            context, TableBgWrapper(TestScreen(sharedTestSnapshot.documentID)));
       })
     ];
 
@@ -94,7 +95,7 @@ class _OpenedViaLinkWidget extends StatelessWidget {
       CopyText('You are unable to join this test'),
       CopyText('It already has a sender and a receiver'),
       Button('Go back', () {
-        goToScreen(context, TableBgWrapper(AfterAuthWidget()));
+        goToScreen(context, TableBgWrapper(HomeScreen()));
       })
     ];
 
@@ -102,7 +103,7 @@ class _OpenedViaLinkWidget extends StatelessWidget {
       CopyText('The test is no longer active'),
       CopyText('The status of the test is $status'),
       Button('Go back', () {
-        goToScreen(context, TableBgWrapper(AfterAuthWidget()));
+        goToScreen(context, TableBgWrapper(HomeScreen()));
       })
     ];
 
@@ -119,14 +120,14 @@ class _OpenedViaLinkWidget extends StatelessWidget {
           var testToJoin = createTestFromFirestore([sharedTestSnapshot]);
           BlocProvider.of<PsiTestSaveBloc>(context)
               .add(JoinPsiTest(test: testToJoin));
-          goToScreen(context, TableBgWrapper(AfterAuthWidget()));
+          goToScreen(context, TableBgWrapper(HomeScreen()));
         },
       ),
       SizedBox(
         height: 10,
       ),
       SecondaryButton("No thanks. I don't want to join", () {
-        goToScreen(context, TableBgWrapper(AfterAuthWidget()));
+        goToScreen(context, TableBgWrapper(HomeScreen()));
       })
     ];
 
@@ -162,7 +163,7 @@ class LinkDoesntExistWidget extends StatelessWidget {
         TitleText('Test not found'),
         CopyText("The test you were invited to doesn't seem to exist anymore"),
         Button('Go back to start', () {
-          goToScreen(context, TableBgWrapper(AfterAuthWidget()));
+          goToScreen(context, TableBgWrapper(HomeScreen()));
         })
       ],
     ));
