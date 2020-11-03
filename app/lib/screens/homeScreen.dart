@@ -18,14 +18,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-        stream: firestoreDatabaseStream.snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (psiTestNotAvailable(snapshot))
-            return psiTestNotAvailableWidget(context, snapshot);
-          var currentTest = createTestFromFirestore(snapshot.data.documents);
-          return _HomeScreen(currentTest);
-        });
+    return Scaffold(
+        appBar: AppBar(
+          title: Text('𝚿 Psi Telepathy Test'),
+        ),
+        body: TableBgWrapper(StreamBuilder<QuerySnapshot>(
+            stream: firestoreDatabaseStream.snapshots(),
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (psiTestNotAvailable(snapshot))
+                return psiTestNotAvailableWidget(context, snapshot);
+              var currentTest =
+                  createTestFromFirestore(snapshot.data.documents);
+              return _HomeScreen(currentTest);
+            })));
   }
 }
 

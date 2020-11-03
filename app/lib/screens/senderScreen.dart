@@ -13,12 +13,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class SenderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return /*Scaffold(
+    return Scaffold(
         appBar: AppBar(
           title: Text('𝚿 Psi Telepathy Test'),
         ),
-        body: */
-        LeftBgWrapper(StreamBuilder<QuerySnapshot>(
+        body: LeftBgWrapper(StreamBuilder<QuerySnapshot>(
             stream: firestoreDatabaseStream.snapshots(),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -28,7 +27,7 @@ class SenderScreen extends StatelessWidget {
                   createTestFromFirestore(snapshot.data.documents);
               print(currentTest);
               return _SenderScreen(currentTest);
-            }));
+            })));
   }
 }
 
