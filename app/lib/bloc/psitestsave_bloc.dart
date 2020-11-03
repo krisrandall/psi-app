@@ -63,9 +63,10 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       var shareTestUrl = await dynamicLink(event.test.testId);
       print(shareTestUrl);
       var shortUrl = await shortenLink(shareTestUrl.toString());
-      if (shortUrl==null) {
+      if (shortUrl == null) {
         shortUrl = shareTestUrl.toString();
-        print('URL shortener returned null, maybe free limit exhausted, using the long URL');
+        print(
+            'URL shortener returned null, maybe free limit exhausted, using the long URL');
       }
       print(shortUrl);
       //Share.share('Take a Telepathy Test with me! $shortUrl');
@@ -201,13 +202,10 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     yield PsiTestSaveAnswerQuestionInProgress();
     try {
       String testId = event.test.testId;
-      int answerProvided = event.test.currentQuestion.providedAnswer;
+      //int answerProvided = event.test.currentQuestion.providedAnswer;
       int numCurrentQuestion = event.test.numQuestionsAnswered - 1;
-      print('answerProvided is $answerProvided');
-      print('numCurrentQuestion is $numCurrentQuestion');
       var questions = new List<Map>();
       for (int i = 0; i < DEFAULT_NUM_QUESTIONS; i++) {
-        print(i);
         Map question = event.test.questions[i].question;
         if (i == numCurrentQuestion) {
           print(
@@ -226,7 +224,6 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         // flag the test as done
         yield* _mapCompletePsiTest(event);
       }
-
     } catch (_) {
       yield PsiTestSaveAnswerQuestionFailed(exception: _);
     }
@@ -238,7 +235,10 @@ Stream<PsiTestSaveState> _mapCompletePsiTest(PsiTestSaveEvent event) async* {
   yield PsiTestCompleteInProgress();
   try {
     String testId = event.test.testId;
-    await db.collection('test').document(testId).updateData({'status': 'completed'});
+    await db
+        .collection('test')
+        .document(testId)
+        .updateData({'status': 'completed'});
     yield PsiTestCompleteSuccessful();
   } catch (_) {
     yield PsiTestCompleteFailed(exception: _);

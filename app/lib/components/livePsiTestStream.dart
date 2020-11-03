@@ -23,11 +23,14 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
   try {
     var data = documents[0];
     var iAm;
+    print(data['sender']);
+    if (data['sender'] == globalCurrentUser.uid) iAm = PsiTestRole.SENDER;
+    if (data['receiver'] == globalCurrentUser.uid) iAm = PsiTestRole.RECEIVER;
 
-    if (data['sender'] == globalCurrentUser.uid)
-      iAm = PsiTestRole.SENDER;
-    else
-      iAm = PsiTestRole.RECEIVER;
+    if (iAm == null) {
+      if (data['sender'] == '') iAm = PsiTestRole.SENDER;
+      if (data['receiver'] == '') iAm = PsiTestRole.RECEIVER;
+    }
 
     // create the questions
 
@@ -65,7 +68,7 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
     } catch (e) {
       print('error while counting numQuestionsAnswered: $e');
     }
-    print('$numQuestionsAnswered questions answered');
+    //print('$numQuestionsAnswered questions answered');
 
     PsiTestStatus status;
     if (data['receiver']?.isEmpty == true)
@@ -89,7 +92,6 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
       currentQuestion: numQuestionsAnswered < questions.length
           ? questions[numQuestionsAnswered]
           : null,
-      //(questions.length > 0) ? questions[questions.length - 1] : null,
       questions: questions,
     );
   } catch (exception) {

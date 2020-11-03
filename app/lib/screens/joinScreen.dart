@@ -118,6 +118,7 @@ class _OpenedViaLinkWidget extends StatelessWidget {
         'Start Psi Test',
         () {
           var testToJoin = createTestFromFirestore([sharedTestSnapshot]);
+          print(testToJoin.myRole);
           BlocProvider.of<PsiTestSaveBloc>(context)
               .add(JoinPsiTest(test: testToJoin));
           goToScreen(context, TableBgWrapper(HomeScreen()));
