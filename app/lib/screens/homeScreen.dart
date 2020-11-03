@@ -39,19 +39,12 @@ class _HomeScreen extends StatelessWidget {
   final PsiTest currentTest;
   _HomeScreen(this.currentTest);
 
-  void goToTestScreen(BuildContext context, PsiTest currentTest) async {
+  void goToTestScreenAsynchronously(
+      BuildContext context, PsiTest currentTest) async {
     await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => TestScreen(currentTest.testId)));
-  }
-
-  void loadTestScreenIfTestReady(BuildContext context, PsiTest currentTest) {
-    Future.microtask(() {
-      if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
-        goToTestScreen(context, currentTest);
-      }
-    });
   }
 
   @override
@@ -61,10 +54,11 @@ class _HomeScreen extends StatelessWidget {
     precacheImage(AssetImage('assets/right.jpg'), context);
     precacheImage(AssetImage('assets/gypsie.png'), context);
 
-    /*if (currentTest != null) if (currentTest.testStatus ==
-        PsiTestStatus.UNDERWAY) return TestScreen(currentTest.testId);*/
-
-    loadTestScreenIfTestReady(context, currentTest);
+    Future.microtask(() {
+      if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
+        goToTestScreenAsynchronously(context, currentTest);
+      }
+    });
 
     List<Widget> noActiveTestOptions = [
       SizedBox(height: 100),

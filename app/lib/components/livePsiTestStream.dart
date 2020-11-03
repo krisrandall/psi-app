@@ -24,12 +24,14 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
     var data = documents[0];
     var iAm;
     print(data['sender']);
+
     if (data['sender'] == globalCurrentUser.uid) iAm = PsiTestRole.SENDER;
     if (data['receiver'] == globalCurrentUser.uid) iAm = PsiTestRole.RECEIVER;
-
+    print('first try $iAm');
     if (iAm == null) {
       if (data['sender'] == '') iAm = PsiTestRole.SENDER;
       if (data['receiver'] == '') iAm = PsiTestRole.RECEIVER;
+      print('second try $iAm');
     }
 
     // create the questions
