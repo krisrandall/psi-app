@@ -83,26 +83,23 @@ class TestCompleteScreen extends StatelessWidget {
           title: Text('𝚿 Test Complete'),
         ),
         backgroundColor: Colors.white,
-        body: SingleChildScrollView(
-            child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-              /*Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        body: ListView(children: [
+          /*Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
                 Container(child: Text('Sender sent')),
                 Container(child: (Text('Receiver received')))
               ]),*/
-              ...images,
-              CopyText(
-                  'Test complete, you got $numCorrect right out of ${currentTest.numQuestionsAnswered}'),
-              BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
-                  builder: (context, state) {
-                if (state is PsiTestCompleteInProgress)
-                  return Container(child: CircularProgressIndicator());
-                else
-                  return Button('OK', () {
-                    goToScreen(context, TableBgWrapper(HomeScreen()));
-                  });
-              })
-            ])));
+          ...images,
+          CopyText(
+              'Test complete, you got $numCorrect right out of ${currentTest.numQuestionsAnswered}'),
+          BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
+              builder: (context, state) {
+            if (state is PsiTestCompleteInProgress)
+              return Container(child: CircularProgressIndicator());
+            else
+              return Button('OK', () {
+                goToScreen(context, TableBgWrapper(HomeScreen()));
+              });
+          })
+        ]));
   }
 }

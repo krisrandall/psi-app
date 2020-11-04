@@ -34,26 +34,23 @@ class ReceiverScreen extends StatelessWidget {
 class _ReceiverScreen extends StatelessWidget {
   final PsiTest currentTest;
 
-  void goToTestScreen(BuildContext context, PsiTest currentTest) async {
+  void goToTestScreenAsynchronously(
+      BuildContext context, PsiTest currentTest) async {
     await Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => TestScreen(currentTest.testId)));
   }
 
-  void loadTestScreenIfTestReady(BuildContext context, PsiTest currentTest) {
-    Future.microtask(() {
-      if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
-        goToTestScreen(context, currentTest);
-      }
-    });
-  }
-
   _ReceiverScreen(this.currentTest);
 
   @override
   Widget build(BuildContext context) {
-    loadTestScreenIfTestReady(context, currentTest);
+    Future.microtask(() {
+      if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
+        goToTestScreenAsynchronously(context, currentTest);
+      }
+    });
 
     Widget actionButton;
     if (currentTest != null) if (currentTest.testStatus ==
