@@ -92,19 +92,21 @@ class TestQuestionSender extends StatelessWidget {
       {this.imageUrl, this.currentQuestionNumber, this.totalNumberQuestions});
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        FadeInImage.assetNetwork(
-            placeholder: 'assets/white_box.png', image: imageUrl),
-        //Image.network(imageUrl),
-        Padding(
-          padding: EdgeInsets.all(30.0),
-          child: Text('Concentrate on this image\n\n\n' +
-              'Question $currentQuestionNumber of $totalNumberQuestions'),
-        ),
-      ],
-    );
+    return WillPopScope(
+        onWillPop: () async => false,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            FadeInImage.assetNetwork(
+                placeholder: 'assets/white_box.png', image: imageUrl),
+            //Image.network(imageUrl),
+            Padding(
+              padding: EdgeInsets.all(30.0),
+              child: Text('Concentrate on this image\n\n\n' +
+                  'Question $currentQuestionNumber of $totalNumberQuestions'),
+            ),
+          ],
+        ));
   }
 }
 
@@ -146,40 +148,53 @@ class _TestQuestionReceiverState extends State<TestQuestionReceiver> {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-        crossAxisCount: 2,
-        childAspectRatio: 1.0,
-        padding: const EdgeInsets.all(4.0),
-        mainAxisSpacing: 4.0,
-        crossAxisSpacing: 4.0,
-        children: [
-          PictureButton(
-              widget.imageUrls[0], () => answerQuestion(context, choice: 0),
-              opacity: opacity[0]),
-          PictureButton(
-              widget.imageUrls[1], () => answerQuestion(context, choice: 1),
-              opacity: opacity[1]),
-          PictureButton(
-              widget.imageUrls[2], () => answerQuestion(context, choice: 2),
-              opacity: opacity[2]),
-          PictureButton(
-              widget.imageUrls[3], () => answerQuestion(context, choice: 3),
-              opacity: opacity[3]),
-          Padding(
-            padding: EdgeInsets.all(30.0),
-            child: Text('\n\nClick to choose'),
-          ),
-          Padding(
-            padding: EdgeInsets.all(30.0),
-            child: Text(
-                '\n\nQuestion ${widget.currentQuestionNumber} of ${widget.totalNumberQuestions}'),
-          ),
-        ]
-        /*
+    return WillPopScope(
+        onWillPop: () async => false,
+        child: GridView.count(
+            crossAxisCount: 2,
+            childAspectRatio: 1.0,
+            padding: const EdgeInsets.all(4.0),
+            mainAxisSpacing: 4.0,
+            crossAxisSpacing: 4.0,
+            children: [
+              PictureButton(
+                  widget.imageUrls[0], () => answerQuestion(context, choice: 0),
+                  opacity: opacity[0]),
+              PictureButton(
+                  widget.imageUrls[1], () => answerQuestion(context, choice: 1),
+                  opacity: opacity[1]),
+              PictureButton(
+                  widget.imageUrls[2], () => answerQuestion(context, choice: 2),
+                  opacity: opacity[2]),
+              PictureButton(
+                  widget.imageUrls[3], () => answerQuestion(context, choice: 3),
+                  opacity: opacity[3]),
+              Stack(alignment: AlignmentDirectional.center, children: [
+                Positioned(
+                    top: 0,
+                    child: Padding(
+                      padding: EdgeInsets.all(30.0),
+                      child: Text('\n\nClick to choose'),
+                    )),
+                TextButton.icon(
+                    onPressed: () {
+                      var event = CancelPsiTest(test: widget.currentTest);
+                      BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+                    },
+                    icon: Icon(Icons.exit_to_app),
+                    label: Text('end test'))
+              ]),
+              Padding(
+                padding: EdgeInsets.all(30.0),
+                child: Text(
+                    '\n\nQuestion ${widget.currentQuestionNumber} of ${widget.totalNumberQuestions}'),
+              ),
+            ]
+            /*
           children: imageUrls.map((String url) {
             return GridTile(
                 child: Image.network(url, fit: BoxFit.cover));
           }).toList()*/
-        );
+            ));
   }
 }

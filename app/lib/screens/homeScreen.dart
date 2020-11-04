@@ -14,7 +14,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:app/screens/deletealltests.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -75,10 +74,7 @@ class _HomeScreen extends StatelessWidget {
         () {
           goToScreen(context, ReceiverScreen());
         },
-      ), /*
-      Button('delete all completed tests', () {
-        goToScreen(context, DeleteAllTests());
-      })*/
+      ),
     ];
 
     List<Widget> activeTestScreen = (currentTest == null)
@@ -146,32 +142,40 @@ class _HomeScreen extends StatelessWidget {
       screenOptions = awaitingReceiver;
     }
 
-    return BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
-        builder: (context, state) {
-      print(state);
-      if (state is PsiTestSaveShareInProgress)
-        return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          CopyText('loading apps for sharing...'),
-          // CircularProgressIndicator()
-        ]);
-      if (state is PsiTestSaveCancelInProgress)
-        return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          CopyText('ending test...'),
-          // CircularProgressIndicator()
-        ]);
-      else
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            SizedBox(height: 10),
-            TitleText(
-                'The Psi Telepathy Test App lets you discover your telepathic abilities with a friend.'),
-            ...screenOptions,
-            SizedBox(height: 150),
-            FooterButtons(),
-          ],
-        );
-    });
+//WillPopScope with onWillPop=>false disables the back button
+    return WillPopScope(
+        onWillPop: () async => false,
+        child: BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
+            builder: (context, state) {
+          print(state);
+          if (state is PsiTestSaveShareInProgress)
+            return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CopyText('loading apps for sharing...'),
+                  // CircularProgressIndicator()
+                ]);
+          if (state is PsiTestSaveCancelInProgress)
+            return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CopyText('ending test...'),
+                  // CircularProgressIndicator()
+                ]);
+          else
+            return SingleChildScrollView(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                SizedBox(height: 10),
+                TitleText(
+                    'The Psi Telepathy Test App lets you discover your telepathic abilities with a friend.'),
+                ...screenOptions,
+                SizedBox(height: 60),
+                FooterButtons(),
+              ],
+            ));
+        }));
   }
 }
 
