@@ -22,15 +22,17 @@ class TestCompleteScreen extends StatelessWidget {
     }
 
     var numCorrect = 0;
-    currentTest.questions.forEach((q) {
+    int numberQuestionsAnswered = currentTest.numQuestionsAnswered;
+    print(numberQuestionsAnswered);
+    /*currentTest.questions.forEach((q) {
       if (q.answeredCorrectly()) numCorrect++;
-    });
+    });*/
 
-    /*var correctAnswerImages = new List<Widget>();
-    var providedAnswerImages = new List<Widget>();*/
     var images = new List<Widget>();
 
-    for (int i = 0; i < DEFAULT_NUM_QUESTIONS; i++) {
+    for (int i = 0; i < numberQuestionsAnswered; i++) {
+      if (currentTest.questions[i].answeredCorrectly()) numCorrect++;
+
       int correctAnswer = currentTest.questions[i].correctAnswer;
       String correctAnswerUrl = currentTest.questions[i].options[correctAnswer];
       //correctAnswerImages.add(Image.network(correctAnswerimageUrl));
@@ -78,28 +80,30 @@ class TestCompleteScreen extends StatelessWidget {
       images.add(Text('Question ${i + 1}'));
     }
 
-    return Scaffold(
-        appBar: AppBar(
-          title: Text('𝚿 Test Complete'),
-        ),
-        backgroundColor: Colors.white,
-        body: ListView(children: [
-          /*Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+    return WillPopScope(
+        onWillPop: () async => false,
+        child: Scaffold(
+            appBar: AppBar(
+              title: Text('𝚿 Test Complete'),
+            ),
+            backgroundColor: Colors.white,
+            body: ListView(children: [
+              /*Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
                 Container(child: Text('Sender sent')),
                 Container(child: (Text('Receiver received')))
               ]),*/
-          ...images,
-          CopyText(
-              'Test complete, you got $numCorrect right out of ${currentTest.numQuestionsAnswered}'),
-          BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
-              builder: (context, state) {
-            if (state is PsiTestCompleteInProgress)
-              return Container(child: CircularProgressIndicator());
-            else
-              return Button('OK', () {
-                goToScreen(context, TableBgWrapper(HomeScreen()));
-              });
-          })
-        ]));
+              ...images,
+              CopyText(
+                  'Test complete, you got $numCorrect right out of ${currentTest.numQuestionsAnswered}'),
+              BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
+                  builder: (context, state) {
+                if (state is PsiTestCompleteInProgress)
+                  return Container(child: CircularProgressIndicator());
+                else
+                  return Button('OK', () {
+                    goToScreen(context, TableBgWrapper(HomeScreen()));
+                  });
+              })
+            ])));
   }
 }

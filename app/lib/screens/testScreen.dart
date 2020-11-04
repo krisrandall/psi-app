@@ -2,6 +2,7 @@ import 'package:app/bloc/psitestsave_bloc.dart';
 
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/pictureButton.dart';
+import 'package:app/components/utils.dart';
 import 'package:app/config.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -51,7 +52,9 @@ class _TestScreen extends StatelessWidget {
   void loadTestCompleteScreenIfTestComplete(
       BuildContext context, PsiTest currentTest) {
     Future.microtask(() {
-      if (currentTest.numQuestionsAnswered == currentTest.questions.length) {
+      //if either the test is finished properly or if the other person presses "end test" and changes the status to completed
+      if (currentTest.numQuestionsAnswered == currentTest.questions.length ||
+          currentTest.testStatus == PsiTestStatus.COMPLETED) {
         goToTestCompleteScreen(context, currentTest);
       }
     });
@@ -71,7 +74,8 @@ class _TestScreen extends StatelessWidget {
       return TestQuestionSender(
           imageUrl: imageUrlBig,
           currentQuestionNumber: currentTest.numQuestionsAnswered + 1,
-          totalNumberQuestions: currentTest.totalNumQuestions);
+          totalNumberQuestions: currentTest.totalNumQuestions,
+          currentTest: currentTest);
     } else if (currentTest.myRole == PsiTestRole.RECEIVER) {
       return TestQuestionReceiver(
           imageUrls: currentTest.currentQuestion.options,
@@ -88,8 +92,12 @@ class TestQuestionSender extends StatelessWidget {
   final String imageUrl;
   final int currentQuestionNumber;
   final int totalNumberQuestions;
+  final PsiTest currentTest;
   TestQuestionSender(
-      {this.imageUrl, this.currentQuestionNumber, this.totalNumberQuestions});
+      {this.imageUrl,
+      this.currentQuestionNumber,
+      this.totalNumberQuestions,
+      this.currentTest});
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -99,12 +107,17 @@ class TestQuestionSender extends StatelessWidget {
           children: [
             FadeInImage.assetNetwork(
                 placeholder: 'assets/white_box.png', image: imageUrl),
-            //Image.network(imageUrl),
             Padding(
               padding: EdgeInsets.all(30.0),
               child: Text('Concentrate on this image\n\n\n' +
                   'Question $currentQuestionNumber of $totalNumberQuestions'),
             ),
+            TextButton.icon(
+                onPressed: () {
+                  goToScreen(context, TestCompleteScreen(currentTest));
+                },
+                icon: Icon(Icons.exit_to_app),
+                label: Text('end test'))
           ],
         ));
   }
@@ -169,26 +182,28 @@ class _TestQuestionReceiverState extends State<TestQuestionReceiver> {
               PictureButton(
                   widget.imageUrls[3], () => answerQuestion(context, choice: 3),
                   opacity: opacity[3]),
+              Padding(
+                padding: EdgeInsets.all(30.0),
+                child: Text('\n\nClick to choose'),
+              ),
               Stack(alignment: AlignmentDirectional.center, children: [
                 Positioned(
                     top: 0,
                     child: Padding(
                       padding: EdgeInsets.all(30.0),
-                      child: Text('\n\nClick to choose'),
+                      child: Text(
+                          '\n\nQuestion ${widget.currentQuestionNumber} of ${widget.totalNumberQuestions}'),
                     )),
-                TextButton.icon(
-                    onPressed: () {
-                      var event = CancelPsiTest(test: widget.currentTest);
-                      BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-                    },
-                    icon: Icon(Icons.exit_to_app),
-                    label: Text('end test'))
+                Positioned(
+                    top: 80,
+                    child: TextButton.icon(
+                        onPressed: () {
+                          goToScreen(
+                              context, TestCompleteScreen(widget.currentTest));
+                        },
+                        icon: Icon(Icons.exit_to_app),
+                        label: Text('end test')))
               ]),
-              Padding(
-                padding: EdgeInsets.all(30.0),
-                child: Text(
-                    '\n\nQuestion ${widget.currentQuestionNumber} of ${widget.totalNumberQuestions}'),
-              ),
             ]
             /*
           children: imageUrls.map((String url) {
