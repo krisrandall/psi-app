@@ -10,7 +10,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 Query allCompletedTests = Firestore.instance
     .collection('test')
-    .where("parties", arrayContains: 'dmjbXZ7BHEUizVeQre2lmry5q982');
+    .where("status", isEqualTo: "completed");
 
 class DeleteAllTests extends StatelessWidget {
   DeleteAllTests();
