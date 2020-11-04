@@ -14,6 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:app/screens/deletealltests.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -74,7 +75,10 @@ class _HomeScreen extends StatelessWidget {
         () {
           goToScreen(context, ReceiverScreen());
         },
-      ),
+      ), /*
+      Button('delete all completed tests', () {
+        goToScreen(context, DeleteAllTests());
+      })*/
     ];
 
     List<Widget> activeTestScreen = (currentTest == null)
