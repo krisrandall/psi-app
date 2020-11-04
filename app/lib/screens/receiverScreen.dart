@@ -63,8 +63,6 @@ class _ReceiverScreen extends StatelessWidget {
           var newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
           var event = CreatePsiTest(test: newlyCreatedTest);
           BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-          var event2 = AddPsiTestQuestions(test: newlyCreatedTest);
-          BlocProvider.of<PsiTestSaveBloc>(context).add(event2);
         },
       );
     } else if (currentTest.myRole == PsiTestRole.RECEIVER) {

@@ -31,9 +31,6 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     if (event is CreateAndSharePsiTest) {
       yield* _mapCreateAndSharePsiTestToState(event);
     }
-    if (event is AddPsiTestQuestions) {
-      yield* _mapAddPsiTestQuestions(event);
-    }
     if (event is CancelPsiTest) {
       yield* _mapCancelPsiTest(event);
     }
@@ -80,13 +77,26 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     }
   }
 
-  Stream<PsiTestSaveState> _mapAddPsiTestQuestions(
+  Stream<PsiTestSaveState> _mapCreatePsiTestToState(
     PsiTestSaveEvent event,
   ) async* {
-    yield PsiTestSaveAddQuestionsInProgress(0.2);
+    yield PsiTestSaveCreateInProgress(0);
     try {
+      print(globalCurrentUser.uid);
+
       final db = Firestore.instance;
-      String testId = event.test.testId;
+      String senderUid;
+      String receiverUid;
+
+      senderUid =
+          event.test.myRole == PsiTestRole.SENDER ? globalCurrentUser.uid : "";
+      receiverUid = event.test.myRole == PsiTestRole.RECEIVER
+          ? globalCurrentUser.uid
+          : "";
+
+      yield PsiTestSaveAddQuestionsInProgress(0.2);
+
+      //String testId = event.test.testId;
       var path = ('https://picsum.photos');
 
       var questions = new List<Map>();
@@ -108,41 +118,10 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         yield PsiTestSaveAddQuestionsSuccessful();
         yield PsiTestSaveAddQuestionsInProgress(i * 0.2 + 0.4);
       }
-      db
-          .collection('test')
-          .document(testId)
-          .updateData({'questions': questions});
-      yield PsiTestSaveAddQuestionsSuccessful();
-    } catch (_) {
-      yield PsiTestSaveAddQuestionsFailed(exception: _);
-    }
-  }
 
-  Stream<PsiTestSaveState> _mapCreatePsiTestToState(
-    PsiTestSaveEvent event,
-  ) async* {
-    yield PsiTestSaveCreateInProgress(0);
-    try {
-      print(globalCurrentUser.uid);
-
-      final db = Firestore.instance;
-      String senderUid;
-      String receiverUid;
-
-      senderUid =
-          event.test.myRole == PsiTestRole.SENDER ? globalCurrentUser.uid : "";
-      receiverUid = event.test.myRole == PsiTestRole.RECEIVER
-          ? globalCurrentUser.uid
-          : "";
-      yield PsiTestSaveCreateInProgress(0.2);
-      DocumentReference ref = await db.collection("test").add({
+      DocumentReference ref = await db.collection('test').add({
         'parties': [globalCurrentUser.uid],
-        'questions': [
-          {
-            'correct answer': 3,
-            'options': ['a', 'b', 'c', 'd']
-          }
-        ],
+        'questions': questions,
         'receiver': receiverUid,
         'sender': senderUid,
         'status': 'underway',
@@ -150,9 +129,9 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
 
       event.test.testId = ref.documentID;
 
-      yield PsiTestSaveCreateSuccessful();
+      yield PsiTestSaveAddQuestionsSuccessful();
     } catch (_) {
-      yield PsiTestSaveCreateFailed(exception: _);
+      yield PsiTestSaveAddQuestionsFailed(exception: _);
     }
   }
 
