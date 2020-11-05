@@ -1,4 +1,4 @@
-package au.com.cocreations.psiapp
+package au.com.cocreations.psiappX
 
 import io.flutter.embedding.android.FlutterActivity
 

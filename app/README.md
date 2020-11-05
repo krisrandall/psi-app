@@ -51,7 +51,7 @@ I have also configured at rebrandly link.cocreations.com.au to work as a custom 
 ##### Testinng Android URL links
 
 ```
-adb shell monkey -p au.com.cocreations.psiapp  1
+adb shell monkey -p au.com.cocreations.psiappX  1
 ```
 
 ... trying to figure out how to specify path ...
