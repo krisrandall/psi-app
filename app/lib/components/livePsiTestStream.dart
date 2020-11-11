@@ -25,13 +25,16 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
     var iAm;
     print(data['sender']);
 
+    //first try to assign PsiTestRole based on globalcurrentUser
+
     if (data['sender'] == globalCurrentUser.uid) iAm = PsiTestRole.SENDER;
     if (data['receiver'] == globalCurrentUser.uid) iAm = PsiTestRole.RECEIVER;
-    print('first try $iAm');
+
+    //else assign based on available role
+
     if (iAm == null) {
       if (data['sender'] == '') iAm = PsiTestRole.SENDER;
       if (data['receiver'] == '') iAm = PsiTestRole.RECEIVER;
-      print('second try $iAm');
     }
 
     // create the questions
@@ -130,19 +133,29 @@ Widget psiTestNotAvailableWidget(
     List<DocumentSnapshot> documents = snapshot.data.documents;
     DocumentSnapshot document;
     if (documents.length > 1) {
+      print("document length = ${documents.length}");
       var testToDelete;
 
       for (document in documents) {
-        if (document.data.isEmpty)
+        if (document.data.isEmpty) {
+          print("testToDelete is Empty");
           testToDelete = createTestFromFirestore([document]);
+        }
       }
       //if one of the tests has sender and receiver, keep it and delete the other
       if (testToDelete == null)
         for (document in documents) {
-          if (document['parties'].length == 1)
+          if (document['parties'].length == 1) {
+            print(
+                "testToDelete = ${document.documentID}, which onely has one party");
             testToDelete = createTestFromFirestore([document]);
+          }
         }
-
+      //if not just pick the first one and delete it
+      if (testToDelete == null) {
+        print("arbitrarily deleting first test");
+        testToDelete = createTestFromFirestore([documents[0]]);
+      }
       var event = CancelPsiTest(test: testToDelete);
       BlocProvider.of<PsiTestSaveBloc>(context).add(event);
       print('deleting test');

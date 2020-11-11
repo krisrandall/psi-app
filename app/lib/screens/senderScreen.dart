@@ -9,6 +9,7 @@ import 'package:app/screens/testScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:app/components/loadingMessages.dart';
 
 class SenderScreen extends StatelessWidget {
   @override
@@ -93,21 +94,13 @@ class _SenderScreen extends StatelessWidget {
       print(state);
       if (state is PsiTestSaveCreateInProgress)
         return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          CopyText('creating test...'),
+          CopyText(getMessage()),
+          //CopyText('creating test...'),
           Container(
               width: 60,
               child: LinearProgressIndicator(value: state.getProgress()))
         ]);
-      else if (state is PsiTestSaveAddQuestionsInProgress) {
-        print(state.getProgress());
-        return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          //CopyText('loading test questions...'),
-          CopyText('creating test...'),
-          Container(
-              width: 60,
-              child: LinearProgressIndicator(value: state.getProgress()))
-        ]);
-      } else if (state is PsiTestSaveShareInProgress)
+      else if (state is PsiTestSaveShareInProgress)
         return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           CopyText('loading apps for sharing...'),
           //CircularProgressIndicator()

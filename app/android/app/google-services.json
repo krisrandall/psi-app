@@ -35,7 +35,45 @@
               "client_id": "297561593260-62q0s4libjj3g9hfhepettek99nlid80.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "au.com.cocreationos.psiapp"
+                "bundle_id": "au.com.cocreationos.psiapp",
+                "app_store_id": "962194608"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:297561593260:android:52778aca3a8bfe9d855609",
+        "android_client_info": {
+          "package_name": "au.com.cocreations.psiappX"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "297561593260-9jjohutf1i8rrj8o1u4el9qhq0si1npb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaJm2033C9kzjSeQG4du5OaZPBTdHaFOQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "297561593260-9jjohutf1i8rrj8o1u4el9qhq0si1npb.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "297561593260-62q0s4libjj3g9hfhepettek99nlid80.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "au.com.cocreationos.psiapp",
+                "app_store_id": "962194608"
               }
             }
           ]

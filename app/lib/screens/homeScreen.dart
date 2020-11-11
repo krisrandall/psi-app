@@ -14,6 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:app/components/loadingMessages.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -85,14 +86,6 @@ class _HomeScreen extends StatelessWidget {
                 "You have a test underway \nWith ${currentTest.totalNumQuestions - currentTest.numQuestionsAnswered} questions left to answer   "),*/
             CopyText("Test starting now...."),
             SizedBox(height: 10),
-            /*Button('Continue Test', () {
-              goToScreen(context, TestScreen(currentTest.testId));
-            }),
-            SecondaryButton('End the Test', () {
-              print('do logic to cancel the test');
-              var event = CancelPsiTest(test: currentTest);
-              BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-            }),*/
           ];
 
     List<Widget> awaitingReceiver = [
@@ -159,7 +152,8 @@ class _HomeScreen extends StatelessWidget {
             return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CopyText('ending test...'),
+                  CopyText(getMessage()),
+                  //CopyText('ending test...'),
                   // CircularProgressIndicator()
                 ]);
           else
