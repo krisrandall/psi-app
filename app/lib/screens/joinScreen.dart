@@ -28,6 +28,13 @@ class OpenedViaLinkWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     //extract TestId String from Deep Link
     String testId = deepLink.replaceAll(new RegExp(ADDRESSPARTOFDEEPLINK), '');
+    //if deepLink is long Url
+    if (testId.length > 34) {
+      print(testId.length);
+
+      testId = deepLink.substring(286, 306);
+      print(testId);
+    }
     return TableBgWrapper(Scaffold(
         appBar: AppBar(
           title: Text('Opened Via Link'),

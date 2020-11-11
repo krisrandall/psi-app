@@ -80,7 +80,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
   Stream<PsiTestSaveState> _mapCreatePsiTestToState(
     PsiTestSaveEvent event,
   ) async* {
-    yield PsiTestSaveCreateInProgress(0);
+    yield PsiTestSaveCreateInProgress(0.2);
     try {
       print(globalCurrentUser.uid);
 
