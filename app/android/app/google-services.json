@@ -8,9 +8,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:297561593260:android:800fad4d6e1046ac855609",
+        "mobilesdk_app_id": "1:297561593260:android:52778aca3a8bfe9d855609",
         "android_client_info": {
-          "package_name": "au.com.cocreations.psiapp"
+          "package_name": "au.com.cocreations.psiappX"
         }
       },
       "oauth_client": [
@@ -32,10 +32,10 @@
               "client_type": 3
             },
             {
-              "client_id": "297561593260-62q0s4libjj3g9hfhepettek99nlid80.apps.googleusercontent.com",
+              "client_id": "297561593260-mdrut2prmiitp8mvr10a0k59lgsuk2o1.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "au.com.cocreationos.psiapp"
+                "bundle_id": "au.com.cocreations.psiappX"
               }
             }
           ]

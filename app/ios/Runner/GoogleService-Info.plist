@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>297561593260-62q0s4libjj3g9hfhepettek99nlid80.apps.googleusercontent.com</string>
+	<string>297561593260-mdrut2prmiitp8mvr10a0k59lgsuk2o1.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.297561593260-62q0s4libjj3g9hfhepettek99nlid80</string>
+	<string>com.googleusercontent.apps.297561593260-mdrut2prmiitp8mvr10a0k59lgsuk2o1</string>
 	<key>API_KEY</key>
 	<string>AIzaSyA6OaJHFpLe6xvt6VoPSUfz6Vmax5nDuc4</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>au.com.cocreationos.psiapp</string>
+	<string>au.com.cocreations.psiappX</string>
 	<key>PROJECT_ID</key>
 	<string>psi-app-6b931</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,7 +29,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:297561593260:ios:3a72304f8956f8b9855609</string>
+	<string>1:297561593260:ios:46118b58497783e1855609</string>
 	<key>DATABASE_URL</key>
 	<string>https://psi-app-6b931.firebaseio.com</string>
 </dict>
