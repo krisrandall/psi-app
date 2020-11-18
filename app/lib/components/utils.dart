@@ -22,7 +22,7 @@ Future<Uri> dynamicLink(String testId) async {
     iosParameters: IosParameters(
       bundleId: 'au.com.cocreations.psiappX',
       minimumVersion: '0.0.0',
-      appStoreId: 'TBD... TODO',
+      appStoreId: '962194608',
     ),
     googleAnalyticsParameters: GoogleAnalyticsParameters(
       campaign: 'xxexample-promo',
