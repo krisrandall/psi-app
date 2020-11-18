@@ -69,6 +69,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       //Share.share('Take a Telepathy Test with me! $shortUrl');
       print('shortUrl $shortUrl');
       Share.share('$shortUrl',
+          //sharePositionOrigin parameter necessary for share to work on iPad
           sharePositionOrigin: Rect.fromLTWH(50, 50, 50, 100));
       print('shared');
       yield PsiTestSaveShareSuccessful();
