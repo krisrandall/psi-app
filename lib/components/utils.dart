@@ -13,7 +13,7 @@ void goToScreen(context, Widget screen) {
 
 Future<Uri> dynamicLink(String testId) async {
   final DynamicLinkParameters parameters = DynamicLinkParameters(
-    uriPrefix: 'https://psiappx.page.link/',
+    uriPrefix: 'https://psiapp.page.link',
     link: Uri.parse('$ADDRESSPARTOFDEEPLINK$testId'),
     androidParameters: AndroidParameters(
       packageName: 'au.com.cocreations.psiappX',
@@ -22,7 +22,7 @@ Future<Uri> dynamicLink(String testId) async {
     iosParameters: IosParameters(
       bundleId: 'au.com.cocreations.psiappX',
       minimumVersion: '0.0.0',
-      appStoreId: 'TBD... TODO',
+      appStoreId: '962194608',
     ),
     googleAnalyticsParameters: GoogleAnalyticsParameters(
       campaign: 'xxexample-promo',

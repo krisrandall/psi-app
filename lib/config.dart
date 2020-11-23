@@ -4,6 +4,6 @@ const URL_SHORTENER = {
   'domain': 'link.cocreations.com.au', // OR/From : 'rebrand.ly'
 };
 
-const String ADDRESSPARTOFDEEPLINK = ('https://psiappx.page.link/');
+const String ADDRESSPARTOFDEEPLINK = ('https://psiapp.page.link/');
 
 const String DEFAULT_IMAGE_SIZE = '400';
