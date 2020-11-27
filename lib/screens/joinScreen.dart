@@ -36,6 +36,7 @@ class OpenedViaLinkWidget extends StatelessWidget {
             future: getSharedPsiTest(testId),
             builder: (context, AsyncSnapshot<dynamic> snapshot) {
               if (!snapshot.hasData) {
+                print('looking for test with testID $testId');
                 return TableBgWrapper(
                     Center(child: CopyText('looking for test...')));
               } else if (snapshot.hasData) {
