@@ -1,5 +1,6 @@
 import 'package:app/bloc/psitestsave_bloc.dart';
 import 'package:app/components/button.dart';
+import 'package:app/components/loadingMessages.dart';
 import 'package:app/components/utils.dart';
 import 'package:app/components/secondaryButton.dart';
 import 'package:app/components/textComponents.dart';
@@ -159,7 +160,7 @@ class _HomeScreen extends StatelessWidget {
             return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CopyText('ending test...'),
+                  CopyText(getMessage()),
                   // CircularProgressIndicator()
                 ]);
           else

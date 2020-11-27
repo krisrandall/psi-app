@@ -1,6 +1,7 @@
 import 'package:app/bloc/psitestsave_bloc.dart';
 import 'package:app/components/button.dart';
 import 'package:app/components/livePsiTestStream.dart';
+import 'package:app/components/loadingMessages.dart';
 import 'package:app/components/utils.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:app/components/textComponents.dart';
@@ -93,7 +94,7 @@ class _ReceiverScreen extends StatelessWidget {
       print(state);
       if (state is PsiTestSaveCreateInProgress)
         return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          CopyText('creating test...'),
+          CopyText(getMessage()),
           Container(
               width: 60,
               child: LinearProgressIndicator(value: state.getProgress()))
