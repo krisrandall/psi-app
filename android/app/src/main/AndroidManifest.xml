@@ -45,7 +45,7 @@
         <!-- Accepts URIs that begin with YOUR_SCHEME://YOUR_HOST -->
         <data
           android:scheme="https"
-          android:host="psiapp.page.link" />
+          android:host="cocreations.com.au" />
       </intent-filter>
 
       <!-- App Links -->
