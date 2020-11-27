@@ -90,41 +90,44 @@ class _LandingPageState extends State<LandingPage> {
       }
     });
 
-    return Scaffold(
+    return /*Scaffold(
         appBar: AppBar(
           title: Text('𝚿 Psi Telepathy Test'),
         ),
-        body: TableBgWrapper(StreamBuilder<FirebaseUser>(
-          stream: FirebaseAuth.instance.onAuthStateChanged,
-          builder: (context, snapshot) {
-            print(snapshot.connectionState);
-            if (snapshot.connectionState == ConnectionState.active) {
-              FirebaseUser user = snapshot.data;
-              if (user == null) {
-                return Column(children: <Widget>[
-                  CircularProgressIndicator(),
-                  Text('Logging in ..'),
-                ]);
-              } else if (signinErrorMessage != '') {
-                return TitleText(signinErrorMessage);
-              } else if (user != null && signinErrorMessage == '') {
-                globalCurrentUser = user;
+        body: */
+        TableBgWrapper(StreamBuilder<FirebaseUser>(
+      stream: FirebaseAuth.instance.onAuthStateChanged,
+      builder: (context, snapshot) {
+        print(snapshot.connectionState);
+        if (snapshot.connectionState == ConnectionState.active) {
+          FirebaseUser user = snapshot.data;
+          if (user == null) {
+            return Column(children: <Widget>[
+              CircularProgressIndicator(),
+              Text('Logging in ..'),
+            ]);
+          } else if (signinErrorMessage != '') {
+            return TitleText(signinErrorMessage);
+          } else if (user != null && signinErrorMessage == '') {
+            globalCurrentUser = user;
+            return HomeScreen();
+            /*
                 Future.microtask(() {
                   goToHomeScreenAsynchronously(context);
                 });
-                return Container();
-              } else
-                return Container();
-            } else {
-              return Column(
-                children: <Widget>[
-                  CircularProgressIndicator(),
-                  Text('Connecting ..'),
-                ],
-              );
-            }
-          },
-        )));
+                return Container();*/
+          } else
+            return Container();
+        } else {
+          return Column(
+            children: <Widget>[
+              CircularProgressIndicator(),
+              Text('Connecting ..'),
+            ],
+          );
+        }
+      },
+    ));
   }
 
   @override
