@@ -80,7 +80,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
   Stream<PsiTestSaveState> _mapCreatePsiTestToState(
     PsiTestSaveEvent event,
   ) async* {
-    yield PsiTestSaveCreateInProgress(0);
+    yield PsiTestSaveCreateInProgress(0.2);
     try {
       print(globalCurrentUser.uid);
 
@@ -94,7 +94,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
           ? globalCurrentUser.uid
           : "";
 
-      yield PsiTestSaveAddQuestionsInProgress(0.2);
+      //yield PsiTestSaveCreateInProgress(0.2);
 
       //String testId = event.test.testId;
       var path = ('https://picsum.photos');
@@ -103,6 +103,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       var question = new Map<String, dynamic>();
 
       for (int i = 0; i < DEFAULT_NUM_QUESTIONS; i++) {
+        yield PsiTestSaveCreateInProgress(i * 0.2 + 0.2);
         var rng = new Random();
         int correctAnswer = rng.nextInt(3);
 
@@ -115,8 +116,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         }
         question = {'options': options, 'correctAnswer': correctAnswer};
         questions.add(question);
-        yield PsiTestSaveAddQuestionsSuccessful();
-        yield PsiTestSaveAddQuestionsInProgress(i * 0.2 + 0.4);
+        yield PsiTestSaveCreateSuccessful();
       }
 
       DocumentReference ref = await db.collection('test').add({
@@ -129,9 +129,9 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
 
       event.test.testId = ref.documentID;
 
-      yield PsiTestSaveAddQuestionsSuccessful();
+      yield PsiTestSaveCreateSuccessful();
     } catch (_) {
-      yield PsiTestSaveAddQuestionsFailed(exception: _);
+      yield PsiTestSaveCreateFailed(exception: _);
     }
   }
 
