@@ -172,6 +172,47 @@ class _HomeScreen extends StatelessWidget {
                 TitleText(
                     'The Psi Telepathy Test App lets you discover your telepathic abilities with a friend.'),
                 ...screenOptions,
+                StreamBuilder<QuerySnapshot>(
+                    stream: userTestStats.snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      List<DocumentSnapshot> testsTaken =
+                          snapshot.data.documents;
+                      int numTests = snapshot.data.documents.length;
+                      int numAnsweredAsSender = 0;
+                      int numCorrectAsSender = 0;
+                      int numAnsweredAsReceiver = 0;
+                      int numCorrectAsReceiver = 0;
+                      for (DocumentSnapshot test in testsTaken) {
+                        List questions = test['questions'];
+                        for (Map question in questions) {
+                          if (question['providedAnswer'] !=
+                              null) if (globalCurrentUser == test['receiver'])
+                            numAnsweredAsReceiver++;
+                          else
+                            numAnsweredAsSender++;
+                          if (question['correctAnswer'] ==
+                              question[
+                                  'providedAnswer']) if (globalCurrentUser ==
+                              test['receiver'])
+                            numCorrectAsReceiver++;
+                          else
+                            numCorrectAsSender++;
+                          /*questions.forEach((question, value) {
+                          if (question['correctAnswer'] ==
+                              question['provided Answer']) numCorrrect++;
+                        });*/
+                        }
+                      }
+                      if (snapshot.hasError)
+                        return CopyText('error loading stats');
+
+                      if (numTests == 0)
+                        return Container();
+                      else
+                        return CopyText(
+                            "$numTests tests taken \n $numAnsweredAsReceiver questions answered as Receiver ,\n $numCorrectAsReceiver correct , \n $numAnsweredAsSender questions answered as Sender, \n $numCorrectAsSender correct ");
+                    }),
                 SizedBox(height: 60),
                 FooterButtons(),
               ],
