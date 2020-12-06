@@ -176,42 +176,33 @@ class _HomeScreen extends StatelessWidget {
                     stream: userTestStats.snapshots(),
                     builder: (BuildContext context,
                         AsyncSnapshot<QuerySnapshot> snapshot) {
-                      List<DocumentSnapshot> testsTaken =
-                          snapshot.data.documents;
-                      int numTests = snapshot.data.documents.length;
-                      int numAnsweredAsSender = 0;
-                      int numCorrectAsSender = 0;
-                      int numAnsweredAsReceiver = 0;
-                      int numCorrectAsReceiver = 0;
-                      for (DocumentSnapshot test in testsTaken) {
-                        List questions = test['questions'];
-                        for (Map question in questions) {
-                          if (question['providedAnswer'] !=
-                              null) if (globalCurrentUser == test['receiver'])
-                            numAnsweredAsReceiver++;
-                          else
-                            numAnsweredAsSender++;
+                      if (snapshot.connectionState == ConnectionState.waiting)
+                        return Container();
+
+                      int numTests = 0;
+                      int numQuestions = 0;
+                      int numCorrect = 0;
+
+                      snapshot.data.documents.forEach((test) {
+                        numTests++;
+                        test['questions'].forEach((question) {
+                          numQuestions++;
                           if (question['correctAnswer'] ==
-                              question[
-                                  'providedAnswer']) if (globalCurrentUser ==
-                              test['receiver'])
-                            numCorrectAsReceiver++;
-                          else
-                            numCorrectAsSender++;
-                          /*questions.forEach((question, value) {
-                          if (question['correctAnswer'] ==
-                              question['provided Answer']) numCorrrect++;
-                        });*/
-                        }
-                      }
+                              question['providedAnswer']) numCorrect++;
+                        });
+                      });
+
                       if (snapshot.hasError)
                         return CopyText('error loading stats');
-
+/*
                       if (numTests == 0)
                         return Container();
                       else
                         return CopyText(
                             "$numTests tests taken \n $numAnsweredAsReceiver questions answered as Receiver ,\n $numCorrectAsReceiver correct , \n $numAnsweredAsSender questions answered as Sender, \n $numCorrectAsSender correct ");
+                    }),*/
+                      return CopyText(
+                          '$numCorrect correct from $numQuestions questions in $numTests tests');
                     }),
                 SizedBox(height: 60),
                 FooterButtons(),
