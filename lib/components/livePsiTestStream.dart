@@ -66,16 +66,15 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
     int numQuestionsAnswered = 0;
 
     try {
-      for (PsiTestQuestion question in questions) {
-        if (question.providedAnswer != null) {
-          //answeredQuestions.add(question);
-          numQuestionsAnswered++;
-        }
-      }
+      answeredQuestions = questions
+          .where((question) => question.providedAnswer != null)
+          .toList();
+      numQuestionsAnswered = answeredQuestions.length;
     } catch (e) {
-      print('error while counting numQuestionsAnswered: $e');
+      print(
+          'error while populating answeredQuestions list and /or counting numQuestionsAnswered: $e');
     }
-    //print('$numQuestionsAnswered questions answered');
+    print('$numQuestionsAnswered questions answered');
 
     PsiTestStatus status;
     if (data['receiver']?.isEmpty == true)
