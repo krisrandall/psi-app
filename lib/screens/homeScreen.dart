@@ -76,6 +76,37 @@ class _HomeScreen extends StatelessWidget {
           goToScreen(context, ReceiverScreen());
         },
       ),
+      StreamBuilder<QuerySnapshot>(
+          stream: userTestStats.snapshots(),
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting)
+              return Container();
+
+            int numTests = 0;
+            int numQuestions = 0;
+            int numCorrect = 0;
+
+            snapshot.data.documents.forEach((test) {
+              numTests++;
+              test['questions'].forEach((question) {
+                numQuestions++;
+                if (question['correctAnswer'] == question['providedAnswer'])
+                  numCorrect++;
+              });
+            });
+
+            if (snapshot.hasError) return CopyText('error loading stats');
+/*
+                      if (numTests == 0)
+                        return Container();
+                      else
+                        return CopyText(
+                            "$numTests tests taken \n $numAnsweredAsReceiver questions answered as Receiver ,\n $numCorrectAsReceiver correct , \n $numAnsweredAsSender questions answered as Sender, \n $numCorrectAsSender correct ");
+                    }),*/
+            return CopyText(
+                '$numCorrect correct from $numQuestions questions in $numTests tests');
+          })
     ];
 
     List<Widget> activeTestScreen = (currentTest == null)
@@ -132,6 +163,8 @@ class _HomeScreen extends StatelessWidget {
       }),
     ];
 
+    // Widget stats =
+
     List<Widget> screenOptions = [];
     if (currentTest == null) {
       screenOptions = noActiveTestOptions;
@@ -172,38 +205,6 @@ class _HomeScreen extends StatelessWidget {
                 TitleText(
                     'The Psi Telepathy Test App lets you discover your telepathic abilities with a friend.'),
                 ...screenOptions,
-                StreamBuilder<QuerySnapshot>(
-                    stream: userTestStats.snapshots(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting)
-                        return Container();
-
-                      int numTests = 0;
-                      int numQuestions = 0;
-                      int numCorrect = 0;
-
-                      snapshot.data.documents.forEach((test) {
-                        numTests++;
-                        test['questions'].forEach((question) {
-                          numQuestions++;
-                          if (question['correctAnswer'] ==
-                              question['providedAnswer']) numCorrect++;
-                        });
-                      });
-
-                      if (snapshot.hasError)
-                        return CopyText('error loading stats');
-/*
-                      if (numTests == 0)
-                        return Container();
-                      else
-                        return CopyText(
-                            "$numTests tests taken \n $numAnsweredAsReceiver questions answered as Receiver ,\n $numCorrectAsReceiver correct , \n $numAnsweredAsSender questions answered as Sender, \n $numCorrectAsSender correct ");
-                    }),*/
-                      return CopyText(
-                          '$numCorrect correct from $numQuestions questions in $numTests tests');
-                    }),
                 SizedBox(height: 60),
                 FooterButtons(),
               ],
