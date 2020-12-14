@@ -32,7 +32,13 @@ class OpenedViaLinkWidget extends StatelessWidget {
     if (testId.length > 34) {
       print(testId.length);
 
-      testId = deepLink.substring(286, 306);
+      var uri = Uri.dataFromString(deepLink);
+      
+      Map<String, String> params = uri.queryParameters;
+      String linkParam = Uri.decodeFull(params['link']);
+      var linkUri = Uri.dataFromString(linkParam);
+      testId = linkUri.pathSegments[linkUri.pathSegments.length-1];
+
       print(testId);
     }
     return TableBgWrapper(Scaffold(
