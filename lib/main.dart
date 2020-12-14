@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
     return BlocProvider(
       create: (context) => PsiTestSaveBloc(),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
         theme: ThemeData(
           primarySwatch: Colors.indigo,
