@@ -1,30 +1,58 @@
 # 𝚿 Psi App
 
-![](./app/assets/630.jpg)
+![](./assets/630.jpg)
 
-The psychic connectedness app is a Flutter mobile app which allows friends to test their telepathic abilities.
 
-A "sender" stares at an image and the "receiver" needs to pick from a list of 4 possible images which one the sender is looking at and thinking of.
 
-~~The backend is Firebase (`/functions`).~~ **NOT USED**
+A Flutter app
 
-The [frontend](./app/README.md) is Flutter (`/app`).
-
-## Getting Started - Run the App
+## Run
 
 ```
-cd app
 flutter run
 ```
 
-## Getting Started - Firebase
+## Regenerate Icons
 
 ```
-firebase login 
+flutter pub run flutter_launcher_icons:main
 ```
 
+## Set Splash Pages 
 
-## More Information
 
-See the [Psychic Connectedness Test Google Driver Folder](https://drive.google.com/drive/u/0/folders/0B131WpwtLMcIY3VMWW9zZkNNTlU)
+Change the files in `android -> app -> src -> main -> res`
+
+and `iOS -> Runner -> Assets.xcassets -> LaunchImage.imageset`
+
+See this SO answer for more details : https://stackoverflow.com/a/48101776/1290746
+
+This tool seems ok for generating splash images : https://www.spdoctor.com/articles/App_Image_Generator.html
+
+
+
+## Other bits
+
+##### Database
+
+There is a Firebase database which controls the shared tests.
+(This is owned by kris.randall@gmail.com)
+
+##### Image service
+
+The service .... is used for fetching images.
+
+##### URL shortening
+
+The service https://developers.rebrandly.com/docs is used for URL shortening, for sharing tests.
+(The account for this is linked to kris.randall@gmail.com)
+I have also configured at rebrandly link.cocreations.com.au to work as a custom URL (set up at crazydomains, as per : https://app.rebrandly.com/domains)
+
+##### Testinng Android URL links
+
+```
+adb shell monkey -p au.com.cocreations.psiapp  1
+```
+
+... trying to figure out how to specify path ...
 

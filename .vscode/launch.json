@@ -5,8 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Dart",
-            "program": "app/lib/main.dart",
+            "name": "psi-app",
             "request": "launch",
             "type": "dart"
         }
