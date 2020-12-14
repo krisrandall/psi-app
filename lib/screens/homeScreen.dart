@@ -62,7 +62,7 @@ class _HomeScreen extends StatelessWidget {
     });
 
     List<Widget> noActiveTestOptions = [
-      SizedBox(height: 100),
+      SizedBox(height: 60),
       Button(
         "Be the Sender",
         () {
@@ -104,8 +104,8 @@ class _HomeScreen extends StatelessWidget {
                         return CopyText(
                             "$numTests tests taken \n $numAnsweredAsReceiver questions answered as Receiver ,\n $numCorrectAsReceiver correct , \n $numAnsweredAsSender questions answered as Sender, \n $numCorrectAsSender correct ");
                     }),*/
-            return CopyText(
-                '$numCorrect correct from $numQuestions questions in $numTests tests');
+            if (numTests == 0) return CopyText(' ');
+            else return CopyText( '$numCorrect correct from $numQuestions questions in $numTests tests' );
           })
     ];
 
