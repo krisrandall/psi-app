@@ -56,7 +56,8 @@ class _HomeScreen extends StatelessWidget {
     precacheImage(AssetImage('assets/gypsie.png'), context);
 
     Future.microtask(() {
-      if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
+      if ((currentTest != null) &&
+          (currentTest.testStatus == PsiTestStatus.UNDERWAY)) {
         goToTestScreenAsynchronously(context, currentTest);
       }
     });
@@ -104,8 +105,11 @@ class _HomeScreen extends StatelessWidget {
                         return CopyText(
                             "$numTests tests taken \n $numAnsweredAsReceiver questions answered as Receiver ,\n $numCorrectAsReceiver correct , \n $numAnsweredAsSender questions answered as Sender, \n $numCorrectAsSender correct ");
                     }),*/
-            if (numTests == 0) return CopyText(' ');
-            else return CopyText( '$numCorrect correct from $numQuestions questions in $numTests tests' );
+            if (numTests == 0)
+              return CopyText(' ');
+            else
+              return CopyText(
+                  '$numCorrect correct from $numQuestions questions in $numTests tests');
           })
     ];
 

@@ -48,7 +48,8 @@ class _ReceiverScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Future.microtask(() {
-      if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
+      if ((currentTest != null) &&
+          (currentTest.testStatus == PsiTestStatus.UNDERWAY)) {
         goToTestScreenAsynchronously(context, currentTest);
       }
     });

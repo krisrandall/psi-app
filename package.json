@@ -1,0 +1,25 @@
+{
+  "name": "psi-app",
+  "version": "1.0.0",
+  "description": "Back-End functions for psi-app",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krisrandall/psi-app.git"
+  },
+  "author": "Kris Randall",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/krisrandall/psi-app/issues"
+  },
+  "homepage": "https://github.com/krisrandall/psi-app#readme",
+  "dependencies": {
+    "firebase-tools": "^9.2.2"
+  }
+}
