@@ -46,3 +46,4 @@ node_modules
 ios/Podfile.lock
 ios/Runner.xcodeproj
 .DS_Store
+firebase_functions/
