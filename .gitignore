@@ -42,3 +42,7 @@ app.*.map.json
 
 
 ios/build/XCBuildData
+node_modules
+ios/Podfile.lock
+ios/Runner.xcodeproj
+.DS_Store
