@@ -135,7 +135,6 @@ Widget psiTestNotAvailableWidget(
     DocumentSnapshot document;
     if (documents.length > 1) {
       var testToDelete;
-
       for (document in documents) {
         if (document.data.isEmpty)
           testToDelete = createTestFromFirestore([document]);

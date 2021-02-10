@@ -78,7 +78,6 @@ class _LandingPageState extends State<LandingPage> {
         print('link from main.dart is $deepLink');
         if (deepLink != null) {
           print(deepLink);
-          // _signInAnonymously();
           goToScreen(context, OpenedViaLinkWidget(deepLink));
         }
         _sub = getLinksStream().listen((String deepLink) {

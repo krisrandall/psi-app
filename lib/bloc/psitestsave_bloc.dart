@@ -82,6 +82,35 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
   ) async* {
     yield PsiTestSaveCreateInProgress(0.2);
     try {
+      var db = Firestore.instance;
+
+      Query findAvailableTestsOnFirestore = Firestore.instance
+          .collection('test')
+          .where('status', isEqualTo: 'created')
+          .where('parties', isEqualTo: '');
+
+      QuerySnapshot testList =
+          await findAvailableTestsOnFirestore.getDocuments();
+      String testID = testList.documents[0].documentID;
+      print('joining test $testID');
+      var myRole = event.test.myRole;
+
+      if (myRole == PsiTestRole.SENDER) {
+        db.collection('test').document(testID).updateData({
+          'parties': FieldValue.arrayUnion([globalCurrentUser.uid]),
+          'sender': globalCurrentUser.uid,
+          'status': 'underway'
+        });
+        print('added $globalCurrentUser to $testID');
+      } else if (myRole == PsiTestRole.RECEIVER) {
+        db.collection('test').document(testID).updateData({
+          'parties': FieldValue.arrayUnion([globalCurrentUser.uid]),
+          'receiver': globalCurrentUser.uid,
+          'status': 'underway'
+        });
+      }
+      yield PsiTestSaveCreateSuccessful();
+      /*
       print(globalCurrentUser.uid);
 
       final db = Firestore.instance;
@@ -129,9 +158,10 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
 
       event.test.testId = ref.documentID;
 
-      yield PsiTestSaveCreateSuccessful();
+      yield PsiTestSaveCreateSuccessful();*/
     } catch (_) {
-      yield PsiTestSaveCreateFailed(exception: _);
+      //yield PsiTestSaveCreateFailed(exception: _);
+      print('error $_');
     }
   }
 
@@ -161,7 +191,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       if (myRole == PsiTestRole.SENDER) {
         db.collection('test').document(testId).updateData({
           'parties': FieldValue.arrayUnion([globalCurrentUser.uid]),
-          'sender': globalCurrentUser.uid
+          'sender': globalCurrentUser.uid,
         });
       } else if (myRole == PsiTestRole.RECEIVER) {
         db.collection('test').document(testId).updateData({
