@@ -140,6 +140,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
 
         for (int j = 0; j < 4; j++) {
           var response = await http.get('$path/$DEFAULT_IMAGE_SIZE');
+          print('$path/$DEFAULT_IMAGE_SIZE');
           var imageId = (response.headers['picsum-id']);
           options.add('$path/id/$imageId/$DEFAULT_IMAGE_SIZE');
         }
@@ -147,6 +148,16 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         questions.add(question);
         yield PsiTestSaveCreateSuccessful();
       }
+
+      Map test = {
+        'parties': [globalCurrentUser.uid],
+        'questions': questions,
+        'receiver': receiverUid,
+        'sender': senderUid,
+        'status': 'underway',
+      };
+
+      print('new test: $test');
 
       DocumentReference ref = await db.collection('test').add({
         'parties': [globalCurrentUser.uid],

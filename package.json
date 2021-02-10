@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/krisrandall/psi-app#readme",
   "dependencies": {
+    "firebase-admin": "^9.4.2",
     "firebase-tools": "^9.2.2"
   }
 }
