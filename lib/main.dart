@@ -16,6 +16,7 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    print('main build started');
     /* to prevent device rotation - but not proven yet if works, or needed... 
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -54,7 +55,9 @@ class _LandingPageState extends State<LandingPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('landing page');
     Future<void> _signInAnonymously() async {
+      print('signinanon page');
       try {
         await precacheImage(AssetImage('assets/table.jpg'), context);
         await precacheImage(AssetImage('assets/splash.png'), context);
