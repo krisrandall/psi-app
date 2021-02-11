@@ -53,7 +53,6 @@ class _ReceiverScreen extends StatelessWidget {
         goToTestScreenAsynchronously(context, currentTest);
       }
     });
-
     Widget actionButton;
     if (currentTest != null) if (currentTest.testStatus ==
         PsiTestStatus.UNDERWAY) return TestScreen(currentTest.testId);

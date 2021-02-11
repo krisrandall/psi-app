@@ -91,6 +91,8 @@ flutter:
     - assets/splash.png
     - assets/purple_box.png
     - assets/white_box.png
+    - assets/loading_grow_flower.gif
+    - assets/falling_stars.gif
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -54,6 +54,7 @@ class _HomeScreen extends StatelessWidget {
     precacheImage(AssetImage('assets/left.jpg'), context);
     precacheImage(AssetImage('assets/right.jpg'), context);
     precacheImage(AssetImage('assets/gypsie.png'), context);
+    precacheImage(AssetImage('assets/loading_grow_flower.gif'), context);
 
     Future.microtask(() {
       if ((currentTest != null) &&
@@ -67,6 +68,9 @@ class _HomeScreen extends StatelessWidget {
       Button(
         "Be the Sender",
         () {
+          var newlyCreatedTest = PsiTest.beginNewTestAsSender();
+          var event = CreatePsiTest(test: newlyCreatedTest);
+          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
           goToScreen(context, SenderScreen());
         },
       ),
@@ -74,6 +78,9 @@ class _HomeScreen extends StatelessWidget {
       Button(
         'Be the Receiver',
         () {
+          var newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
+          var event = CreatePsiTest(test: newlyCreatedTest);
+          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
           goToScreen(context, ReceiverScreen());
         },
       ),
@@ -180,7 +187,8 @@ class _HomeScreen extends StatelessWidget {
       screenOptions = awaitingReceiver;
     }
 
-//WillPopScope with onWillPop=>false disables the back button
+// WillPopScope with onWillPop=>false disables the back button
+
     return WillPopScope(
         onWillPop: () async => false,
         child: BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
@@ -190,7 +198,7 @@ class _HomeScreen extends StatelessWidget {
             return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CopyText('loading apps for sharing...'),
+                  Image.asset("assets/loading_grow_flower.gif")
                   // CircularProgressIndicator()
                 ]);
           if (state is PsiTestSaveCancelInProgress)
