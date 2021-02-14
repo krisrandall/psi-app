@@ -59,14 +59,7 @@ class _SenderScreen extends StatelessWidget {
         PsiTestStatus.UNDERWAY) return TestScreen(currentTest.testId);
 
     if (currentTest == null) {
-      actionButton = Button(
-        'Create Test (Invite Friend)',
-        () {
-          var newlyCreatedTest = PsiTest.beginNewTestAsSender();
-          var event = CreatePsiTest(test: newlyCreatedTest);
-          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-        },
-      );
+      actionButton = Image.asset("assets/loading_grow_flower.gif");
     } else if (currentTest.myRole == PsiTestRole.SENDER) {
       if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
         actionButton = TitleText('Test starting now...');
@@ -93,26 +86,32 @@ class _SenderScreen extends StatelessWidget {
     return BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
         builder: (context, state) {
       print(state);
-      if (state is PsiTestSaveCreateInProgress)
+      if (currentTest == null)
         return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          CopyText(getMessage()),
+          Image.asset("assets/loading_grow_flower.gif")
+          // CopyText('loading apps for sharing...'),
+        ]);
+      else if (state is PsiTestSaveCreateInProgress)
+        return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          // CopyText(getMessage()),
           Container(
               width: 60,
-              child: LinearProgressIndicator(value: state.getProgress()))
+              child: // LinearProgressIndicator(value: state.getProgress()))
+                  Image.asset("assets/loading_grow_flower.gif"))
         ]);
       else if (state is PsiTestSaveAddQuestionsInProgress) {
         print(state.getProgress());
         return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          //CopyText('loading test questions...'),
-          CopyText(getMessage()),
+          Image.asset("assets/loading_grow_flower.gif"),
+          // CopyText(getMessage()),
           Container(
               width: 60,
               child: LinearProgressIndicator(value: state.getProgress()))
         ]);
       } else if (state is PsiTestSaveShareInProgress)
         return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          CopyText('loading apps for sharing...'),
-          //CircularProgressIndicator()
+          Image.asset("assets/loading_grow_flower.gif")
+          // CopyText('loading apps for sharing...'),
         ]);
       else
         return SingleChildScrollView(

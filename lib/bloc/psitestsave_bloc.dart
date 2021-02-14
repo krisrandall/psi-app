@@ -110,68 +110,78 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         });
       }
       yield PsiTestSaveCreateSuccessful();
-      /*
-      print(globalCurrentUser.uid);
 
-      final db = Firestore.instance;
-      String senderUid;
-      String receiverUid;
+      // code for adding fresh tests to firebase if necessary
+      //
+      /*final db = Firestore.instance;
+      Future createTest() async {
+        print(globalCurrentUser.uid);
 
-      senderUid =
-          event.test.myRole == PsiTestRole.SENDER ? globalCurrentUser.uid : "";
-      receiverUid = event.test.myRole == PsiTestRole.RECEIVER
-          ? globalCurrentUser.uid
-          : "";
+        String senderUid;
+        String receiverUid;
 
-      //yield PsiTestSaveCreateInProgress(0.2);
+        senderUid = event.test.myRole == PsiTestRole.SENDER
+            ? globalCurrentUser.uid
+            : "";
+        receiverUid = event.test.myRole == PsiTestRole.RECEIVER
+            ? globalCurrentUser.uid
+            : "";
 
-      //String testId = event.test.testId;
-      var path = ('https://picsum.photos');
+        //yield PsiTestSaveCreateInProgress(0.2);
 
-      var questions = new List<Map>();
-      var question = new Map<String, dynamic>();
+        //String testId = event.test.testId;
+        var path = ('https://picsum.photos');
 
-      for (int i = 0; i < DEFAULT_NUM_QUESTIONS; i++) {
-        yield PsiTestSaveCreateInProgress(i * 0.2 + 0.2);
-        var rng = new Random();
-        int correctAnswer = rng.nextInt(3);
+        var questions = new List<Map>();
+        var question = new Map<String, dynamic>();
 
-        var options = List<String>();
+        for (int i = 0; i < DEFAULT_NUM_QUESTIONS; i++) {
+          //  yield PsiTestSaveCreateInProgress(i * 0.2 + 0.2);
+          var rng = new Random();
+          int correctAnswer = rng.nextInt(3);
 
-        for (int j = 0; j < 4; j++) {
-          var response = await http.get('$path/$DEFAULT_IMAGE_SIZE');
-          print('$path/$DEFAULT_IMAGE_SIZE');
-          var imageId = (response.headers['picsum-id']);
-          options.add('$path/id/$imageId/$DEFAULT_IMAGE_SIZE');
+          var options = List<String>();
+
+          for (int j = 0; j < 4; j += 0) {
+            var imageId;
+
+            await http
+                .get('$path/$DEFAULT_IMAGE_SIZE')
+                .then((response) => imageId = response.headers['picsum-id']);
+
+            if (imageId == '0' || imageId == '1' || imageId == null) {
+              print('error while getting imageID');
+            } else {
+              options.add('$path/id/$imageId/$DEFAULT_IMAGE_SIZE');
+              print('adding option');
+              j++;
+            }
+            print('j = $j');
+          }
+          question = {'options': options, 'correctAnswer': correctAnswer};
+          questions.add(question);
+          //yield PsiTestSaveCreateSuccessful();
         }
-        question = {'options': options, 'correctAnswer': correctAnswer};
-        questions.add(question);
-        yield PsiTestSaveCreateSuccessful();
+
+        Map<String, dynamic> newTest = {
+          'parties': '',
+          'questions': questions,
+          'receiver': '',
+          'sender': '',
+          'status': 'created',
+        };
+        print('new test: $newTest');
+        return newTest;
       }
 
-      Map test = {
-        'parties': [globalCurrentUser.uid],
-        'questions': questions,
-        'receiver': receiverUid,
-        'sender': senderUid,
-        'status': 'underway',
-      };
-
-      print('new test: $test');
-
-      DocumentReference ref = await db.collection('test').add({
-        'parties': [globalCurrentUser.uid],
-        'questions': questions,
-        'receiver': receiverUid,
-        'sender': senderUid,
-        'status': 'underway',
-      });
+      DocumentReference ref = await createTest()
+          .then((newTest) => db.collection('test').add(newTest));
 
       event.test.testId = ref.documentID;
-
-      yield PsiTestSaveCreateSuccessful();*/
+      */
+      yield PsiTestSaveCreateSuccessful();
     } catch (_) {
-      //yield PsiTestSaveCreateFailed(exception: _);
+      yield PsiTestSaveCreateFailed(exception: _);
       print('error $_');
     }
   }

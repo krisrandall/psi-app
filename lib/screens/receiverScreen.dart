@@ -58,14 +58,7 @@ class _ReceiverScreen extends StatelessWidget {
         PsiTestStatus.UNDERWAY) return TestScreen(currentTest.testId);
 
     if (currentTest == null) {
-      actionButton = Button(
-        'Create Test (Invite Friend)',
-        () {
-          var newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
-          var event = CreatePsiTest(test: newlyCreatedTest);
-          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-        },
-      );
+      actionButton = Image.asset("assets/loading_grow_flower.gif");
     } else if (currentTest.myRole == PsiTestRole.RECEIVER) {
       if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
         actionButton = TitleText('Test starting now...');
@@ -94,10 +87,10 @@ class _ReceiverScreen extends StatelessWidget {
       print(state);
       if (state is PsiTestSaveCreateInProgress)
         return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          CopyText(getMessage()),
+          //CopyText(getMessage()
           Container(
-              width: 60,
-              child: LinearProgressIndicator(value: state.getProgress()))
+              width: 60, child: Image.asset("assets/loading_grow_flower.gif"))
+          // child: LinearProgressIndicator(value: state.getProgress()))
         ]);
       else if (state is PsiTestSaveAddQuestionsInProgress) {
         print(state.getProgress());
@@ -110,8 +103,8 @@ class _ReceiverScreen extends StatelessWidget {
         ]);
       } else if (state is PsiTestSaveShareInProgress)
         return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          CopyText('loading apps for sharing...'),
-          //CircularProgressIndicator()
+          Image.asset("assets/loading_grow_flower.gif")
+          //CopyText('loading apps for sharing...'),
         ]);
       else
         return SingleChildScrollView(

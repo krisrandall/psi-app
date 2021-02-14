@@ -84,6 +84,41 @@ class _HomeScreen extends StatelessWidget {
           goToScreen(context, ReceiverScreen());
         },
       ),
+      /*Button(
+        'create 5 tests',
+        () {
+          var newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
+          var event = CreatePsiTest(test: newlyCreatedTest);
+          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+          newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
+          event = CreatePsiTest(test: newlyCreatedTest);
+          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+          newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
+          event = CreatePsiTest(test: newlyCreatedTest);
+          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+          newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
+          event = CreatePsiTest(test: newlyCreatedTest);
+          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+          newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
+          event = CreatePsiTest(test: newlyCreatedTest);
+          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+          newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
+          event = CreatePsiTest(test: newlyCreatedTest);
+          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+          newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
+          event = CreatePsiTest(test: newlyCreatedTest);
+          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+          newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
+          event = CreatePsiTest(test: newlyCreatedTest);
+          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+          newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
+          event = CreatePsiTest(test: newlyCreatedTest);
+          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+          newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
+          event = CreatePsiTest(test: newlyCreatedTest);
+          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+        },
+      ),*/
       StreamBuilder<QuerySnapshot>(
           stream: userTestStats.snapshots(),
           builder:
@@ -105,13 +140,6 @@ class _HomeScreen extends StatelessWidget {
             });
 
             if (snapshot.hasError) return CopyText('error loading stats');
-/*
-                      if (numTests == 0)
-                        return Container();
-                      else
-                        return CopyText(
-                            "$numTests tests taken \n $numAnsweredAsReceiver questions answered as Receiver ,\n $numCorrectAsReceiver correct , \n $numAnsweredAsSender questions answered as Sender, \n $numCorrectAsSender correct ");
-                    }),*/
             if (numTests == 0)
               return CopyText(' ');
             else
@@ -124,18 +152,8 @@ class _HomeScreen extends StatelessWidget {
         ? []
         : [
             SizedBox(height: 60),
-            /*CopyText(
-                "You have a test underway \nWith ${currentTest.totalNumQuestions - currentTest.numQuestionsAnswered} questions left to answer   "),*/
             CopyText("Test starting now...."),
             SizedBox(height: 10),
-            /*Button('Continue Test', () {
-              goToScreen(context, TestScreen(currentTest.testId));
-            }),
-            SecondaryButton('End the Test', () {
-              print('do logic to cancel the test');
-              var event = CancelPsiTest(test: currentTest);
-              BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-            }),*/
           ];
 
     List<Widget> awaitingReceiver = [
@@ -205,7 +223,8 @@ class _HomeScreen extends StatelessWidget {
             return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CopyText(getMessage()),
+                  Image.asset("assets/loading_grow_flower.gif")
+                  // CopyText(getMessage()),
                   // CircularProgressIndicator()
                 ]);
           else
