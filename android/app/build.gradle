@@ -66,4 +66,5 @@ dependencies {
     implementation 'com.android.support:multidex:2.0.1'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
 }

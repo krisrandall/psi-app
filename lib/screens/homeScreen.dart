@@ -15,6 +15,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
