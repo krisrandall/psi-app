@@ -26,7 +26,11 @@ class PsiTestSaveCreateFailed extends PsiTestSaveState {
 
 class PsiTestSaveShareInProgress extends PsiTestSaveState {}
 
-class PsiTestSaveShareSuccessful extends PsiTestSaveState {}
+class PsiTestSaveShareSuccessful extends PsiTestSaveState {
+  final String _shareLink;
+  PsiTestSaveShareSuccessful(this._shareLink);
+  String getShareLink() => _shareLink;
+}
 
 class PsiTestSaveShareFailed extends PsiTestSaveState {
   final StateError

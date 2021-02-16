@@ -10,6 +10,7 @@ import 'package:app/screens/testScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share/share.dart';
 
 class ReceiverScreen extends StatelessWidget {
   @override
@@ -69,23 +70,76 @@ class _ReceiverScreen extends StatelessWidget {
           },
         );
       } else if (currentTest.testStatus == PsiTestStatus.AWAITING_SENDER) {
-        actionButton = Button(
-          'Invite Friend via a share link',
-          () {
-            BlocProvider.of<PsiTestSaveBloc>(context)
-                .add(SharePsiTest(test: currentTest));
-          },
-        );
+        actionButton = BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
+            builder: (context, state) {
+          print(state);
+          String shareLink = '';
+          if (state is PsiTestSaveShareSuccessful) {
+            shareLink = state.getShareLink();
+            return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                      //padding: EdgeInsets.only(left: 80.0, right: 80.0),
+                      width: 400,
+                      height: 70,
+                      child: TextFormField(
+                          //enabled: false,
+                          decoration: InputDecoration(
+                              //icon: Icon(Icons.copy, color: Colors.black),
+                              border: const OutlineInputBorder(),
+                              fillColor: Colors.purple[50],
+                              filled: true),
+                          initialValue: shareLink)),
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    FlatButton(
+                        height: 62,
+                        color: Colors.purple,
+                        child: Icon(Icons.copy),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(32.0),
+                            side: BorderSide(color: Colors.white, width: 4.0)),
+                        onPressed: () {
+                          BlocProvider.of<PsiTestSaveBloc>(context)
+                              .add(SharePsiTest(test: currentTest));
+                        }),
+                    SizedBox(width: 20),
+                    FlatButton(
+                        height: 62,
+                        color: Colors.purple,
+                        child: Icon(Icons.share),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(32.0),
+                            side: BorderSide(color: Colors.white, width: 4.0)),
+                        onPressed: () {
+                          //  BlocProvider.of<PsiTestSaveBloc>(context)
+                          //     .add(SharePsiTest(test: currentTest));
+                          Share.share(shareLink);
+                        })
+                  ]),
+                  SizedBox(height: 20),
+                  CopyText('Send the link above to a friend'),
+                  CopyText('to invite them to the test')
+                ]);
+          } else {
+            return CopyText('loading shareLink $state');
+          }
+        });
+      } else {
+        actionButton = CopyText(
+            "There is a test underway and you are the Receiver.\n\nGo back and complete the test.");
       }
-    } else {
-      actionButton = CopyText(
-          "There is a test underway and you are the Receiver.\n\nGo back and complete the test.");
     }
 
     return BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
         builder: (context, state) {
       print(state);
-      if (state is PsiTestSaveCreateInProgress)
+      if (currentTest == null)
+        return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Image.asset("assets/loading_grow_flower.gif")
+          // CopyText('loading apps for sharing...'),
+        ]);
+      else if (state is PsiTestSaveCreateInProgress)
         return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           //CopyText(getMessage()
           Container(

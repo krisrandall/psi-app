@@ -69,20 +69,22 @@ class _HomeScreen extends StatelessWidget {
       Button(
         "Be the Sender",
         () {
+          goToScreen(context, SenderScreen());
           var newlyCreatedTest = PsiTest.beginNewTestAsSender();
           var event = CreatePsiTest(test: newlyCreatedTest);
           BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-          goToScreen(context, SenderScreen());
         },
       ),
       SizedBox(height: 10),
       Button(
         'Be the Receiver',
         () {
+          goToScreen(context, ReceiverScreen());
           var newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
           var event = CreatePsiTest(test: newlyCreatedTest);
           BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-          goToScreen(context, ReceiverScreen());
+          BlocProvider.of<PsiTestSaveBloc>(context)
+              .add(SharePsiTest(test: newlyCreatedTest));
         },
       ),
       /*Button(
@@ -189,6 +191,7 @@ class _HomeScreen extends StatelessWidget {
         print('do logic to cancel the test');
         var event = CancelPsiTest(test: currentTest);
         BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+        event = CancelPsiTest(test: currentTest);
         goToScreen(context, TableBgWrapper(HomeScreen()));
       }),
     ];
@@ -224,8 +227,8 @@ class _HomeScreen extends StatelessWidget {
             return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset("assets/loading_grow_flower.gif")
-                  // CopyText(getMessage()),
+                  // Image.asset("assets/loading_grow_flower.gif")
+                  CopyText('Ending Test'),
                   // CircularProgressIndicator()
                 ]);
           else

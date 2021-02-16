@@ -52,6 +52,31 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     yield* _mapSharePsiTestToState(event);
   }
 
+  /*Stream<PsiTestSaveState> _mapCreateShareLinkforPsiTestToState(
+    PsiTestSaveEvent event,
+  ) async* {
+    yield PsiTestCreateShareLinkInProgress();
+    try {
+      var shareTestUrl = await dynamicLink(event.test.testId);
+      print(shareTestUrl);
+      var shortUrl = await shortenLink(shareTestUrl.toString());
+      if (shortUrl == null) {
+        shortUrl = shareTestUrl.toString();
+        print(
+            'URL shortener returned null, maybe free limit exhausted, using the long URL');
+      }
+      print(shortUrl);
+      //Share.share('Take a Telepathy Test with me! $shortUrl');
+      print('shortUrl $shortUrl');
+      
+      print('shared');
+      yield PsiTestSaveShareSuccessful(shortUrl);
+    } catch (_) {
+      print('share failed');
+      yield PsiTestSaveShareFailed(exception: _);
+    }
+  }*/
+
   Stream<PsiTestSaveState> _mapSharePsiTestToState(
     PsiTestSaveEvent event,
   ) async* {
@@ -68,9 +93,9 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       print(shortUrl);
       //Share.share('Take a Telepathy Test with me! $shortUrl');
       print('shortUrl $shortUrl');
-      Share.share('$shortUrl');
+
       print('shared');
-      yield PsiTestSaveShareSuccessful();
+      yield PsiTestSaveShareSuccessful(shortUrl);
     } catch (_) {
       print('share failed');
       yield PsiTestSaveShareFailed(exception: _);
@@ -109,7 +134,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
           'status': 'underway'
         });
       }
-      yield PsiTestSaveCreateSuccessful();
+      //yield PsiTestSaveCreateSuccessful();
 
       // code for adding fresh tests to firebase if necessary
       //
