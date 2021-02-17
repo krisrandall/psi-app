@@ -52,6 +52,8 @@ dependencies:
   rxdart: ^0.24.1
 
   flutter_bloc: ^4.0.0
+  clipboard: ^0.1.2+8
+  flutter_facebook_login: ^3.0.0
 
   
 

@@ -16,6 +16,8 @@ import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 //import 'package:flutter_facebook_login/flutter_facebook_login.dart';
+import 'package:app/components/authentication.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -122,6 +124,9 @@ class _HomeScreen extends StatelessWidget {
           BlocProvider.of<PsiTestSaveBloc>(context).add(event);
         },
       ),*/
+      Button('FB login', () {
+        goToScreen(context, FBLogin());
+      }),
       StreamBuilder<QuerySnapshot>(
           stream: userTestStats.snapshots(),
           builder:

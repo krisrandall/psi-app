@@ -11,11 +11,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share/share.dart';
+import 'package:clipboard/clipboard.dart';
 
 class ReceiverScreen extends StatelessWidget {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: Text('𝚿 Psi Telepathy Test'),
         ),
@@ -28,13 +32,14 @@ class ReceiverScreen extends StatelessWidget {
               var currentTest =
                   createTestFromFirestore(snapshot.data.documents);
               print(currentTest);
-              return _ReceiverScreen(currentTest);
+              return _ReceiverScreen(currentTest, _scaffoldKey);
             })));
   }
 }
 
 class _ReceiverScreen extends StatelessWidget {
   final PsiTest currentTest;
+  final _scaffoldKey;
 
   void goToTestScreenAsynchronously(
       BuildContext context, PsiTest currentTest) async {
@@ -44,7 +49,17 @@ class _ReceiverScreen extends StatelessWidget {
             builder: (context) => TestScreen(currentTest.testId)));
   }
 
-  _ReceiverScreen(this.currentTest);
+  _ReceiverScreen(this.currentTest, this._scaffoldKey);
+  _showSnackBar() {
+    final snackBar = new SnackBar(
+        backgroundColor: Colors.purple,
+        duration: Duration(milliseconds: 1000),
+        content:
+            new Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          CopyText('Copied link'),
+        ]));
+    _scaffoldKey.currentState.showSnackBar(snackBar);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,18 +94,19 @@ class _ReceiverScreen extends StatelessWidget {
             return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                      //padding: EdgeInsets.only(left: 80.0, right: 80.0),
-                      width: 400,
-                      height: 70,
-                      child: TextFormField(
-                          //enabled: false,
-                          decoration: InputDecoration(
-                              //icon: Icon(Icons.copy, color: Colors.black),
-                              border: const OutlineInputBorder(),
-                              fillColor: Colors.purple[50],
-                              filled: true),
-                          initialValue: shareLink)),
+                  Padding(
+                      padding: EdgeInsets.only(left: 20, right: 20),
+                      child: SizedBox(
+                          //padding: EdgeInsets.only(left: 80.0, right: 80.0),
+                          width: 440,
+                          height: 70,
+                          child: TextFormField(
+                              //enabled: false,
+                              decoration: InputDecoration(
+                                  border: const OutlineInputBorder(),
+                                  fillColor: Colors.purple[50],
+                                  filled: true),
+                              initialValue: shareLink))),
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     FlatButton(
                         height: 62,
@@ -99,10 +115,9 @@ class _ReceiverScreen extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(32.0),
                             side: BorderSide(color: Colors.white, width: 4.0)),
-                        onPressed: () {
-                          BlocProvider.of<PsiTestSaveBloc>(context)
-                              .add(SharePsiTest(test: currentTest));
-                        }),
+                        onPressed:
+                            //FlutterClipboard.copy(shareLink);
+                            _showSnackBar),
                     SizedBox(width: 20),
                     FlatButton(
                         height: 62,
@@ -165,6 +180,7 @@ class _ReceiverScreen extends StatelessWidget {
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
+              //final snackBar = new SnackBar(content: new Text("Copied to Clipboard")),
               SizedBox(height: 5),
               TitleText('Receiver'),
               CopyText(
