@@ -15,7 +15,7 @@ class _FBLoginState extends State<FBLogin> {
 
   Future<Null> _login() async {
     final FacebookLoginResult result = await facebookSignIn.logIn(['email']);
-
+    print(result.accessToken.userId);
     switch (result.status) {
       case FacebookLoginStatus.loggedIn:
         final FacebookAccessToken accessToken = result.accessToken;
@@ -28,6 +28,7 @@ class _FBLoginState extends State<FBLogin> {
          Permissions: ${accessToken.permissions}
          Declined permissions: ${accessToken.declinedPermissions}
          ''');
+        // await http
         break;
       case FacebookLoginStatus.cancelledByUser:
         _showMessage('Login cancelled by the user.');
