@@ -6,6 +6,7 @@ import 'package:app/components/utils.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:app/components/textComponents.dart';
 import 'package:app/models/psiTest.dart';
+import 'package:app/screens/infoScreens.dart';
 import 'package:app/screens/testScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -60,39 +61,40 @@ class _ReceiverScreen extends StatelessWidget {
   Future<List> getFacebookFriendsList() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String facebookAccessToken = prefs.getString('facebookAccessToken');
-    String facebookID = prefs.getString('facebookID');
+    //String facebookID = prefs.getString('facebookID');
     Map jsonResponse;
     List friends;
+    try {
+      var response = await http.get(
+          "https://graph.facebook.com/me/friends?access_token=$facebookAccessToken");
 
-    var response = await http.get(
-        "https://graph.facebook.com/me/friends?access_token=$facebookAccessToken");
-    if (response.statusCode == 200) {
-      jsonResponse = convert.jsonDecode(response.body);
-      // ("https://graph.facebook.com/105153304956005/picture?small?access_token=$")
+      if (response.statusCode == 200) {
+        jsonResponse = convert.jsonDecode(response.body);
+        friends = jsonResponse['data'];
+        print(jsonResponse);
+        print("friends object: $friends");
+        print("friends 0 ${friends[0]}");
 
-      friends = jsonResponse['data'];
-      print(jsonResponse);
-      print("friends object: $friends");
-      print("friends 0 ${friends[0]}");
+        for (Map friend in friends) {
+          String friendID = friend['id'];
+          print(friendID);
 
-      for (Map friend in friends) {
-        String friendID = friend['id'];
-        print(friendID);
-
-        var friendProfilePic =
-            "https://graph.facebook.com/$friendID/picture?small?access_token=$facebookAccessToken";
-        facebookFriendsList.add(ListTile(
-            tileColor: Colors.purple[100],
-            leading: Image.network(friendProfilePic),
-            trailing: Icon(Icons.bar_chart),
-            title: Text(friend['name'])));
-        facebookFriendsList.add(SizedBox(height: 10));
+          var friendProfilePic =
+              "https://graph.facebook.com/$friendID/picture?small?access_token=$facebookAccessToken";
+          facebookFriendsList.add(ListTile(
+              tileColor: Colors.purple[100],
+              leading: Image.network(friendProfilePic),
+              trailing: Icon(Icons.bar_chart),
+              title: Text(friend['name'])));
+          facebookFriendsList.add(SizedBox(height: 10));
+        }
+      } else {
+        print(
+            'GET Request (facebook api) failed with status: ${response.statusCode}.');
+        return null;
       }
-      ;
-      print("facebook freinds list 0 : ${facebookFriendsList[0]}");
-    } else {
-      print(
-          'GET Request (facebook api) failed with status: ${response.statusCode}.');
+    } catch (error) {
+      print(error);
       return null;
     }
     return facebookFriendsList;
@@ -124,6 +126,8 @@ class _ReceiverScreen extends StatelessWidget {
     Widget facebookFriends = FutureBuilder<List>(
         future: getFacebookFriendsList(),
         builder: ((context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting)
+            return CircularProgressIndicator();
           if (!snapshot.hasData)
             return Button(
                 // this appears when ID or access token are not available
@@ -131,14 +135,16 @@ class _ReceiverScreen extends StatelessWidget {
                 signInWithFacebook);
           else {
             print(snapshot.data);
-            return Padding(
-                padding: EdgeInsets.only(left: 20, right: 20),
-                child: SizedBox(
-                    height: 400,
-                    width: 440,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: facebookFriendsList)));
+            return Column(children: [
+              SizedBox(height: 30),
+              Padding(
+                  padding: EdgeInsets.only(left: 20, right: 20),
+                  child: SizedBox(
+                      width: 440,
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: facebookFriendsList)))
+            ]);
           }
         }));
 
@@ -166,18 +172,9 @@ class _ReceiverScreen extends StatelessWidget {
             return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Padding(
-                      padding: EdgeInsets.only(left: 20, right: 20),
-                      child: SizedBox(
-                          width: 440,
-                          height: 70,
-                          child: TextFormField(
-                              //enabled: false,
-                              decoration: InputDecoration(
-                                  border: const OutlineInputBorder(),
-                                  fillColor: Colors.purple[50],
-                                  filled: true),
-                              initialValue: shareLink))),
+                  CopyText('''Send the link below to a friend
+      to invite them to the test'''),
+                  SizedBox(height: 30),
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     PsiIconButton(Icon(Icons.copy), () {
                       FlutterClipboard.copy(shareLink);
@@ -189,11 +186,28 @@ class _ReceiverScreen extends StatelessWidget {
                     })
                   ]),
                   SizedBox(height: 20),
-                  CopyText('Send the link above to a friend'),
-                  CopyText('to invite them to the test')
+                  Padding(
+                      padding: EdgeInsets.only(left: 20, right: 20),
+                      child: SizedBox(
+                          width: 440,
+                          height: 70,
+                          child: Text(shareLink,
+                              style: TextStyle(color: Colors.white)))),
+                  /*TextFormField(
+                              //enabled: false,
+                              decoration: InputDecoration(
+                                  border: const OutlineInputBorder(),
+                                  fillColor: Colors.purple[50],
+                                  filled: true),
+                              initialValue: shareLink))),*/
+                  SizedBox(height: 20),
                 ]);
           } else {
-            return CopyText('loading shareLink $state');
+            return Column(children: [
+              CopyText('loading shareLink'),
+              CircularProgressIndicator(),
+              SizedBox(height: 20),
+            ]);
           }
         });
       } else {
@@ -239,9 +253,18 @@ class _ReceiverScreen extends StatelessWidget {
               //final snackBar = new SnackBar(content: new Text("Copied to Clipboard")),
               SizedBox(height: 5),
               TitleText('Receiver'),
+              FlatButton(
+                  child: Icon(Icons.help),
+                  onPressed: () => goToScreen(context, ReceiverInfo())),
 
-              SizedBox(height: 10),
+              SizedBox(height: 19),
               actionButton,
+              SizedBox(
+                height: 40,
+              ),
+              CopyText('''    Or connect directly
+to your Facebook friends
+   (who have this app)'''),
               facebookFriends,
               SizedBox(height: 130),
             ]));
