@@ -128,17 +128,20 @@ class _LandingPageState extends State<LandingPage> {
         if (snapshot.connectionState == ConnectionState.active) {
           FirebaseUser user = snapshot.data;
           if (user == null) {
-            return Column(children: <Widget>[
-              Button("Sign in with Facebook", signInWithFacebook),
-              SecondaryButton("Not now", () {
-                _signInAnonymously();
-                //  _setFacebookPreference('dontUse');
-              }),
-              !_checking
-                  ? CircularProgressIndicator()
-                  : Text("access Token $_accessToken"),
-              Text('Logging in ..'),
-            ]);
+            return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  TitleText("Sign in with Facebook"),
+                  Button("Sign in with Facebook", signInWithFacebook),
+                  SecondaryButton("Not now", () {
+                    _signInAnonymously();
+                    //  _setFacebookPreference('dontUse');
+                  }),
+                  !_checking
+                      ? CircularProgressIndicator()
+                      : Text("access Token $_accessToken"),
+                  Text('Logging in ..'),
+                ]);
           } else if (signinErrorMessage != '') {
             return TitleText(signinErrorMessage);
           } else if (user != null && signinErrorMessage == '') {

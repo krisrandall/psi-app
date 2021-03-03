@@ -5,13 +5,6 @@ import 'package:app/models/psitest.dart';
 class ReceiverInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print('main build started');
-    /* to prevent device rotation - but not proven yet if works, or needed... 
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
-    */
-
     return CopyText(
         '''As the Receiver you will be presented with a set of four different pictures.  
 

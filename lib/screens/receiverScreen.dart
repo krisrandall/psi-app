@@ -65,19 +65,31 @@ class _ReceiverScreen extends StatelessWidget {
     List friends;
 
     var response = await http.get(
-        "https://graph.facebook.com/$facebookID/friends?access_token=$facebookAccessToken");
+        "https://graph.facebook.com/me/friends?access_token=$facebookAccessToken");
     if (response.statusCode == 200) {
       jsonResponse = convert.jsonDecode(response.body);
+      // ("https://graph.facebook.com/105153304956005/picture?small?access_token=$")
+
       friends = jsonResponse['data'];
       print(jsonResponse);
       print("friends object: $friends");
       print("friends 0 ${friends[0]}");
 
-      friends.forEach((friend) {
-        facebookFriendsList.add(Button(friend['name'], null));
+      for (Map friend in friends) {
+        String friendID = friend['id'];
+        print(friendID);
+
+        var friendProfilePic =
+            "https://graph.facebook.com/$friendID/picture?small?access_token=$facebookAccessToken";
+        facebookFriendsList.add(ListTile(
+            tileColor: Colors.purple[100],
+            leading: Image.network(friendProfilePic),
+            trailing: Icon(Icons.bar_chart),
+            title: Text(friend['name'])));
         facebookFriendsList.add(SizedBox(height: 10));
-      });
-      print(facebookFriendsList[0]);
+      }
+      ;
+      print("facebook freinds list 0 : ${facebookFriendsList[0]}");
     } else {
       print(
           'GET Request (facebook api) failed with status: ${response.statusCode}.');
@@ -87,6 +99,7 @@ class _ReceiverScreen extends StatelessWidget {
   }
 
   _ReceiverScreen(this.currentTest, this._receiverScreenScaffoldKey);
+
   _showSnackBar() {
     final snackBar = new SnackBar(
         backgroundColor: Colors.purple,
@@ -107,6 +120,7 @@ class _ReceiverScreen extends StatelessWidget {
       }
     });
     Widget actionButton;
+
     Widget facebookFriends = FutureBuilder<List>(
         future: getFacebookFriendsList(),
         builder: ((context, snapshot) {
@@ -117,7 +131,14 @@ class _ReceiverScreen extends StatelessWidget {
                 signInWithFacebook);
           else {
             print(snapshot.data);
-            return Column(children: facebookFriendsList);
+            return Padding(
+                padding: EdgeInsets.only(left: 20, right: 20),
+                child: SizedBox(
+                    height: 400,
+                    width: 440,
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: facebookFriendsList)));
           }
         }));
 
@@ -148,7 +169,6 @@ class _ReceiverScreen extends StatelessWidget {
                   Padding(
                       padding: EdgeInsets.only(left: 20, right: 20),
                       child: SizedBox(
-                          //padding: EdgeInsets.only(left: 80.0, right: 80.0),
                           width: 440,
                           height: 70,
                           child: TextFormField(
@@ -219,8 +239,7 @@ class _ReceiverScreen extends StatelessWidget {
               //final snackBar = new SnackBar(content: new Text("Copied to Clipboard")),
               SizedBox(height: 5),
               TitleText('Receiver'),
-              CopyText('''
-'''),
+
               SizedBox(height: 10),
               actionButton,
               facebookFriends,
