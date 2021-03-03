@@ -107,6 +107,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
   ) async* {
     yield PsiTestSaveCreateInProgress(0.2);
     try {
+      /*
       var db = Firestore.instance;
 
       Query findAvailableTestsOnFirestore = Firestore.instance
@@ -133,12 +134,12 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
           'receiver': globalCurrentUser.uid,
           'status': 'underway'
         });
-      }
+      }*/
       //yield PsiTestSaveCreateSuccessful();
 
       // code for adding fresh tests to firebase if necessary
       //
-      /*final db = Firestore.instance;
+      final db = Firestore.instance;
       Future createTest() async {
         print(globalCurrentUser.uid);
 
@@ -168,15 +169,16 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
           var options = List<String>();
 
           for (int j = 0; j < 4; j += 0) {
-            var imageId;
+            int imageId = rng.nextInt(1000);
 
-            await http
+            /* await http
                 .get('$path/$DEFAULT_IMAGE_SIZE')
                 .then((response) => imageId = response.headers['picsum-id']);
 
             if (imageId == '0' || imageId == '1' || imageId == null) {
               print('error while getting imageID');
-            } else {
+            } else */
+            {
               options.add('$path/id/$imageId/$DEFAULT_IMAGE_SIZE');
               print('adding option');
               j++;
@@ -203,7 +205,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
           .then((newTest) => db.collection('test').add(newTest));
 
       event.test.testId = ref.documentID;
-      */
+
       yield PsiTestSaveCreateSuccessful();
     } catch (_) {
       yield PsiTestSaveCreateFailed(exception: _);

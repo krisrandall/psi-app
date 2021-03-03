@@ -66,6 +66,8 @@ class _LandingPageState extends State<LandingPage> {
     await precacheImage(AssetImage('assets/splash.png'), context);
   }
 
+// TO DO : use these methods below to store facebook access token instead
+
   Future<String> _getFacebookPreference() async {
     final SharedPreferences prefs = await _prefs;
     return prefs.getString('facebookPreference') ?? 'use';
