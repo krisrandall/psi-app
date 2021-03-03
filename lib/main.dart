@@ -14,7 +14,7 @@ import 'dart:async';
 import 'package:app/screens/joinScreen.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
+import 'package:app/components/facebook_login.dart';
 
 void main() => runApp(MyApp());
 
@@ -79,18 +79,6 @@ class _LandingPageState extends State<LandingPage> {
     setState(() {
       prefs.setString('facebookPreference', preference);
     });
-  }
-
-  Future<Null> signInWithFacebook() async {
-    // Trigger the sign-in flow
-    final AccessToken accessToken = await FacebookAuth.instance.login();
-    _accessToken = accessToken;
-    // Create a credential from the access token
-    final FacebookAuthCredential facebookAuthCredential =
-        FacebookAuthProvider.getCredential(accessToken: _accessToken.token);
-
-    // Once signed in, return the UserCredential
-    await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
   }
 
   Future<void> _signInAnonymously() async {

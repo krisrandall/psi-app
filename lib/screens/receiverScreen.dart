@@ -10,7 +10,12 @@ import 'package:app/screens/testScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:app/components/facebook_login.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:share/share.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as convert;
 import 'package:clipboard/clipboard.dart';
 
 class ReceiverScreen extends StatelessWidget {
@@ -50,6 +55,37 @@ class _ReceiverScreen extends StatelessWidget {
             builder: (context) => TestScreen(currentTest.testId)));
   }
 
+  var facebookFriendsList = new List<Widget>();
+
+  Future<List> getFacebookFriendsList() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String facebookAccessToken = prefs.getString('facebookAccessToken');
+    String facebookID = prefs.getString('facebookID');
+    Map jsonResponse;
+    List friends;
+
+    var response = await http.get(
+        "https://graph.facebook.com/$facebookID/friends?access_token=$facebookAccessToken");
+    if (response.statusCode == 200) {
+      jsonResponse = convert.jsonDecode(response.body);
+      friends = jsonResponse['data'];
+      print(jsonResponse);
+      print("friends object: $friends");
+      print("friends 0 ${friends[0]}");
+
+      friends.forEach((friend) {
+        facebookFriendsList.add(Button(friend['name'], null));
+        facebookFriendsList.add(SizedBox(height: 10));
+      });
+      print(facebookFriendsList[0]);
+    } else {
+      print(
+          'GET Request (facebook api) failed with status: ${response.statusCode}.');
+      return null;
+    }
+    return facebookFriendsList;
+  }
+
   _ReceiverScreen(this.currentTest, this._receiverScreenScaffoldKey);
   _showSnackBar() {
     final snackBar = new SnackBar(
@@ -71,6 +107,20 @@ class _ReceiverScreen extends StatelessWidget {
       }
     });
     Widget actionButton;
+    Widget facebookFriends = FutureBuilder<List>(
+        future: getFacebookFriendsList(),
+        builder: ((context, snapshot) {
+          if (!snapshot.hasData)
+            return Button(
+                // this appears when ID or access token are not available
+                'log on to Facebook to find your friends',
+                signInWithFacebook);
+          else {
+            print(snapshot.data);
+            return Column(children: facebookFriendsList);
+          }
+        }));
+
     if (currentTest != null) if (currentTest.testStatus ==
         PsiTestStatus.UNDERWAY) return TestScreen(currentTest.testId);
 
@@ -109,29 +159,14 @@ class _ReceiverScreen extends StatelessWidget {
                                   filled: true),
                               initialValue: shareLink))),
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    FlatButton(
-                        height: 62,
-                        color: Colors.purple,
-                        child: Icon(Icons.copy),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(32.0),
-                            side: BorderSide(color: Colors.white, width: 4.0)),
-                        onPressed:
-                            //FlutterClipboard.copy(shareLink);
-                            _showSnackBar),
+                    PsiIconButton(Icon(Icons.copy), () {
+                      FlutterClipboard.copy(shareLink);
+                      _showSnackBar();
+                    }),
                     SizedBox(width: 20),
-                    FlatButton(
-                        height: 62,
-                        color: Colors.purple,
-                        child: Icon(Icons.share),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(32.0),
-                            side: BorderSide(color: Colors.white, width: 4.0)),
-                        onPressed: () {
-                          //  BlocProvider.of<PsiTestSaveBloc>(context)
-                          //     .add(SharePsiTest(test: currentTest));
-                          Share.share(shareLink);
-                        })
+                    PsiIconButton(Icon(Icons.share), () {
+                      Share.share(shareLink);
+                    })
                   ]),
                   SizedBox(height: 20),
                   CopyText('Send the link above to a friend'),
@@ -184,17 +219,11 @@ class _ReceiverScreen extends StatelessWidget {
               //final snackBar = new SnackBar(content: new Text("Copied to Clipboard")),
               SizedBox(height: 5),
               TitleText('Receiver'),
-              CopyText(
-                  '''As the Receiver you will be presented with a set of four different pictures.  
-
-The Sender will be looking at one of those pictures and telepathically projecting a mental image of it to you.
-
-Your job as the Receiver is to receive that mental image, and choose the picture that the Sender is sending by clicking on it.
-
-There will be $DEFAULT_NUM_QUESTIONS sets of images in the test.
+              CopyText('''
 '''),
               SizedBox(height: 10),
               actionButton,
+              facebookFriends,
               SizedBox(height: 130),
             ]));
     });

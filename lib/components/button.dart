@@ -1,13 +1,11 @@
-
 import 'package:flutter/material.dart';
 
 class Button extends StatelessWidget {
-
   final buttonText;
   final onPressed;
 
   Button(this.buttonText, this.onPressed);
-  
+
   @override
   Widget build(BuildContext context) {
     return FlatButton(
@@ -18,11 +16,8 @@ class Button extends StatelessWidget {
       padding: EdgeInsets.all(18.0),
       splashColor: Colors.blueAccent,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(32.0),
-        side: BorderSide(
-          color: Colors.white,
-          width: 4.0)
-      ),
+          borderRadius: BorderRadius.circular(32.0),
+          side: BorderSide(color: Colors.white, width: 4.0)),
       onPressed: onPressed,
       child: Text(
         buttonText,
@@ -30,5 +25,21 @@ class Button extends StatelessWidget {
       ),
     );
   }
+}
 
+class PsiIconButton extends StatelessWidget {
+  final icon;
+  final onPressed;
+  PsiIconButton(this.icon, this.onPressed);
+  @override
+  Widget build(BuildContext context) {
+    return FlatButton(
+        height: 62,
+        color: Colors.purple,
+        child: icon,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(32.0),
+            side: BorderSide(color: Colors.white, width: 4.0)),
+        onPressed: onPressed);
+  }
 }
