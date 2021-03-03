@@ -1,4 +1,6 @@
 import 'package:app/bloc/psitestsave_bloc.dart';
+import 'package:app/components/button.dart';
+import 'package:app/components/secondaryButton.dart';
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:app/components/textComponents.dart';
@@ -10,6 +12,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uni_links/uni_links.dart';
 import 'dart:async';
 import 'package:app/screens/joinScreen.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
 
 void main() => runApp(MyApp());
 
@@ -47,31 +52,64 @@ class _LandingPageState extends State<LandingPage> {
   String signinErrorMessage = "";
   StreamSubscription _sub;
   String deepLink;
+  AccessToken _accessToken;
+  bool _checking = true;
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   void goToHomeScreenAsynchronously(BuildContext context) async {
     await Navigator.push(
         context, MaterialPageRoute(builder: (context) => HomeScreen()));
   }
 
+  Future<void> precacheImages() async {
+    await precacheImage(AssetImage('assets/table.jpg'), context);
+    await precacheImage(AssetImage('assets/splash.png'), context);
+  }
+
+  Future<String> _getFacebookPreference() async {
+    final SharedPreferences prefs = await _prefs;
+    return prefs.getString('facebookPreference') ?? 'use';
+  }
+
+  Future _saveFacebookPreference(preference) async {
+    print('setting facebook preference to $preference');
+    final SharedPreferences prefs = await _prefs;
+    setState(() {
+      prefs.setString('facebookPreference', preference);
+    });
+  }
+
+  Future<Null> signInWithFacebook() async {
+    // Trigger the sign-in flow
+    final AccessToken accessToken = await FacebookAuth.instance.login();
+    _accessToken = accessToken;
+    // Create a credential from the access token
+    final FacebookAuthCredential facebookAuthCredential =
+        FacebookAuthProvider.getCredential(accessToken: _accessToken.token);
+
+    // Once signed in, return the UserCredential
+    await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+  }
+
+  Future<void> _signInAnonymously() async {
+    //set preference
+    try {
+      await FirebaseAuth.instance.signInAnonymously();
+    } catch (e) {
+      setState(() {
+        signinErrorMessage = "Unable to Sign in\n" +
+            "Check your internet connection\n" +
+            e.toString();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     print('landing page');
-    Future<void> _signInAnonymously() async {
-      print('signinanon page');
-      try {
-        await precacheImage(AssetImage('assets/table.jpg'), context);
-        await precacheImage(AssetImage('assets/splash.png'), context);
-        await FirebaseAuth.instance.signInAnonymously();
-      } catch (e) {
-        setState(() {
-          signinErrorMessage = "Unable to Sign in\n" +
-              "Check your internet connection\n" +
-              e.toString();
-        });
-      }
-    }
 
-    _signInAnonymously(); // auto anon signin
+    precacheImages();
+    //_signInAnonymously(); // auto anon signin
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       try {
         deepLink = await getInitialLink();
@@ -93,12 +131,7 @@ class _LandingPageState extends State<LandingPage> {
       }
     });
 
-    return /*Scaffold(
-        appBar: AppBar(
-          title: Text('𝚿 Psi Telepathy Test'),
-        ),
-        body: */
-        TableBgWrapper(StreamBuilder<FirebaseUser>(
+    return TableBgWrapper(StreamBuilder<FirebaseUser>(
       stream: FirebaseAuth.instance.onAuthStateChanged,
       builder: (context, snapshot) {
         print(snapshot.connectionState);
@@ -106,13 +139,21 @@ class _LandingPageState extends State<LandingPage> {
           FirebaseUser user = snapshot.data;
           if (user == null) {
             return Column(children: <Widget>[
-              CircularProgressIndicator(),
+              Button("Sign in with Facebook", signInWithFacebook),
+              SecondaryButton("Not now", () {
+                _signInAnonymously();
+                //  _setFacebookPreference('dontUse');
+              }),
+              !_checking
+                  ? CircularProgressIndicator()
+                  : Text("access Token $_accessToken"),
               Text('Logging in ..'),
             ]);
           } else if (signinErrorMessage != '') {
             return TitleText(signinErrorMessage);
           } else if (user != null && signinErrorMessage == '') {
             globalCurrentUser = user;
+
             return HomeScreen();
             /*
                 Future.microtask(() {

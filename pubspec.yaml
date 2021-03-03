@@ -27,7 +27,8 @@ dependencies:
   firebase_core: ^0.4.5
   firebase_auth: ^0.16.1
   cloud_firestore: ^0.13.6
-  
+  firebase_auth_platform_interface: ^1.0.4
+
   uni_links: ^0.4.0
       
   page_transition: "^1.1.5"
@@ -53,7 +54,8 @@ dependencies:
 
   flutter_bloc: ^4.0.0
   clipboard: ^0.1.2+8
-  flutter_facebook_login: ^3.0.0
+  flutter_facebook_auth: "^1.0.0"
+  shared_preferences: ^0.5.12+4
 
   
 

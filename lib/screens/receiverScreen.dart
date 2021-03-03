@@ -14,12 +14,13 @@ import 'package:share/share.dart';
 import 'package:clipboard/clipboard.dart';
 
 class ReceiverScreen extends StatelessWidget {
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> _receiverScreenScaffoldKey =
+      new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: _scaffoldKey,
+        key: _receiverScreenScaffoldKey,
         appBar: AppBar(
           title: Text('𝚿 Psi Telepathy Test'),
         ),
@@ -32,14 +33,14 @@ class ReceiverScreen extends StatelessWidget {
               var currentTest =
                   createTestFromFirestore(snapshot.data.documents);
               print(currentTest);
-              return _ReceiverScreen(currentTest, _scaffoldKey);
+              return _ReceiverScreen(currentTest, _receiverScreenScaffoldKey);
             })));
   }
 }
 
 class _ReceiverScreen extends StatelessWidget {
   final PsiTest currentTest;
-  final _scaffoldKey;
+  final _receiverScreenScaffoldKey;
 
   void goToTestScreenAsynchronously(
       BuildContext context, PsiTest currentTest) async {
@@ -49,7 +50,7 @@ class _ReceiverScreen extends StatelessWidget {
             builder: (context) => TestScreen(currentTest.testId)));
   }
 
-  _ReceiverScreen(this.currentTest, this._scaffoldKey);
+  _ReceiverScreen(this.currentTest, this._receiverScreenScaffoldKey);
   _showSnackBar() {
     final snackBar = new SnackBar(
         backgroundColor: Colors.purple,
@@ -58,7 +59,7 @@ class _ReceiverScreen extends StatelessWidget {
             new Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           CopyText('Copied link'),
         ]));
-    _scaffoldKey.currentState.showSnackBar(snackBar);
+    _receiverScreenScaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   @override

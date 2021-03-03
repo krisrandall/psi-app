@@ -1,9 +1,9 @@
 import 'package:app/bloc/psitestsave_bloc.dart';
 import 'package:app/components/button.dart';
-import 'package:app/components/loadingMessages.dart';
 import 'package:app/components/utils.dart';
 import 'package:app/components/secondaryButton.dart';
 import 'package:app/components/textComponents.dart';
+import 'package:app/main.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:app/screens/creditsScreen.dart';
 import 'package:app/screens/learnMoreScreen.dart';
@@ -15,13 +15,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-import 'package:app/components/authentication.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:app/components/fb_login.dart';
 
 class HomeScreen extends StatelessWidget {
+  final GlobalKey<ScaffoldState> _homeScaffoldKey =
+      new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
+    print('in home screen');
     return Scaffold(
         appBar: AppBar(
           title: Text('𝚿 Psi Telepathy Test'),
@@ -34,14 +35,15 @@ class HomeScreen extends StatelessWidget {
                 return psiTestNotAvailableWidget(context, snapshot);
               var currentTest =
                   createTestFromFirestore(snapshot.data.documents);
-              return _HomeScreen(currentTest);
+              return _HomeScreen(currentTest, _homeScaffoldKey);
             })));
   }
 }
 
 class _HomeScreen extends StatelessWidget {
   final PsiTest currentTest;
-  _HomeScreen(this.currentTest);
+  final _homeScaffoldKey;
+  _HomeScreen(this.currentTest, this._homeScaffoldKey);
 
   void goToTestScreenAsynchronously(
       BuildContext context, PsiTest currentTest) async {
@@ -51,12 +53,27 @@ class _HomeScreen extends StatelessWidget {
             builder: (context) => TestScreen(currentTest.testId)));
   }
 
+  _showSnackBar() {
+    final snackBar = new SnackBar(
+        backgroundColor: Colors.purple,
+        //duration: Duration(milliseconds: 1000),
+        content: new Center(
+            child: Column(children: [
+          CopyText('Copied link'),
+          Button(() {
+            _homeScaffoldKey.currentState.hideCurrentSnackBar();
+          }, 'No, Thanks'),
+        ])));
+    _homeScaffoldKey.currentState.showSnackBar(snackBar);
+  }
+
+  var user = globalCurrentUser;
+
   @override
   Widget build(BuildContext context) {
     // load other BG images to avoid a flash of white BG when navigating to other pages for the first time
     precacheImage(AssetImage('assets/left.jpg'), context);
     precacheImage(AssetImage('assets/right.jpg'), context);
-    precacheImage(AssetImage('assets/gypsie.png'), context);
     precacheImage(AssetImage('assets/loading_grow_flower.gif'), context);
 
     Future.microtask(() {
@@ -89,43 +106,9 @@ class _HomeScreen extends StatelessWidget {
               .add(SharePsiTest(test: newlyCreatedTest));
         },
       ),
-      /*Button(
-        'create 5 tests',
-        () {
-          var newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
-          var event = CreatePsiTest(test: newlyCreatedTest);
-          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-          newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
-          event = CreatePsiTest(test: newlyCreatedTest);
-          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-          newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
-          event = CreatePsiTest(test: newlyCreatedTest);
-          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-          newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
-          event = CreatePsiTest(test: newlyCreatedTest);
-          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-          newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
-          event = CreatePsiTest(test: newlyCreatedTest);
-          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-          newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
-          event = CreatePsiTest(test: newlyCreatedTest);
-          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-          newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
-          event = CreatePsiTest(test: newlyCreatedTest);
-          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-          newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
-          event = CreatePsiTest(test: newlyCreatedTest);
-          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-          newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
-          event = CreatePsiTest(test: newlyCreatedTest);
-          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-          newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
-          event = CreatePsiTest(test: newlyCreatedTest);
-          BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-        },
-      ),*/
-      Button('FB login', () {
-        goToScreen(context, FBLogin());
+      SizedBox(height: 10),
+      Button('FB logout', () {
+        goToScreen(context, LandingPage());
       }),
       StreamBuilder<QuerySnapshot>(
           stream: userTestStats.snapshots(),
