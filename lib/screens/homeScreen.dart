@@ -151,10 +151,9 @@ class _HomeScreen extends StatelessWidget {
       CopyText('You have created a test and you are the Sender.'),
       CopyText('Try inviting a friend to join your test.'),
       Button(
-        'Invite Friend via a share link',
+        'Invite Friend to your Test',
         () {
-          BlocProvider.of<PsiTestSaveBloc>(context)
-              .add(SharePsiTest(test: currentTest));
+          goToScreen(context, SenderScreen());
         },
       ),
       SecondaryButton('End the Test', () {
@@ -169,10 +168,9 @@ class _HomeScreen extends StatelessWidget {
       CopyText('You have created a test and you are the Receiver.'),
       CopyText('Try inviting a friend to join your test.'),
       Button(
-        'Invite Friend via a share link',
+        'Invite Friend to your Test',
         () {
-          BlocProvider.of<PsiTestSaveBloc>(context)
-              .add(SharePsiTest(test: currentTest));
+          goToScreen(context, SenderScreen());
         },
       ),
       SecondaryButton('End the Test', () {
@@ -225,8 +223,13 @@ class _HomeScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 SizedBox(height: 10),
-                TitleText(
-                    'The Psi Telepathy Test App lets you discover your telepathic abilities with a friend.'),
+                SizedBox(
+                    width: 440,
+                    child: TitleText(
+                        'The Psi Telepathy Test App lets you discover your telepathic abilities with a friend.')),
+                SizedBox(
+                  height: 40,
+                ),
                 ...screenOptions,
                 SizedBox(height: 60),
                 FooterButtons(),

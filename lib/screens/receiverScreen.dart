@@ -257,7 +257,7 @@ class _ReceiverScreen extends StatelessWidget {
                   child: Icon(Icons.help),
                   onPressed: () => goToScreen(context, ReceiverInfo())),
 
-              SizedBox(height: 19),
+              // SizedBox(height: 19),
               actionButton,
               SizedBox(
                 height: 40,
