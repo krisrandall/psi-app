@@ -92,6 +92,8 @@ class _HomeScreen extends StatelessWidget {
           var newlyCreatedTest = PsiTest.beginNewTestAsSender();
           var event = CreatePsiTest(test: newlyCreatedTest);
           BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+          BlocProvider.of<PsiTestSaveBloc>(context)
+              .add(SharePsiTest(test: newlyCreatedTest));
         },
       ),
       SizedBox(height: 10),
@@ -148,15 +150,16 @@ class _HomeScreen extends StatelessWidget {
           ];
 
     List<Widget> awaitingReceiver = [
-      CopyText('You have created a test and you are the Sender.'),
+      CopyText('You are the Sender.'),
       CopyText('Try inviting a friend to join your test.'),
+      SizedBox(height: 30),
       Button(
         'Invite Friend to your Test',
         () {
           goToScreen(context, SenderScreen());
         },
       ),
-      SecondaryButton('End the Test', () {
+      SecondaryButton('Choose different role', () {
         print('do logic to cancel the test');
         var event = CancelPsiTest(test: currentTest);
         BlocProvider.of<PsiTestSaveBloc>(context).add(event);
@@ -165,15 +168,16 @@ class _HomeScreen extends StatelessWidget {
     ];
 
     List<Widget> awaitingSender = [
-      CopyText('You have created a test and you are the Receiver.'),
+      CopyText('You are the Receiver.'),
       CopyText('Try inviting a friend to join your test.'),
+      SizedBox(height: 30),
       Button(
         'Invite Friend to your Test',
         () {
-          goToScreen(context, SenderScreen());
+          goToScreen(context, ReceiverScreen());
         },
       ),
-      SecondaryButton('End the Test', () {
+      SecondaryButton('Choose different role', () {
         print('do logic to cancel the test');
         var event = CancelPsiTest(test: currentTest);
         BlocProvider.of<PsiTestSaveBloc>(context).add(event);
