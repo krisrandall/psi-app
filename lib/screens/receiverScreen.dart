@@ -152,7 +152,7 @@ class _ReceiverScreen extends StatelessWidget {
         PsiTestStatus.UNDERWAY) return TestScreen(currentTest.testId);
 
     if (currentTest == null) {
-      actionButton = Image.asset("assets/loading_grow_flower.gif");
+      actionButton = Image.asset("assets/sun_loading_spinner.gif");
     } else if (currentTest.myRole == PsiTestRole.RECEIVER) {
       if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
         actionButton = TitleText('Test starting now...');
@@ -220,44 +220,27 @@ class _ReceiverScreen extends StatelessWidget {
         builder: (context, state) {
       print(state);
       if (currentTest == null)
-        return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Image.asset("assets/loading_grow_flower.gif")
-          // CopyText('loading apps for sharing...'),
-        ]);
+        return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [Image.asset("assets/sun_loading_spinner.gif")]);
       else if (state is PsiTestSaveCreateInProgress)
-        return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          //CopyText(getMessage()
-          Container(
-              width: 60, child: Image.asset("assets/loading_grow_flower.gif"))
-          // child: LinearProgressIndicator(value: state.getProgress()))
-        ]);
-      else if (state is PsiTestSaveAddQuestionsInProgress) {
-        print(state.getProgress());
-        return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          //CopyText('loading test questions...'),
-          CopyText('creating test...'),
-          Container(
-              width: 60,
-              child: LinearProgressIndicator(value: state.getProgress()))
-        ]);
-      } else if (state is PsiTestSaveShareInProgress)
-        return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Image.asset("assets/loading_grow_flower.gif")
-          //CopyText('loading apps for sharing...'),
-        ]);
+        return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [Image.asset("assets/sun_loading_spinner.gif")]);
+      else if (state is PsiTestSaveShareInProgress)
+        return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [Image.asset("assets/sun_loading_spinner.gif")]);
       else
         return SingleChildScrollView(
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-              //final snackBar = new SnackBar(content: new Text("Copied to Clipboard")),
               SizedBox(height: 5),
               TitleText('Receiver'),
               FlatButton(
                   child: Icon(Icons.help),
                   onPressed: () => goToScreen(context, ReceiverInfo())),
-
-              // SizedBox(height: 19),
               actionButton,
               SizedBox(
                 height: 40,

@@ -152,7 +152,7 @@ class _SenderScreen extends StatelessWidget {
         PsiTestStatus.UNDERWAY) return TestScreen(currentTest.testId);
 
     if (currentTest == null) {
-      actionButton = Image.asset("assets/loading_grow_flower.gif");
+      actionButton = Image.asset("assets/sun_loading_spinner.gif");
     } else if (currentTest.myRole == PsiTestRole.SENDER) {
       if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
         actionButton = TitleText('Test starting now...');
@@ -221,14 +221,14 @@ class _SenderScreen extends StatelessWidget {
       print(state);
       if (currentTest == null)
         return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Image.asset("assets/loading_grow_flower.gif")
+          Image.asset("assets/sun_loading_spinner.gif")
           // CopyText('loading apps for sharing...'),
         ]);
       else if (state is PsiTestSaveCreateInProgress)
         return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           //CopyText(getMessage()
           Container(
-              width: 60, child: Image.asset("assets/loading_grow_flower.gif"))
+              width: 60, child: Image.asset("assets/sun_loading_spinner.gif"))
           // child: LinearProgressIndicator(value: state.getProgress()))
         ]);
       else if (state is PsiTestSaveAddQuestionsInProgress) {
@@ -242,7 +242,7 @@ class _SenderScreen extends StatelessWidget {
         ]);
       } else if (state is PsiTestSaveShareInProgress)
         return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Image.asset("assets/loading_grow_flower.gif")
+          Image.asset("assets/sun_loading_spinner.gif")
           //CopyText('loading apps for sharing...'),
         ]);
       else

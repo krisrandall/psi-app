@@ -74,7 +74,7 @@ class _HomeScreen extends StatelessWidget {
     // load other BG images to avoid a flash of white BG when navigating to other pages for the first time
     precacheImage(AssetImage('assets/left.jpg'), context);
     precacheImage(AssetImage('assets/right.jpg'), context);
-    precacheImage(AssetImage('assets/loading_grow_flower.gif'), context);
+    precacheImage(AssetImage('assets/sun_loading_spinner.gif'), context);
 
     Future.microtask(() {
       if ((currentTest != null) &&
@@ -210,14 +210,14 @@ class _HomeScreen extends StatelessWidget {
             return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset("assets/loading_grow_flower.gif")
+                  Image.asset("assets/sun_loading_spinner.gif")
                   // CircularProgressIndicator()
                 ]);
           if (state is PsiTestSaveCancelInProgress)
             return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Image.asset("assets/loading_grow_flower.gif")
+                  // Image.asset("assets/sun_loading_spinner.gif")
                   CopyText('Ending Test'),
                   // CircularProgressIndicator()
                 ]);
