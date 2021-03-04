@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
+import 'package:app/components/livePsiTestStream.dart';
 
 AccessToken _accessToken;
 
@@ -14,11 +15,21 @@ Future<Null> _saveFacebookAccessToken(AccessToken accessToken) async {
   prefs.setString('facebookID', accessToken.userId);
 }
 
+void _setFacebookIdAsFirebaseUserProfileName(facebookUserId) {
+  if (globalCurrentUser.isAnonymous && globalCurrentUser.displayName == null) {
+    globalCurrentUser.updateProfile(displayName: facebookUserId);
+    print(
+        'ran _setFacebookIdAsFirebaseUserProfileName and now profile name = ${globalCurrentUser.displayName}');
+  } else
+    print('profile name = ${globalCurrentUser.displayName}');
+}
+
 Future<Null> signInWithFacebook() async {
   // Trigger the sign-in flow
   final AccessToken accessToken = await FacebookAuth.instance.login();
   _accessToken = accessToken;
   _saveFacebookAccessToken(accessToken);
+  _setFacebookIdAsFirebaseUserProfileName(_accessToken.userId);
   // Create a credential from the access token
   final FacebookAuthCredential facebookAuthCredential =
       FacebookAuthProvider.getCredential(accessToken: _accessToken.token);
@@ -27,6 +38,9 @@ Future<Null> signInWithFacebook() async {
   // Once signed in, return the UserCredential
   await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
 }
+
+// facebook users need to have their e-mail addresses explicitly added. see here: (https://github.com/FirebaseExtended/flutterfire/issues/4612#issuecomment-782107867)
+//
 
 var facebookFriendsList;
 

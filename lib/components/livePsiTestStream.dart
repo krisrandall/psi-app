@@ -10,12 +10,14 @@ var globalCurrentUser;
 
 Query firestoreDatabaseStream = Firestore.instance
     .collection('test')
-    .where('parties', arrayContains: globalCurrentUser.uid)
+    .where('parties',
+        arrayContains: globalCurrentUser.uid || globalCurrentUser.displayName)
     .where("status", isEqualTo: "underway");
 
 Query userTestStats = Firestore.instance
     .collection('test')
-    .where('parties', arrayContains: globalCurrentUser.uid)
+    .where('parties',
+        arrayContains: globalCurrentUser.uid || globalCurrentUser.displayName)
     .where("status", isEqualTo: "completed");
 
 /// Convert a firestore data snapshot into a psiTest
