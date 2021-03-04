@@ -28,9 +28,10 @@ Future<Null> signInWithFacebook() async {
   await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
 }
 
-var facebookFriendsList = new List<Widget>();
+var facebookFriendsList;
 
 Future<List> getFacebookFriendsList() async {
+  facebookFriendsList = new List<Widget>();
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   String facebookAccessToken = prefs.getString('facebookAccessToken');
   //String facebookID = prefs.getString('facebookID');
@@ -60,6 +61,12 @@ Future<List> getFacebookFriendsList() async {
             title: Text(friend['name'])));
         facebookFriendsList.add(SizedBox(height: 10));
       }
+      if (facebookFriendsList.length == 0)
+        return [
+          Text(
+              "none of your Facebook friends have this app installed. Use the link above to invite them",
+              style: TextStyle(color: Colors.white)),
+        ];
     } else {
       print(
           'GET Request (facebook api) failed with status: ${response.statusCode}.');
