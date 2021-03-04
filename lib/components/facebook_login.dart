@@ -57,15 +57,14 @@ Future<List> getFacebookFriendsList() async {
         facebookFriendsList.add(ListTile(
             tileColor: Colors.purple[100],
             leading: Image.network(friendProfilePic),
-            trailing: Icon(Icons.bar_chart),
+            trailing: Icon(Icons.send_sharp),
             title: Text(friend['name'])));
         facebookFriendsList.add(SizedBox(height: 10));
       }
       if (facebookFriendsList.length == 0)
         return [
-          Text(
-              "none of your Facebook friends have this app installed. Use the link above to invite them",
-              style: TextStyle(color: Colors.white)),
+          Text('''none of your Facebook friends have this app installed. 
+Use the link above to invite them''', style: TextStyle(color: Colors.white)),
         ];
     } else {
       print(
