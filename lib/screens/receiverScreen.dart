@@ -26,6 +26,11 @@ class ReceiverScreen extends StatelessWidget {
         key: _receiverScreenScaffoldKey,
         appBar: AppBar(
           title: Text('𝚿 Psi Telepathy Test'),
+          actions: [
+            IconButton(
+                icon: Icon(Icons.help),
+                onPressed: () => goToScreen(context, ReceiverInfo())),
+          ],
         ),
         body: RightBgWrapper(StreamBuilder<QuerySnapshot>(
             stream: firestoreDatabaseStream.snapshots(),
@@ -172,15 +177,9 @@ class _ReceiverScreen extends StatelessWidget {
     return BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
         builder: (context, state) {
       print(state);
-      if (currentTest == null)
-        return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [Image.asset("assets/sun_loading_spinner.gif")]);
-      else if (state is PsiTestSaveCreateInProgress)
-        return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [Image.asset("assets/sun_loading_spinner.gif")]);
-      else if (state is PsiTestSaveShareInProgress)
+      if (currentTest == null ||
+          state is PsiTestSaveCreateInProgress ||
+          state is PsiTestSaveShareInProgress)
         return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [Image.asset("assets/sun_loading_spinner.gif")]);
@@ -191,9 +190,6 @@ class _ReceiverScreen extends StatelessWidget {
                 children: <Widget>[
               SizedBox(height: 5),
               TitleText('Receiver'),
-              FlatButton(
-                  child: Icon(Icons.help),
-                  onPressed: () => goToScreen(context, ReceiverInfo())),
               actionButton,
               SizedBox(
                 height: 40,

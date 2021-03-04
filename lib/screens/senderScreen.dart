@@ -12,11 +12,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/components/facebook_login.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:share/share.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert' as convert;
 import 'package:clipboard/clipboard.dart';
 
 class SenderScreen extends StatelessWidget {
@@ -29,6 +25,11 @@ class SenderScreen extends StatelessWidget {
         key: _senderScreenScaffoldKey,
         appBar: AppBar(
           title: Text('𝚿 Psi Telepathy Test'),
+          actions: [
+            IconButton(
+                icon: Icon(Icons.help),
+                onPressed: () => goToScreen(context, SenderInfo())),
+          ],
         ),
         body: LeftBgWrapper(StreamBuilder<QuerySnapshot>(
             stream: firestoreDatabaseStream.snapshots(),
@@ -54,50 +55,6 @@ class _SenderScreen extends StatelessWidget {
         context,
         MaterialPageRoute(
             builder: (context) => TestScreen(currentTest.testId)));
-  }
-
-  var facebookFriendsList = new List<Widget>();
-
-  Future<List> getFacebookFriendsList() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String facebookAccessToken = prefs.getString('facebookAccessToken');
-    //String facebookID = prefs.getString('facebookID');
-    Map jsonResponse;
-    List friends;
-    try {
-      var response = await http.get(
-          "https://graph.facebook.com/me/friends?access_token=$facebookAccessToken");
-
-      if (response.statusCode == 200) {
-        jsonResponse = convert.jsonDecode(response.body);
-        friends = jsonResponse['data'];
-        print(jsonResponse);
-        print("friends object: $friends");
-        print("friends 0 ${friends[0]}");
-
-        for (Map friend in friends) {
-          String friendID = friend['id'];
-          print(friendID);
-
-          var friendProfilePic =
-              "https://graph.facebook.com/$friendID/picture?small?access_token=$facebookAccessToken";
-          facebookFriendsList.add(ListTile(
-              tileColor: Colors.purple[100],
-              leading: Image.network(friendProfilePic),
-              trailing: Icon(Icons.bar_chart),
-              title: Text(friend['name'])));
-          facebookFriendsList.add(SizedBox(height: 10));
-        }
-      } else {
-        print(
-            'GET Request (facebook api) failed with status: ${response.statusCode}.');
-        return null;
-      }
-    } catch (error) {
-      print(error);
-      return null;
-    }
-    return facebookFriendsList;
   }
 
   _SenderScreen(this.currentTest, this._senderScreenScaffoldKey);
@@ -219,45 +176,20 @@ class _SenderScreen extends StatelessWidget {
     return BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
         builder: (context, state) {
       print(state);
-      if (currentTest == null)
-        return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Image.asset("assets/sun_loading_spinner.gif")
-          // CopyText('loading apps for sharing...'),
-        ]);
-      else if (state is PsiTestSaveCreateInProgress)
-        return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          //CopyText(getMessage()
-          Container(
-              width: 60, child: Image.asset("assets/sun_loading_spinner.gif"))
-          // child: LinearProgressIndicator(value: state.getProgress()))
-        ]);
-      else if (state is PsiTestSaveAddQuestionsInProgress) {
-        print(state.getProgress());
-        return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          //CopyText('loading test questions...'),
-          CopyText('creating test...'),
-          Container(
-              width: 60,
-              child: LinearProgressIndicator(value: state.getProgress()))
-        ]);
-      } else if (state is PsiTestSaveShareInProgress)
-        return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Image.asset("assets/sun_loading_spinner.gif")
-          //CopyText('loading apps for sharing...'),
-        ]);
+      if (currentTest == null ||
+          state is PsiTestSaveCreateInProgress ||
+          state is PsiTestSaveShareInProgress)
+        return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [Image.asset("assets/sun_loading_spinner.gif")]);
       else
         return SingleChildScrollView(
             child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-              //final snackBar = new SnackBar(content: new Text("Copied to Clipboard")),
               SizedBox(height: 5),
               TitleText('Sender'),
-              FlatButton(
-                  child: Icon(Icons.help),
-                  onPressed: () => goToScreen(context, SenderInfo())),
-
-              // SizedBox(height: 19),
+              SizedBox(height: 19),
               actionButton,
               SizedBox(
                 height: 40,

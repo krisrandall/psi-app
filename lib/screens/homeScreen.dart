@@ -9,6 +9,7 @@ import 'package:app/screens/creditsScreen.dart';
 import 'package:app/screens/learnMoreScreen.dart';
 import 'package:app/screens/receiverScreen.dart';
 import 'package:app/screens/senderScreen.dart';
+import 'package:app/screens/settingsScreen.dart';
 import 'package:app/screens/testScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,6 +26,12 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: Text('𝚿 Psi Telepathy Test'),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: () => goToScreen(context, SettingsScreen()),
+            )
+          ],
         ),
         body: TableBgWrapper(StreamBuilder<QuerySnapshot>(
             stream: firestoreDatabaseStream.snapshots(),
@@ -107,10 +114,6 @@ class _HomeScreen extends StatelessWidget {
               .add(SharePsiTest(test: newlyCreatedTest));
         },
       ),
-      SizedBox(height: 10),
-      Button('FB logout', () {
-        goToScreen(context, LandingPage());
-      }),
       StreamBuilder<QuerySnapshot>(
           stream: userTestStats.snapshots(),
           builder:
@@ -149,8 +152,8 @@ class _HomeScreen extends StatelessWidget {
           ];
 
     List<Widget> awaitingReceiver = [
-      CopyText('You are the Sender.'),
-      CopyText('Try inviting a friend to join your test.'),
+      CopyText('''              You are the Sender.
+Try inviting a friend to join your test.'''),
       SizedBox(height: 30),
       Button(
         'Invite Friend to your Test',
@@ -167,8 +170,8 @@ class _HomeScreen extends StatelessWidget {
     ];
 
     List<Widget> awaitingSender = [
-      CopyText('You are the Receiver.'),
-      CopyText('Try inviting a friend to join your test.'),
+      CopyText('''              You are the Receiver.
+Try inviting a friend to join your test.'''),
       SizedBox(height: 30),
       Button(
         'Invite Friend to your Test',

@@ -7,7 +7,7 @@ class ReceiverInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RightBgWrapper(Scaffold(
-        appBar: AppBar(title: Text("Role")),
+        appBar: AppBar(title: Text("Receiver")),
         body: Center(
             child: CopyText(
                 '''As the Receiver you will be presented with a set of four different pictures.  
