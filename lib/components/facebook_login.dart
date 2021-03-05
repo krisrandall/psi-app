@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'package:app/components/livePsiTestStream.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:app/bloc/psitestsave_bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 AccessToken _accessToken;
 
@@ -39,12 +42,25 @@ Future<Null> signInWithFacebook() async {
   await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
 }
 
+void _inviteFacebookFriend({friendID, context, test}) async {
+  Query facebookFriend = Firestore.instance
+      .collection('test')
+      .where('parties', arrayContains: friendID)
+      .where("status", isEqualTo: "underway");
+  var snapshot = await facebookFriend.getDocuments();
+  var length = snapshot.documents.length;
+  print(length);
+  /*var currentTest = test;
+  var event = InviteFacebookFriend(test: currentTest, facebookFriend: friendID);
+  BlocProvider.of<PsiTestSaveBloc>(context).add(event);*/
+}
+
 // facebook users need to have their e-mail addresses explicitly added. see here: (https://github.com/FirebaseExtended/flutterfire/issues/4612#issuecomment-782107867)
 //
 
 var facebookFriendsList;
 
-Future<List> getFacebookFriendsList() async {
+Future<List> getFacebookFriendsList(context, currentTest) async {
   facebookFriendsList = new List<Widget>();
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   String facebookAccessToken = prefs.getString('facebookAccessToken');
@@ -72,13 +88,15 @@ Future<List> getFacebookFriendsList() async {
             tileColor: Colors.purple[100],
             leading: Image.network(friendProfilePic),
             trailing: Icon(Icons.send_sharp),
-            title: Text(friend['name'])));
+            title: Text(friend['name']),
+            onTap: () => _inviteFacebookFriend(
+                test: currentTest, context: context, friendID: friendID)));
         facebookFriendsList.add(SizedBox(height: 10));
       }
       if (facebookFriendsList.length == 0)
         return [
-          Text('''none of your Facebook friends have this app installed. 
-Use the link above to invite them''', style: TextStyle(color: Colors.white)),
+          Text('''none of your Facebook friends have this app installed.''',
+              style: TextStyle(color: Colors.white)),
         ];
     } else {
       print(

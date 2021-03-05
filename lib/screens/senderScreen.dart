@@ -81,7 +81,7 @@ class _SenderScreen extends StatelessWidget {
     Widget actionButton;
 
     Widget facebookFriends = FutureBuilder<List>(
-        future: getFacebookFriendsList(),
+        future: getFacebookFriendsList(currentTest, context),
         builder: ((context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting)
             return CircularProgressIndicator();

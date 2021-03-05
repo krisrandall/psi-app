@@ -10,15 +10,16 @@ var globalCurrentUser;
 
 Query firestoreDatabaseStream = Firestore.instance
     .collection('test')
-    .where('parties',
-        arrayContains: globalCurrentUser.uid || globalCurrentUser.displayName)
-    .where("status", isEqualTo: "underway");
+    .where('parties', arrayContainsAny: [
+  globalCurrentUser.uid,
+  globalCurrentUser.displayName
+]).where("status", isEqualTo: "underway");
 
-Query userTestStats = Firestore.instance
-    .collection('test')
-    .where('parties',
-        arrayContains: globalCurrentUser.uid || globalCurrentUser.displayName)
-    .where("status", isEqualTo: "completed");
+Query userTestStats = Firestore.instance.collection('test').where('parties',
+    arrayContainsAny: [
+      globalCurrentUser.uid,
+      globalCurrentUser.displayName
+    ]).where("status", isEqualTo: "completed");
 
 /// Convert a firestore data snapshot into a psiTest
 ///
@@ -26,14 +27,19 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
   if (documents.length == 0) return null;
 
   PsiTest test;
+  String myID;
+
+  myID = globalCurrentUser.displayName == null
+      ? globalCurrentUser.uid
+      : globalCurrentUser.displayName;
 
   try {
     var data = documents[0];
     var iAm;
     print(data['sender']);
 
-    if (data['sender'] == globalCurrentUser.uid) iAm = PsiTestRole.SENDER;
-    if (data['receiver'] == globalCurrentUser.uid) iAm = PsiTestRole.RECEIVER;
+    if (data['sender'] == myID) iAm = PsiTestRole.SENDER;
+    if (data['receiver'] == myID) iAm = PsiTestRole.RECEIVER;
     print('first try $iAm');
     if (iAm == null) {
       if (data['sender'] == '') iAm = PsiTestRole.SENDER;

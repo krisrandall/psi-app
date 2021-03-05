@@ -6,11 +6,8 @@ import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:share/share.dart';
 import 'package:app/config.dart';
-import 'package:http/http.dart' as http;
 import 'dart:math';
-
 part 'psitestsave_event.dart';
 part 'psitestsave_state.dart';
 
@@ -39,6 +36,9 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     }
     if (event is AnswerPsiTestQuestion) {
       yield* _mapAnswerPsiTestQuestionToState(event);
+    }
+    if (event is InviteFacebookFriend) {
+      yield* _mapInviteFacebookFriendToState(event);
     }
     if (event is CompletePsiTest) {
       yield* _mapCompletePsiTest(event);
@@ -112,12 +112,14 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       final db = Firestore.instance;
       String senderUid;
       String receiverUid;
+      String myID;
 
-      senderUid =
-          event.test.myRole == PsiTestRole.SENDER ? globalCurrentUser.uid : "";
-      receiverUid = event.test.myRole == PsiTestRole.RECEIVER
+      myID = globalCurrentUser.displayName == null
           ? globalCurrentUser.uid
-          : "";
+          : globalCurrentUser.displayName;
+
+      senderUid = event.test.myRole == PsiTestRole.SENDER ? myID : "";
+      receiverUid = event.test.myRole == PsiTestRole.RECEIVER ? myID : "";
 
       //yield PsiTestSaveCreateInProgress(0.2);
 
@@ -146,7 +148,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       }
 
       DocumentReference ref = await db.collection('test').add({
-        'parties': [globalCurrentUser.uid],
+        'parties': [myID],
         'questions': questions,
         'receiver': receiverUid,
         'sender': senderUid,
@@ -199,6 +201,19 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     } catch (_) {
       yield PsiTestJoinFailed(exception: _);
     }
+  }
+
+  Stream<PsiTestSaveState> _mapInviteFacebookFriendToState(
+      PsiTestSaveEvent event) async* {
+    String testId = event.test.testId;
+    var facebookFriendId = event.facebookFriend;
+    var db = Firestore.instance;
+    Query facebookFriendFind = Firestore.instance
+        .collection('test')
+        .where('parties', arrayContains: facebookFriendId)
+        .where("status", isEqualTo: "underway");
+
+    //db.collection('test').
   }
 
   Stream<PsiTestSaveState> _mapAnswerPsiTestQuestionToState(

@@ -105,6 +105,18 @@ class PsiTestReshareFailed extends PsiTestSaveState {
   List<Object> get props => [exception];
 }
 
+class PsiTestInviteFacebookFriendInProgress extends PsiTestSaveState {}
+
+class PsiTestInviteFacebookFriendSuccessful extends PsiTestSaveState {}
+
+class PsiTestInviteFacebookFriendFailed extends PsiTestSaveState {
+  final Exception exception;
+  const PsiTestInviteFacebookFriendFailed({@required this.exception})
+      : assert(exception != null);
+  @override
+  List<Object> get props => [exception];
+}
+
 class PsiTestCompleteInProgress extends PsiTestSaveState {}
 
 class PsiTestCompleteSuccessful extends PsiTestSaveState {}

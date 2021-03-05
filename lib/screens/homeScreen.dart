@@ -3,7 +3,6 @@ import 'package:app/components/button.dart';
 import 'package:app/components/utils.dart';
 import 'package:app/components/secondaryButton.dart';
 import 'package:app/components/textComponents.dart';
-import 'package:app/main.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:app/screens/creditsScreen.dart';
 import 'package:app/screens/learnMoreScreen.dart';

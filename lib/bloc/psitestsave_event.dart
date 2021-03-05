@@ -2,7 +2,9 @@ part of 'psitestsave_bloc.dart';
 
 abstract class PsiTestSaveEvent extends Equatable {
   final PsiTest test;
-  const PsiTestSaveEvent({@required this.test}) : assert(test != null);
+  final String facebookFriend;
+  const PsiTestSaveEvent({@required this.test, this.facebookFriend})
+      : assert(test != null);
   @override
   List<Object> get props => [test];
 }
@@ -36,8 +38,9 @@ class CancelPsiTest extends PsiTestSaveEvent {
   const CancelPsiTest({@required test}) : super(test: test);
 }
 
-class ResharePsiTest extends PsiTestSaveEvent {
-  const ResharePsiTest({@required test}) : super(test: test);
+class InviteFacebookFriend extends PsiTestSaveEvent {
+  final String facebookFriend;
+  const InviteFacebookFriend({@required test, @required this.facebookFriend});
 }
 
 class JoinPsiTest extends PsiTestSaveEvent {
