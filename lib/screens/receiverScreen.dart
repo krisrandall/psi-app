@@ -12,7 +12,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/components/facebook_logic.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:share/share.dart';
 import 'package:clipboard/clipboard.dart';
 
@@ -183,6 +182,8 @@ class _ReceiverScreen extends StatelessWidget {
         return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [Image.asset("assets/sun_loading_spinner.gif")]);
+      else if (currentTest.invitedTo != null)
+        return Button('$currentTest.invitedTo invited you to a test', null);
       else
         return SingleChildScrollView(
             child: Column(

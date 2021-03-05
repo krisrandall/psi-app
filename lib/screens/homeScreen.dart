@@ -201,7 +201,7 @@ Try inviting a friend to join your test.'''),
     }
 
 // WillPopScope with onWillPop=>false disables the back button
-
+//
     return WillPopScope(
         onWillPop: () async => false,
         child: BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
@@ -219,7 +219,7 @@ Try inviting a friend to join your test.'''),
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // Image.asset("assets/sun_loading_spinner.gif")
-                  CopyText('Ending Test'),
+                  //CopyText('Ending Test'),
                   // CircularProgressIndicator()
                 ]);
           else

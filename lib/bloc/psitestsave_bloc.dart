@@ -114,9 +114,9 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       String receiverUid;
       String myID;
 
-      myID = globalCurrentUser.displayName == null
+      myID = globalCurrentUser.email == null
           ? globalCurrentUser.uid
-          : globalCurrentUser.displayName;
+          : globalCurrentUser.email;
 
       senderUid = event.test.myRole == PsiTestRole.SENDER ? myID : "";
       receiverUid = event.test.myRole == PsiTestRole.RECEIVER ? myID : "";

@@ -21,7 +21,7 @@ class SettingsScreen extends StatelessWidget {
           TitleText('Settings'),
           SizedBox(height: 40),
           //Button('Log out of Facebook', () => logOutOfFacebook())
-          Button('Log out of Facebook', () => signInWithFacebook()),
+          Button('Sign in to Facebook', () => signInWithFacebook()),
           CopyText('there are currently no settings for this app'),
         ]))));
   }

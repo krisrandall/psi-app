@@ -6,7 +6,7 @@ enum PsiTestStatus {
   UNDERWAY,
   COMPLETED,
   CANCELLED,
-  UNKNOWN   // an unexpected value from the Firestore database -- should be treated as an error
+  UNKNOWN // an unexpected value from the Firestore database -- should be treated as an error
 }
 
 enum PsiTestRole {
@@ -23,6 +23,7 @@ class PsiTest {
   int totalNumQuestions;
   int numQuestionsAnswered;
   PsiTestQuestion currentQuestion;
+  String invitedTo;
 
   List<PsiTestQuestion> answeredQuestions;
   List<PsiTestQuestion> questions;
@@ -35,7 +36,8 @@ class PsiTest {
       this.numQuestionsAnswered,
       this.answeredQuestions,
       this.currentQuestion,
-      this.questions});
+      this.questions,
+      this.invitedTo});
 
   PsiTest.beginNewTestAsSender() {
     myRole = PsiTestRole.SENDER;

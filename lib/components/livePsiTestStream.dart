@@ -7,31 +7,32 @@ import 'package:app/bloc/psitestsave_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 var globalCurrentUser;
+String faceBookUid = (globalCurrentUser.email);
 
 Query firestoreDatabaseStream = Firestore.instance
     .collection('test')
     .where('parties', arrayContainsAny: [
   globalCurrentUser.uid,
-  globalCurrentUser.displayName
+  globalCurrentUser.email
 ]).where("status", isEqualTo: "underway");
 
 Query userTestStats = Firestore.instance.collection('test').where('parties',
     arrayContainsAny: [
       globalCurrentUser.uid,
-      globalCurrentUser.displayName
+      globalCurrentUser.email
     ]).where("status", isEqualTo: "completed");
 
 /// Convert a firestore data snapshot into a psiTest
 ///
 PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
   if (documents.length == 0) return null;
-
+  print(faceBookUid);
   PsiTest test;
   String myID;
 
-  myID = globalCurrentUser.displayName == null
+  myID = globalCurrentUser.email == null
       ? globalCurrentUser.uid
-      : globalCurrentUser.displayName;
+      : globalCurrentUser.email;
 
   try {
     var data = documents[0];
@@ -108,6 +109,14 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
           : null,
       questions: questions,
     );
+    /*try {
+      String invitedTo;
+      invitedTo = documents[0].data['invitedTo'].isEmpty
+          ? documents[0].data['invitedTo']
+          : null;
+    } catch (error) {
+      print('error looking for invitedTo property $error');
+    }*/
   } catch (exception) {
     // TODO - better global app error handling
     print('Error happened during createTestFromFirestore');
