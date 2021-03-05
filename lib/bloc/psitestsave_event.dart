@@ -40,7 +40,8 @@ class CancelPsiTest extends PsiTestSaveEvent {
 
 class InviteFacebookFriend extends PsiTestSaveEvent {
   final String facebookFriend;
-  const InviteFacebookFriend({@required test, @required this.facebookFriend});
+  const InviteFacebookFriend({@required test, @required this.facebookFriend})
+      : super(test: test);
 }
 
 class JoinPsiTest extends PsiTestSaveEvent {

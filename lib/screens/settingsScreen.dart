@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:app/components/textcomponents.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:app/components/facebook_login.dart';
+import 'package:app/components/facebook_logic.dart';
 
 // doesn't work
 

@@ -206,12 +206,19 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
   Stream<PsiTestSaveState> _mapInviteFacebookFriendToState(
       PsiTestSaveEvent event) async* {
     String testId = event.test.testId;
-    var facebookFriendId = event.facebookFriend;
+    var facebookFriendID = event.facebookFriend;
     var db = Firestore.instance;
-    Query facebookFriendFind = Firestore.instance
+
+    Query facebookFriendQuery = db
         .collection('test')
-        .where('parties', arrayContains: facebookFriendId)
+        .where('parties', arrayContains: facebookFriendID)
         .where("status", isEqualTo: "underway");
+    var snapshot = await facebookFriendQuery.getDocuments();
+    var length = snapshot.documents.length;
+    print(length);
+    if (length == 0) {
+      // send push notification
+    }
 
     //db.collection('test').
   }

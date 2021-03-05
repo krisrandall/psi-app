@@ -14,7 +14,7 @@ import 'dart:async';
 import 'package:app/screens/joinScreen.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:app/components/facebook_login.dart';
+import 'package:app/components/facebook_logic.dart';
 
 void main() => runApp(MyApp());
 

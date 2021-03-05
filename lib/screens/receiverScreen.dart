@@ -11,7 +11,7 @@ import 'package:app/screens/testScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app/components/facebook_login.dart';
+import 'package:app/components/facebook_logic.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:share/share.dart';
 import 'package:clipboard/clipboard.dart';
@@ -82,7 +82,7 @@ class _ReceiverScreen extends StatelessWidget {
     Widget actionButton;
 
     Widget facebookFriends = FutureBuilder<List>(
-        future: getFacebookFriendsList(currentTest, context),
+        future: getFacebookFriendsList(context, currentTest),
         builder: ((context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting)
             return CircularProgressIndicator();
