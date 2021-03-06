@@ -182,8 +182,8 @@ class _ReceiverScreen extends StatelessWidget {
         return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [Image.asset("assets/sun_loading_spinner.gif")]);
-      else if (currentTest.invitedTo != null)
-        return Button('$currentTest.invitedTo invited you to a test', null);
+      else if (currentTest.invitedTo != '')
+        return Button('${currentTest.invitedTo} invited you to a test', null);
       else
         return SingleChildScrollView(
             child: Column(

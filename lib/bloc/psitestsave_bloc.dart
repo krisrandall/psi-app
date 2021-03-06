@@ -82,7 +82,8 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
   ) async* {
     yield PsiTestSaveShareInProgress();
     try {
-      var shareTestUrl = await dynamicLink(event.test.testId);
+      var testId = event.test.testId;
+      var shareTestUrl = await dynamicLink(testId);
       print(shareTestUrl);
       var shortUrl = await shortenLink(shareTestUrl.toString());
       if (shortUrl == null) {
@@ -90,11 +91,17 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         print(
             'URL shortener returned null, maybe free limit exhausted, using the long URL');
       }
-      print(shortUrl);
+
       //Share.share('Take a Telepathy Test with me! $shortUrl');
       print('shortUrl $shortUrl');
 
       print('shared');
+      var db = Firestore.instance;
+      db
+          .collection('test')
+          .document(testId)
+          .updateData({'shareLink': shortUrl});
+
       yield PsiTestSaveShareSuccessful(shortUrl);
     } catch (_) {
       print('share failed');
@@ -114,9 +121,11 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       String receiverUid;
       String myID;
 
-      myID = globalCurrentUser.email == null
+      myID = globalCurrentUser.isAnonymous
           ? globalCurrentUser.uid
           : globalCurrentUser.email;
+
+      print(myID);
 
       senderUid = event.test.myRole == PsiTestRole.SENDER ? myID : "";
       receiverUid = event.test.myRole == PsiTestRole.RECEIVER ? myID : "";
@@ -153,6 +162,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         'receiver': receiverUid,
         'sender': senderUid,
         'status': 'underway',
+        'invitedTo': ''
       });
 
       event.test.testId = ref.documentID;
@@ -205,22 +215,31 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
 
   Stream<PsiTestSaveState> _mapInviteFacebookFriendToState(
       PsiTestSaveEvent event) async* {
-    String testId = event.test.testId;
-    var facebookFriendID = event.facebookFriend;
-    var db = Firestore.instance;
+    try {
+      yield PsiTestInviteFacebookFriendInProgress();
+      String testId = event.test.testId;
+      var facebookFriendID = event.facebookFriend;
+      var db = Firestore.instance;
 
-    Query facebookFriendQuery = db
-        .collection('test')
-        .where('parties', arrayContains: facebookFriendID)
-        .where("status", isEqualTo: "underway");
-    var snapshot = await facebookFriendQuery.getDocuments();
-    var length = snapshot.documents.length;
-    print(length);
-    if (length == 0) {
-      // send push notification
+      Query facebookFriendQuery = db
+          .collection('test')
+          .where('parties', arrayContains: facebookFriendID)
+          .where("status", isEqualTo: "underway");
+      var snapshot = await facebookFriendQuery.getDocuments();
+      var length = snapshot.documents.length;
+      print(length);
+      if (length == 0) {
+        // send push notification
+      }
+
+      var docRef = db
+          .collection('test')
+          .document(testId)
+          .updateData({'invitedTo': facebookFriendID});
+      yield PsiTestInviteFacebookFriendSuccessful();
+    } catch (error) {
+      yield PsiTestInviteFacebookFriendFailed(error);
     }
-
-    //db.collection('test').
   }
 
   Stream<PsiTestSaveState> _mapAnswerPsiTestQuestionToState(

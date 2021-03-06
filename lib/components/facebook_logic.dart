@@ -1,3 +1,5 @@
+import 'package:app/components/utils.dart';
+import 'package:app/main.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
@@ -40,7 +42,10 @@ void _setFacebookIdAsFirebaseUserEmail(facebookUserId) async {
 
 Future<Null> signInWithFacebook() async {
   // Trigger the sign-in flow
-  final AccessToken _accessToken = await FacebookAuth.instance.login();
+  final AccessToken _accessToken =
+      await FacebookAuth.instance.login().catchError((error) {
+    print('error possibly user cancelled facebook login$error');
+  });
 
   // Create a credential from the access token
   final FacebookAuthCredential facebookAuthCredential =
@@ -58,6 +63,7 @@ Future<Null> signInWithFacebook() async {
 var facebookFriendsList;
 
 Future<List> getFacebookFriendsList(context, currentTest) async {
+  if (globalCurrentUser.isAnonymous) return null;
   facebookFriendsList = new List<Widget>();
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   String facebookAccessToken = prefs.getString('facebookAccessToken');
@@ -104,4 +110,21 @@ Future<List> getFacebookFriendsList(context, currentTest) async {
     return null;
   }
   return facebookFriendsList;
+}
+
+void logOutOfFacebook(context) async {
+  var user;
+  try {
+    FacebookAuth.instance.logOut();
+    await FirebaseAuth.instance.signOut();
+    user = await FirebaseAuth.instance.currentUser();
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('facebookAccessToken', null);
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => LandingPage()));
+  } catch (error) {
+    print(error);
+  }
+  print('firebase user ${user.uid}');
 }

@@ -22,6 +22,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('in home screen');
+    print('user is ${globalCurrentUser.uid}');
     return Scaffold(
         appBar: AppBar(
           title: Text('𝚿 Psi Telepathy Test'),
@@ -36,10 +37,12 @@ class HomeScreen extends StatelessWidget {
             stream: firestoreDatabaseStream.snapshots(),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) print(snapshot.error);
               if (psiTestNotAvailable(snapshot))
                 return psiTestNotAvailableWidget(context, snapshot);
               var currentTest =
                   createTestFromFirestore(snapshot.data.documents);
+              print('got to bottom of _HomeScreen');
               return _HomeScreen(currentTest, _homeScaffoldKey);
             })));
   }
@@ -113,6 +116,7 @@ class _HomeScreen extends StatelessWidget {
               .add(SharePsiTest(test: newlyCreatedTest));
         },
       ),
+      Button('print user', () => print(globalCurrentUser.uid)),
       StreamBuilder<QuerySnapshot>(
           stream: userTestStats.snapshots(),
           builder:

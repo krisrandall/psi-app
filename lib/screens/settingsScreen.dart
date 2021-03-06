@@ -8,10 +8,6 @@ import 'package:app/components/facebook_logic.dart';
 // doesn't work
 
 class SettingsScreen extends StatelessWidget {
-  void logOutOfFacebook() {
-    FacebookAuth.instance.logOut();
-  }
-
   @override
   Widget build(BuildContext context) {
     return RightBgWrapper(Scaffold(
@@ -20,7 +16,7 @@ class SettingsScreen extends StatelessWidget {
             child: Column(children: [
           TitleText('Settings'),
           SizedBox(height: 40),
-          //Button('Log out of Facebook', () => logOutOfFacebook())
+          Button('Log out of Facebook', () => logOutOfFacebook(context)),
           Button('Sign in to Facebook', () => signInWithFacebook()),
           CopyText('there are currently no settings for this app'),
         ]))));

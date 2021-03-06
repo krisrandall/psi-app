@@ -8,6 +8,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 var globalCurrentUser;
 String faceBookUid = (globalCurrentUser.email);
+String myID = globalCurrentUser.isAnyonymous
+    ? globalCurrentUser.email
+    : globalCurrentUser.uid;
 
 Query firestoreDatabaseStream = Firestore.instance
     .collection('test')
@@ -25,15 +28,15 @@ Query userTestStats = Firestore.instance.collection('test').where('parties',
 /// Convert a firestore data snapshot into a psiTest
 ///
 PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
-  if (documents.length == 0) return null;
-  print(faceBookUid);
+  print("myID is $myID");
+  if (documents.length == 0) {
+    print('no matching documents found');
+    return null;
+  }
+
   PsiTest test;
-  String myID;
 
-  myID = globalCurrentUser.email == null
-      ? globalCurrentUser.uid
-      : globalCurrentUser.email;
-
+  print('livePsi globaluser = $myID');
   try {
     var data = documents[0];
     var iAm;
@@ -84,6 +87,15 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
           'error while populating answeredQuestions list and /or counting numQuestionsAnswered: $e');
     }
     print('$numQuestionsAnswered questions answered');
+    String invitedTo;
+    String shareLink;
+    try {
+      invitedTo = documents[0].data['invitedTo'];
+
+      shareLink = documents[0].data['shareLink'];
+    } catch (error) {
+      print('error looking for invitedTo property $error');
+    }
 
     PsiTestStatus status;
     if (data['receiver']?.isEmpty == true)
@@ -108,15 +120,9 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
           ? questions[numQuestionsAnswered]
           : null,
       questions: questions,
+      invitedTo: invitedTo,
+      shareLink: shareLink,
     );
-    /*try {
-      String invitedTo;
-      invitedTo = documents[0].data['invitedTo'].isEmpty
-          ? documents[0].data['invitedTo']
-          : null;
-    } catch (error) {
-      print('error looking for invitedTo property $error');
-    }*/
   } catch (exception) {
     // TODO - better global app error handling
     print('Error happened during createTestFromFirestore');
@@ -146,7 +152,7 @@ Widget psiTestNotAvailableWidget(
 
     Future.delayed(Duration(milliseconds: 300))
         .then((value) => CopyText("Fetching existing test data .."));
-    return Container();
+    return Container(child: Text('stuck'));
   } else {
     List<DocumentSnapshot> documents = snapshot.data.documents;
     DocumentSnapshot document;

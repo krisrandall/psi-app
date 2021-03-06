@@ -125,7 +125,9 @@ class _SenderScreen extends StatelessWidget {
           print(state);
           String shareLink = '';
           if (state is PsiTestSaveShareSuccessful) {
-            shareLink = state.getShareLink();
+            //shareLink = state.getShareLink();
+            if (shareLink == '') shareLink = currentTest.shareLink;
+
             return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

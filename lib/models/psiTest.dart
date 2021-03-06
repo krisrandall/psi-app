@@ -24,6 +24,7 @@ class PsiTest {
   int numQuestionsAnswered;
   PsiTestQuestion currentQuestion;
   String invitedTo;
+  String shareLink;
 
   List<PsiTestQuestion> answeredQuestions;
   List<PsiTestQuestion> questions;
@@ -37,7 +38,8 @@ class PsiTest {
       this.answeredQuestions,
       this.currentQuestion,
       this.questions,
-      this.invitedTo});
+      this.invitedTo,
+      this.shareLink});
 
   PsiTest.beginNewTestAsSender() {
     myRole = PsiTestRole.SENDER;

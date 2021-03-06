@@ -82,7 +82,9 @@ class _LandingPageState extends State<LandingPage> {
   }
 
   Future<void> _signInAnonymously() async {
-    //set preference
+    // the isAnonymous method doesn't work(false nrgatives), so we add an email
+    // to match facebook user
+
     try {
       await FirebaseAuth.instance.signInAnonymously();
     } catch (e) {
@@ -134,8 +136,9 @@ class _LandingPageState extends State<LandingPage> {
                   TitleText("Sign in with Facebook"),
                   Button("Sign in with Facebook", signInWithFacebook),
                   SecondaryButton("Not now", () {
-                    _signInAnonymously();
-                    //  _setFacebookPreference('dontUse');
+                    _signInAnonymously().catchError((error) {
+                      print('error while signing in anonymously$error');
+                    });
                   }),
                   !_checking
                       ? CircularProgressIndicator()
