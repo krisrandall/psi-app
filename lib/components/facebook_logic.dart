@@ -128,3 +128,22 @@ void logOutOfFacebook(context) async {
   }
   print('firebase user ${user.uid}');
 }
+
+Future<Null> linkFacebookUserWithCurrentAnonUser() async {
+  // Trigger the sign-in flow
+  final AccessToken _accessToken =
+      await FacebookAuth.instance.login().catchError((error) {
+    print('error possibly user cancelled facebook login$error');
+  });
+
+  // Create a credential from the access token
+  final FacebookAuthCredential facebookAuthCredential =
+      FacebookAuthProvider.getCredential(accessToken: _accessToken.token);
+
+  saveFacebookAccessToken(_accessToken);
+  _setFacebookIdAsFirebaseUserEmail(_accessToken.userId);
+
+  // Once signed in, return the UserCredential
+  await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+  globalCurrentUser.linkWithCredential(facebookAuthCredential);
+}

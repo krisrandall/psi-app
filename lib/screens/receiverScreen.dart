@@ -89,7 +89,7 @@ class _ReceiverScreen extends StatelessWidget {
             return Button(
                 // this appears when ID or access token are not available
                 'log on to Facebook to find your friends',
-                signInWithFacebook);
+                linkFacebookUserWithCurrentAnonUser);
           else {
             print(snapshot.data);
             return Column(children: [
