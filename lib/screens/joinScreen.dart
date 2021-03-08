@@ -33,11 +33,11 @@ class OpenedViaLinkWidget extends StatelessWidget {
       print(testId.length);
 
       var uri = Uri.dataFromString(deepLink);
-      
+
       Map<String, String> params = uri.queryParameters;
       String linkParam = Uri.decodeFull(params['link']);
       var linkUri = Uri.dataFromString(linkParam);
-      testId = linkUri.pathSegments[linkUri.pathSegments.length-1];
+      testId = linkUri.pathSegments[linkUri.pathSegments.length - 1];
 
       print(testId);
     }
@@ -145,15 +145,16 @@ class _OpenedViaLinkWidget extends StatelessWidget {
         goToScreen(context, TableBgWrapper(HomeScreen()));
       })
     ];
+    myID = isFacebookUser(globalCurrentUser)
+        ? globalCurrentUser.email
+        : globalCurrentUser.uid;
 
     if (receiverId != '' && senderId != '') {
-      if (globalCurrentUser.uid == receiverId ||
-          globalCurrentUser.uid == senderId) {
+      if (myID == receiverId || myID == senderId) {
         screenOptions = linkIsYourActiveTest;
       } else
         screenOptions = testAlreadyFull;
-    } else if (globalCurrentUser.uid == receiverId ||
-        globalCurrentUser.uid == senderId) {
+    } else if (myID == receiverId || myID == senderId) {
       screenOptions = triedToJoinOwnTest;
     } else if (status != 'underway') {
       screenOptions = testNotUnderway;

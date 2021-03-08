@@ -29,12 +29,12 @@ Future<Null> saveFacebookAccessToken(AccessToken accessToken) async {
 //
 void _setFacebookIdAsFirebaseUserEmail(facebookUserId) async {
   try {
-    if (!globalCurrentUser.isAnonymous && globalCurrentUser.email == null) {
+    if (isFacebookUser(globalCurrentUser) && globalCurrentUser.email == null) {
       globalCurrentUser.updateEmail("$facebookUserId@psi.com");
       print(
           'ran _setFacebookIdAsFirebaseUserEmail and now email  = ${globalCurrentUser.email}');
     } else
-      print('profile name = ${globalCurrentUser.email}');
+      print('email address = ${globalCurrentUser.email}');
   } catch (error) {
     print("error $error");
   }
@@ -63,8 +63,8 @@ Future<Null> signInWithFacebook() async {
 var facebookFriendsList;
 
 Future<List> getFacebookFriendsList(context, currentTest) async {
-  if (globalCurrentUser.isAnonymous) return null;
-  facebookFriendsList = new List<Widget>();
+  if (!isFacebookUser(globalCurrentUser)) return null;
+  List<Widget> facebookFriendsList = [];
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   String facebookAccessToken = prefs.getString('facebookAccessToken');
   //String facebookID = prefs.getString('facebookID');
@@ -126,7 +126,7 @@ void logOutOfFacebook(context) async {
   } catch (error) {
     print(error);
   }
-  print('firebase user ${user.uid}');
+  //print('firebase user ${user.uid}');
 }
 
 Future<Null> linkFacebookUserWithCurrentAnonUser() async {

@@ -22,7 +22,8 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('in home screen');
-    print('user is ${globalCurrentUser.uid}');
+    print(
+        'isFacebookUser = ${isFacebookUser(globalCurrentUser)} gcu uid is ${globalCurrentUser.uid} email is ${globalCurrentUser.email}');
     return Scaffold(
         appBar: AppBar(
           title: Text('𝚿 Psi Telepathy Test'),

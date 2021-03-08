@@ -2,28 +2,38 @@ import 'package:app/components/textComponents.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:app/models/psiTestQuestion.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:app/bloc/psitestsave_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 var globalCurrentUser;
+bool isFacebookUser(user) {
+  /*for (String provider in user.providerData) {
+    if (user.getProviderId().equals("facebook.com")) {
+      print("User is signed in with Facebook");
+      return true;
+    }
+  }
+  print('user is anonymous');
+  return false;*/
+  return !user.isAnonymous;
+}
+
 String faceBookUid = (globalCurrentUser.email);
-String myID = globalCurrentUser.isAnyonymous
+String myID = isFacebookUser(globalCurrentUser)
     ? globalCurrentUser.email
     : globalCurrentUser.uid;
 
 Query firestoreDatabaseStream = Firestore.instance
     .collection('test')
-    .where('parties', arrayContainsAny: [
-  globalCurrentUser.uid,
-  globalCurrentUser.email
-]).where("status", isEqualTo: "underway");
+    .where('parties', arrayContains: myID)
+    .where("status", isEqualTo: "underway");
 
-Query userTestStats = Firestore.instance.collection('test').where('parties',
-    arrayContainsAny: [
-      globalCurrentUser.uid,
-      globalCurrentUser.email
-    ]).where("status", isEqualTo: "completed");
+Query userTestStats = Firestore.instance
+    .collection('test')
+    .where('parties', arrayContains: myID)
+    .where("status", isEqualTo: "completed");
 
 /// Convert a firestore data snapshot into a psiTest
 ///

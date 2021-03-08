@@ -114,16 +114,16 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
   ) async* {
     yield PsiTestSaveCreateInProgress(0.2);
     try {
-      print(globalCurrentUser.uid);
+      //print(myID);
 
       final db = Firestore.instance;
       String senderUid;
       String receiverUid;
       String myID;
 
-      myID = globalCurrentUser.isAnonymous
-          ? globalCurrentUser.uid
-          : globalCurrentUser.email;
+      myID = isFacebookUser(globalCurrentUser)
+          ? globalCurrentUser.email
+          : globalCurrentUser.uid;
 
       print(myID);
 
@@ -195,16 +195,19 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     try {
       String testId = event.test.testId;
       var myRole = event.test.myRole;
+      myID = isFacebookUser(globalCurrentUser)
+          ? globalCurrentUser.email
+          : globalCurrentUser.uid;
 
       if (myRole == PsiTestRole.SENDER) {
         db.collection('test').document(testId).updateData({
-          'parties': FieldValue.arrayUnion([globalCurrentUser.uid]),
-          'sender': globalCurrentUser.uid,
+          'parties': FieldValue.arrayUnion([myID]),
+          'sender': myID,
         });
       } else if (myRole == PsiTestRole.RECEIVER) {
         db.collection('test').document(testId).updateData({
-          'parties': FieldValue.arrayUnion([globalCurrentUser.uid]),
-          'receiver': globalCurrentUser.uid
+          'parties': FieldValue.arrayUnion([myID]),
+          'receiver': myID
         });
       }
       yield PsiTestJoinSuccessful();
