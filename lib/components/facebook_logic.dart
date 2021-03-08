@@ -64,7 +64,7 @@ var facebookFriendsList;
 
 Future<List> getFacebookFriendsList(context, currentTest) async {
   if (!isFacebookUser(globalCurrentUser)) return null;
-  List<Widget> facebookFriendsList = [];
+  List<dynamic> facebookFriendsList = [];
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   String facebookAccessToken = prefs.getString('facebookAccessToken');
   //String facebookID = prefs.getString('facebookID');
@@ -103,11 +103,11 @@ Future<List> getFacebookFriendsList(context, currentTest) async {
     } else {
       print(
           'GET Request (facebook api) failed with status: ${response.statusCode}.');
-      return null;
+      return [Container()];
     }
   } catch (error) {
     print(error);
-    return null;
+    return [Container()];
   }
   return facebookFriendsList;
 }
@@ -116,8 +116,8 @@ void logOutOfFacebook(context) async {
   var user;
   try {
     FacebookAuth.instance.logOut();
-    await FirebaseAuth.instance.signOut();
-    user = await FirebaseAuth.instance.currentUser();
+    await globalCurrentUser.signOut();
+    //user = await FirebaseAuth.instance.currentUser();
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('facebookAccessToken', null);
@@ -129,7 +129,7 @@ void logOutOfFacebook(context) async {
   //print('firebase user ${user.uid}');
 }
 
-Future<Null> linkFacebookUserWithCurrentAnonUser() async {
+Future<Null> linkFacebookUserWithCurrentAnonUser(context) async {
   // Trigger the sign-in flow
   final AccessToken _accessToken =
       await FacebookAuth.instance.login().catchError((error) {
@@ -140,10 +140,23 @@ Future<Null> linkFacebookUserWithCurrentAnonUser() async {
   final FacebookAuthCredential facebookAuthCredential =
       FacebookAuthProvider.getCredential(accessToken: _accessToken.token);
 
-  saveFacebookAccessToken(_accessToken);
-  _setFacebookIdAsFirebaseUserEmail(_accessToken.userId);
-
   // Once signed in, return the UserCredential
-  await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
-  globalCurrentUser.linkWithCredential(facebookAuthCredential);
+  /*await FirebaseAuth.instance
+      .signInWithCredential(facebookAuthCredential)
+      .catchError((error) {
+    print('error possibly user cancelled facebook login$error');
+  });*/
+
+  _setFacebookIdAsFirebaseUserEmail(_accessToken.userId);
+  saveFacebookAccessToken(_accessToken).catchError((error) {
+    print('error possibly user cancelled facebook login$error');
+  });
+  globalCurrentUser = await FirebaseAuth.instance.currentUser();
+  globalCurrentUser
+      .linkWithCredential(facebookAuthCredential)
+      .catchError((error) {
+    print('error possibly user cancelled facebook login$error');
+  });
+  Navigator.push(
+      context, MaterialPageRoute(builder: (context) => LandingPage()));
 }

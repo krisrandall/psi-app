@@ -8,6 +8,11 @@ import 'package:app/bloc/psitestsave_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 var globalCurrentUser;
+
+Future<Null> setGlobalCurrentuser() async {
+  globalCurrentUser = await FirebaseAuth.instance.currentUser();
+}
+
 bool isFacebookUser(user) {
   /*for (String provider in user.providerData) {
     if (user.getProviderId().equals("facebook.com")) {

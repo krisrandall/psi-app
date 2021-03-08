@@ -88,8 +88,8 @@ class _SenderScreen extends StatelessWidget {
           if (!snapshot.hasData)
             return Button(
                 // this appears when ID or access token are not available
-                'log on to Facebook to find your friends',
-                linkFacebookUserWithCurrentAnonUser);
+                'log on to Facebook',
+                () => linkFacebookUserWithCurrentAnonUser(context));
           else {
             print(snapshot.data);
             return Column(children: [
@@ -100,7 +100,7 @@ class _SenderScreen extends StatelessWidget {
                       width: 440,
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: facebookFriendsList)))
+                          children: [...snapshot.data])))
             ]);
           }
         }));
@@ -150,7 +150,7 @@ class _SenderScreen extends StatelessWidget {
                       child: SizedBox(
                           width: 440,
                           height: 70,
-                          child: Text(shareLink,
+                          child: Text(shareLink == null ? '' : shareLink,
                               style: TextStyle(color: Colors.white)))),
                   /*TextFormField(
                               //enabled: false,

@@ -88,10 +88,10 @@ class _ReceiverScreen extends StatelessWidget {
           if (!snapshot.hasData)
             return Button(
                 // this appears when ID or access token are not available
-                'log on to Facebook to find your friends',
-                linkFacebookUserWithCurrentAnonUser);
+                'log on to Facebook',
+                () => linkFacebookUserWithCurrentAnonUser(context));
           else {
-            print(snapshot.data);
+            print("snapshot.data is ${snapshot.data}");
             return Column(children: [
               SizedBox(height: 30),
               Padding(
@@ -100,7 +100,7 @@ class _ReceiverScreen extends StatelessWidget {
                       width: 440,
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: facebookFriendsList)))
+                          children: [...snapshot.data])))
             ]);
           }
         }));
@@ -125,7 +125,7 @@ class _ReceiverScreen extends StatelessWidget {
           print(state);
           String shareLink = '';
           if (state is PsiTestSaveShareSuccessful) {
-            shareLink = state.getShareLink();
+            if (shareLink == '') shareLink = currentTest.shareLink;
             return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -148,7 +148,7 @@ class _ReceiverScreen extends StatelessWidget {
                       child: SizedBox(
                           width: 440,
                           height: 70,
-                          child: Text(shareLink,
+                          child: Text(shareLink == null ? '' : shareLink,
                               style: TextStyle(color: Colors.white)))),
                   /*TextFormField(
                               //enabled: false,
@@ -195,9 +195,8 @@ class _ReceiverScreen extends StatelessWidget {
               SizedBox(
                 height: 40,
               ),
-              CopyText('''    Or connect directly
-to your Facebook friends
-   (who have this app)'''),
+              CopyText('''Or invite your Facebook friends...
+   '''),
               facebookFriends,
               SizedBox(height: 130),
             ]));
