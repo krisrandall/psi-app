@@ -117,7 +117,10 @@ class _HomeScreen extends StatelessWidget {
               .add(SharePsiTest(test: newlyCreatedTest));
         },
       ),
-      Button('print user', () => print(globalCurrentUser.uid)),
+      Button(
+          'print user',
+          () => print(
+              'isFacebookUser = ${isFacebookUser(globalCurrentUser)} gcu uid is ${globalCurrentUser.uid} email is ${globalCurrentUser.email}')),
       StreamBuilder<QuerySnapshot>(
           stream: userTestStats.snapshots(),
           builder:

@@ -29,7 +29,8 @@ Future<Null> saveFacebookAccessToken(AccessToken accessToken) async {
 //
 void _setFacebookIdAsFirebaseUserEmail(facebookUserId) async {
   try {
-    if (isFacebookUser(globalCurrentUser) && globalCurrentUser.email == null) {
+    if (isFacebookUser(
+        globalCurrentUser) /* && globalCurrentUser.email == null*/) {
       globalCurrentUser.updateEmail("$facebookUserId@psi.com");
       print(
           'ran _setFacebookIdAsFirebaseUserEmail and now email  = ${globalCurrentUser.email}');
@@ -51,13 +52,12 @@ Future<Null> signInWithFacebook() async {
   final FacebookAuthCredential facebookAuthCredential =
       FacebookAuthProvider.getCredential(accessToken: _accessToken.token);
 
-  saveFacebookAccessToken(_accessToken);
-  _setFacebookIdAsFirebaseUserEmail(_accessToken.userId);
-
   print("_accessToken.userId is ${_accessToken.userId}");
 
   // Once signed in, return the UserCredential
   await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+  saveFacebookAccessToken(_accessToken);
+  _setFacebookIdAsFirebaseUserEmail(_accessToken.userId);
 }
 
 var facebookFriendsList;
@@ -116,13 +116,14 @@ void logOutOfFacebook(context) async {
   var user;
   try {
     FacebookAuth.instance.logOut();
-    await globalCurrentUser.signOut();
-    //user = await FirebaseAuth.instance.currentUser();
+    await FirebaseAuth.instance.signOut();
+    //
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('facebookAccessToken', null);
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => LandingPage()));
+    setGlobalCurrentuser();
   } catch (error) {
     print(error);
   }
