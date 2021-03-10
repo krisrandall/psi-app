@@ -197,9 +197,8 @@ class _SenderScreen extends StatelessWidget {
               SizedBox(
                 height: 40,
               ),
-              CopyText('''    Or connect directly
-to your Facebook friends
-   (who have this app)'''),
+              CopyText('''Or invite your Facebook friends...
+   '''),
               facebookFriends,
               SizedBox(height: 130),
             ]));

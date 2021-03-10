@@ -121,9 +121,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       String receiverUid;
       String myID;
 
-      myID = isFacebookUser(globalCurrentUser)
-          ? globalCurrentUser.email
-          : globalCurrentUser.uid;
+      myID = getMyID();
 
       print(myID);
 
@@ -195,9 +193,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     try {
       String testId = event.test.testId;
       var myRole = event.test.myRole;
-      myID = isFacebookUser(globalCurrentUser)
-          ? globalCurrentUser.email
-          : globalCurrentUser.uid;
+      var myID = getMyID();
 
       if (myRole == PsiTestRole.SENDER) {
         db.collection('test').document(testId).updateData({

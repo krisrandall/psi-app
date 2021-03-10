@@ -24,7 +24,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     print('in home screen');
     print(
-        'isFacebookUser = ${isFacebookUser(globalCurrentUser)} gcu uid is ${globalCurrentUser.uid} email is ${globalCurrentUser.email}');
+        'isFacebookUser = ${globalCurrentUser.isAnonymous} gcu uid is ${globalCurrentUser.uid} myID is ${getMyID()}');
     return Scaffold(
         appBar: AppBar(
           title: Text('𝚿 Psi Telepathy Test'),
@@ -77,8 +77,6 @@ class _HomeScreen extends StatelessWidget {
     _homeScaffoldKey.currentState.showSnackBar(snackBar);
   }
 
-  var user = globalCurrentUser;
-
   @override
   Widget build(BuildContext context) {
     // load other BG images to avoid a flash of white BG when navigating to other pages for the first time
@@ -98,7 +96,7 @@ class _HomeScreen extends StatelessWidget {
       Button(
         "Be the Sender",
         () {
-          resetGlobalCurrentuser();
+          resetMyId();
           goToScreen(context, SenderScreen());
           var newlyCreatedTest = PsiTest.beginNewTestAsSender();
           var event = CreatePsiTest(test: newlyCreatedTest);
@@ -122,7 +120,7 @@ class _HomeScreen extends StatelessWidget {
       Button(
           'print user',
           () => print(
-              'isFacebookUser = ${isFacebookUser(globalCurrentUser)} gcu uid is ${globalCurrentUser.uid} email is ${globalCurrentUser.email} myID = $myID')),
+              'isFacebookUser = ${!globalCurrentUser.isAnonymous} gcu uid is ${globalCurrentUser.uid} email is ${globalCurrentUser.email} myID = ${getMyID()}')),
       StreamBuilder<QuerySnapshot>(
           stream: userTestStats.snapshots(),
           builder:

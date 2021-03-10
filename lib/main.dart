@@ -12,8 +12,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uni_links/uni_links.dart';
 import 'dart:async';
 import 'package:app/screens/joinScreen.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:app/components/facebook_logic.dart';
 
 void main() => runApp(MyApp());
@@ -52,9 +50,6 @@ class _LandingPageState extends State<LandingPage> {
   String signinErrorMessage = "";
   StreamSubscription _sub;
   String deepLink;
-  AccessToken _accessToken;
-  bool _checking = true;
-  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   void goToHomeScreenAsynchronously(BuildContext context) async {
     await Navigator.push(
@@ -122,25 +117,16 @@ class _LandingPageState extends State<LandingPage> {
                     _signInAnonymously().catchError((error) {
                       print('error while signing in anonymously$error');
                     });
-                  }),
-                  !_checking
-                      ? CircularProgressIndicator()
-                      : Text("access Token $_accessToken"),
-                  Text('Logging in ..'),
+                  })
                 ]);
           } else if (signinErrorMessage != '') {
             return TitleText(signinErrorMessage);
           } else if (user != null && signinErrorMessage == '') {
             globalCurrentUser = user;
 
-            resetGlobalCurrentuser();
+            resetMyId();
 
             return HomeScreen();
-            /*
-                Future.microtask(() {
-                  goToHomeScreenAsynchronously(context);
-                });
-                return Container();*/
           } else
             return Container();
         } else {

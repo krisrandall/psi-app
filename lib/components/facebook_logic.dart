@@ -24,23 +24,6 @@ Future<Null> saveFacebookAccessToken(AccessToken accessToken) async {
   }
 }
 
-// facebook users need to have their id explicitly added to Firebase.
-
-//
-void _setFacebookIdAsFirebaseUserEmail(facebookUserId) async {
-  try {
-    if (isFacebookUser(
-        globalCurrentUser) /* && globalCurrentUser.email == null*/) {
-      globalCurrentUser.updateEmail("$facebookUserId@psi.com");
-      print(
-          'ran _setFacebookIdAsFirebaseUserEmail and now email  = ${globalCurrentUser.email}');
-    } else
-      print('email address = ${globalCurrentUser.email}');
-  } catch (error) {
-    print("error $error");
-  }
-}
-
 Future<Null> signInWithFacebook() async {
   // Trigger the sign-in flow
   try {
@@ -59,7 +42,6 @@ Future<Null> signInWithFacebook() async {
 
     await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
     saveFacebookAccessToken(_accessToken);
-    //_setFacebookIdAsFirebaseUserEmail(_accessToken.userId);
     //resetGlobalCurrentuser();
     //await globalCurrentUser.reload();
   } catch (error) {
@@ -67,14 +49,34 @@ Future<Null> signInWithFacebook() async {
   }
 }
 
+void logOutOfFacebook(context) async {
+  try {
+    await FacebookAuth.instance.logOut();
+    await FirebaseAuth.instance.signOut();
+
+    //
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('facebookAccessToken', null).catchError((error) {
+      print(error);
+    });
+    await globalCurrentUser.reload();
+    resetMyId();
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => LandingPage()));
+  } catch (error) {
+    print(error);
+  }
+  //print('firebase user ${user.uid}');
+}
+
 var facebookFriendsList;
 
 Future<List> getFacebookFriendsList(context, currentTest) async {
-  if (!isFacebookUser(globalCurrentUser)) return null;
+  if (globalCurrentUser.isAnonymous) return null;
   List<dynamic> facebookFriendsList = [];
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   String facebookAccessToken = prefs.getString('facebookAccessToken');
-  //String facebookID = prefs.getString('facebookID');
   Map jsonResponse;
   List friends;
   try {
@@ -97,7 +99,7 @@ Future<List> getFacebookFriendsList(context, currentTest) async {
             title: Text(friend['name']),
             onTap: () {
               var event = InviteFacebookFriend(
-                  test: currentTest, facebookFriend: '$friendID@psi.com');
+                  test: currentTest, facebookFriend: '$friendID');
               BlocProvider.of<PsiTestSaveBloc>(context).add(event);
               facebookFriendsList.add(SizedBox(height: 10));
             }));
@@ -117,27 +119,6 @@ Future<List> getFacebookFriendsList(context, currentTest) async {
     return [Container()];
   }
   return facebookFriendsList;
-}
-
-void logOutOfFacebook(context) async {
-  try {
-    await FacebookAuth.instance.logOut();
-    await FirebaseAuth.instance.signOut();
-
-    //
-
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('facebookAccessToken', null).catchError((error) {
-      print(error);
-    });
-    resetGlobalCurrentuser();
-    await globalCurrentUser.reload();
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => LandingPage()));
-  } catch (error) {
-    print(error);
-  }
-  //print('firebase user ${user.uid}');
 }
 
 Future<Null> linkFacebookUserWithCurrentAnonUser(context) async {
@@ -162,7 +143,7 @@ Future<Null> linkFacebookUserWithCurrentAnonUser(context) async {
     print('error possibly user cancelled facebook login$error');
   });*/
   globalCurrentUser.setUserId('a');
-  _setFacebookIdAsFirebaseUserEmail(_accessToken.userId);
+
   saveFacebookAccessToken(_accessToken).catchError((error) {
     print('error possibly user cancelled facebook login$error');
   });

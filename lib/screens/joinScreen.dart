@@ -145,9 +145,7 @@ class _OpenedViaLinkWidget extends StatelessWidget {
         goToScreen(context, TableBgWrapper(HomeScreen()));
       })
     ];
-    myID = isFacebookUser(globalCurrentUser)
-        ? globalCurrentUser.email
-        : globalCurrentUser.uid;
+    var myID = getMyID();
 
     if (receiverId != '' && senderId != '') {
       if (myID == receiverId || myID == senderId) {

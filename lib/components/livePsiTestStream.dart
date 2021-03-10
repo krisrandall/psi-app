@@ -1,3 +1,4 @@
+import 'package:app/components/facebook_logic.dart';
 import 'package:app/components/textComponents.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:app/models/psiTestQuestion.dart';
@@ -6,48 +7,44 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:app/bloc/psitestsave_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 var globalCurrentUser;
+var _myID;
 
-Future<Null> resetGlobalCurrentuser() async {
+void setMyID(myID) {
+  _myID = myID;
+}
+
+String getMyID() {
+  print('getting myID: $_myID');
+  return _myID;
+}
+
+Future<Null> resetMyId() async {
   globalCurrentUser = await FirebaseAuth.instance.currentUser();
-  myID = isFacebookUser(globalCurrentUser)
-      ? globalCurrentUser.email
-      : globalCurrentUser.uid;
+  if (!globalCurrentUser.isAnonymous) {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String facebookID = prefs.getString('facebookID');
+    setMyID(facebookID);
+  } else
+    setMyID(globalCurrentUser.uid);
 }
-
-bool isFacebookUser(user) {
-  /*for (String provider in user.providerData) {
-    if (user.getProviderId().equals("facebook.com")) {
-      print("User is signed in with Facebook");
-      return true;
-    }
-  }
-  print('user is anonymous');
-  return false;*/
-  print('user is anonymous = ${user.isAnonymous}');
-  return !user.isAnonymous;
-}
-
-String faceBookUid = (globalCurrentUser.email);
-String myID = isFacebookUser(globalCurrentUser)
-    ? globalCurrentUser.email
-    : globalCurrentUser.uid;
 
 Query firestoreDatabaseStream = Firestore.instance
     .collection('test')
-    .where('parties', arrayContains: '$myID')
+    .where('parties', arrayContains: _myID)
     .where("status", isEqualTo: "underway");
 
 Query userTestStats = Firestore.instance
     .collection('test')
-    .where('parties', arrayContains: myID)
+    .where('parties', arrayContains: _myID)
     .where("status", isEqualTo: "completed");
 
 /// Convert a firestore data snapshot into a psiTest
 ///
 PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
-  print("myID is $myID");
+  String myID = getMyID();
 
   if (documents.length == 0) {
     print('no matching documents found');
@@ -56,7 +53,7 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
 
   PsiTest test;
 
-  print('livePsi globaluser = $myID');
+  print('livePsi myID = $_myID');
   try {
     var data = documents[0];
     var iAm;
