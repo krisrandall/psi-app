@@ -15,6 +15,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:app/components/facebook_logic.dart';
 
 class HomeScreen extends StatelessWidget {
   final GlobalKey<ScaffoldState> _homeScaffoldKey =
@@ -97,6 +98,7 @@ class _HomeScreen extends StatelessWidget {
       Button(
         "Be the Sender",
         () {
+          resetGlobalCurrentuser();
           goToScreen(context, SenderScreen());
           var newlyCreatedTest = PsiTest.beginNewTestAsSender();
           var event = CreatePsiTest(test: newlyCreatedTest);
@@ -120,7 +122,7 @@ class _HomeScreen extends StatelessWidget {
       Button(
           'print user',
           () => print(
-              'isFacebookUser = ${isFacebookUser(globalCurrentUser)} gcu uid is ${globalCurrentUser.uid} email is ${globalCurrentUser.email}')),
+              'isFacebookUser = ${isFacebookUser(globalCurrentUser)} gcu uid is ${globalCurrentUser.uid} email is ${globalCurrentUser.email} myID = $myID')),
       StreamBuilder<QuerySnapshot>(
           stream: userTestStats.snapshots(),
           builder:

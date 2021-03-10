@@ -9,8 +9,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 var globalCurrentUser;
 
-Future<Null> setGlobalCurrentuser() async {
+Future<Null> resetGlobalCurrentuser() async {
   globalCurrentUser = await FirebaseAuth.instance.currentUser();
+  myID = isFacebookUser(globalCurrentUser)
+      ? globalCurrentUser.email
+      : globalCurrentUser.uid;
 }
 
 bool isFacebookUser(user) {
@@ -22,6 +25,7 @@ bool isFacebookUser(user) {
   }
   print('user is anonymous');
   return false;*/
+  print('user is anonymous = ${user.isAnonymous}');
   return !user.isAnonymous;
 }
 
@@ -32,7 +36,7 @@ String myID = isFacebookUser(globalCurrentUser)
 
 Query firestoreDatabaseStream = Firestore.instance
     .collection('test')
-    .where('parties', arrayContains: myID)
+    .where('parties', arrayContains: '$myID')
     .where("status", isEqualTo: "underway");
 
 Query userTestStats = Firestore.instance
@@ -44,6 +48,7 @@ Query userTestStats = Firestore.instance
 ///
 PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
   print("myID is $myID");
+
   if (documents.length == 0) {
     print('no matching documents found');
     return null;

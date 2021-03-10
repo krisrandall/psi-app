@@ -66,25 +66,7 @@ class _LandingPageState extends State<LandingPage> {
     await precacheImage(AssetImage('assets/splash.png'), context);
   }
 
-// TO DO : use these methods below to store facebook access token instead
-
-  Future<String> _getFacebookPreference() async {
-    final SharedPreferences prefs = await _prefs;
-    return prefs.getString('facebookPreference') ?? 'use';
-  }
-
-  Future _saveFacebookPreference(preference) async {
-    print('setting facebook preference to $preference');
-    final SharedPreferences prefs = await _prefs;
-    setState(() {
-      prefs.setString('facebookPreference', preference);
-    });
-  }
-
   Future<void> _signInAnonymously() async {
-    // the isAnonymous method doesn't work(false nrgatives), so we add an email
-    // to match facebook user
-
     try {
       await FirebaseAuth.instance.signInAnonymously();
     } catch (e) {
@@ -132,6 +114,7 @@ class _LandingPageState extends State<LandingPage> {
           if (user == null) {
             return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   TitleText("Sign in with Facebook"),
                   Button("Sign in with Facebook", signInWithFacebook),
@@ -149,6 +132,8 @@ class _LandingPageState extends State<LandingPage> {
             return TitleText(signinErrorMessage);
           } else if (user != null && signinErrorMessage == '') {
             globalCurrentUser = user;
+
+            resetGlobalCurrentuser();
 
             return HomeScreen();
             /*

@@ -14,6 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/components/facebook_logic.dart';
 import 'package:share/share.dart';
 import 'package:clipboard/clipboard.dart';
+import 'package:app/main.dart';
 
 class ReceiverScreen extends StatelessWidget {
   final GlobalKey<ScaffoldState> _receiverScreenScaffoldKey =
@@ -89,7 +90,7 @@ class _ReceiverScreen extends StatelessWidget {
             return Button(
                 // this appears when ID or access token are not available
                 'log on to Facebook',
-                signInWithFacebook);
+                () => signInWithFacebook());
           else {
             print("snapshot.data is ${snapshot.data}");
             return Column(children: [

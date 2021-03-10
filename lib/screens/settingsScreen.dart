@@ -4,6 +4,7 @@ import 'package:app/components/textcomponents.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:app/components/facebook_logic.dart';
+import 'package:app/main.dart';
 
 // doesn't work
 

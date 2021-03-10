@@ -25,7 +25,7 @@ Future<Null> saveFacebookAccessToken(AccessToken accessToken) async {
 }
 
 // facebook users need to have their id explicitly added to Firebase.
-// see here: (https://github.com/FirebaseExtended/flutterfire/issues/4612#issuecomment-782107867)
+
 //
 void _setFacebookIdAsFirebaseUserEmail(facebookUserId) async {
   try {
@@ -43,21 +43,28 @@ void _setFacebookIdAsFirebaseUserEmail(facebookUserId) async {
 
 Future<Null> signInWithFacebook() async {
   // Trigger the sign-in flow
-  final AccessToken _accessToken =
-      await FacebookAuth.instance.login().catchError((error) {
-    print('error possibly user cancelled facebook login$error');
-  });
+  try {
+    final AccessToken _accessToken =
+        await FacebookAuth.instance.login().catchError((error) {
+      print('error possibly user cancelled facebook login$error');
+    });
 
-  // Create a credential from the access token
-  final FacebookAuthCredential facebookAuthCredential =
-      FacebookAuthProvider.getCredential(accessToken: _accessToken.token);
+    // Create a credential from the access token
+    final FacebookAuthCredential facebookAuthCredential =
+        FacebookAuthProvider.getCredential(accessToken: _accessToken.token);
 
-  print("_accessToken.userId is ${_accessToken.userId}");
+    print("_accessToken.userId is ${_accessToken.userId}");
 
-  // Once signed in, return the UserCredential
-  await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
-  saveFacebookAccessToken(_accessToken);
-  _setFacebookIdAsFirebaseUserEmail(_accessToken.userId);
+    // Once signed in, return the UserCredential
+
+    await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
+    saveFacebookAccessToken(_accessToken);
+    //_setFacebookIdAsFirebaseUserEmail(_accessToken.userId);
+    //resetGlobalCurrentuser();
+    //await globalCurrentUser.reload();
+  } catch (error) {
+    print(error);
+  }
 }
 
 var facebookFriendsList;
@@ -113,17 +120,20 @@ Future<List> getFacebookFriendsList(context, currentTest) async {
 }
 
 void logOutOfFacebook(context) async {
-  var user;
   try {
-    FacebookAuth.instance.logOut();
+    await FacebookAuth.instance.logOut();
     await FirebaseAuth.instance.signOut();
+
     //
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('facebookAccessToken', null);
+    prefs.setString('facebookAccessToken', null).catchError((error) {
+      print(error);
+    });
+    resetGlobalCurrentuser();
+    await globalCurrentUser.reload();
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => LandingPage()));
-    setGlobalCurrentuser();
   } catch (error) {
     print(error);
   }
@@ -136,26 +146,24 @@ Future<Null> linkFacebookUserWithCurrentAnonUser(context) async {
       await FacebookAuth.instance.login().catchError((error) {
     print('error possibly user cancelled facebook login$error');
   });
-
   // Create a credential from the access token
   final FacebookAuthCredential facebookAuthCredential =
       FacebookAuthProvider.getCredential(accessToken: _accessToken.token);
-
   // Once signed in, return the UserCredential
   /*await FirebaseAuth.instance
       .signInWithCredential(facebookAuthCredential)
       .catchError((error) {
     print('error possibly user cancelled facebook login$error');
   });*/
-
-  _setFacebookIdAsFirebaseUserEmail(_accessToken.userId);
-  saveFacebookAccessToken(_accessToken).catchError((error) {
-    print('error possibly user cancelled facebook login$error');
-  });
   globalCurrentUser = await FirebaseAuth.instance.currentUser();
-  globalCurrentUser
+  /* globalCurrentUser
       .linkWithCredential(facebookAuthCredential)
       .catchError((error) {
+    print('error possibly user cancelled facebook login$error');
+  });*/
+  globalCurrentUser.setUserId('a');
+  _setFacebookIdAsFirebaseUserEmail(_accessToken.userId);
+  saveFacebookAccessToken(_accessToken).catchError((error) {
     print('error possibly user cancelled facebook login$error');
   });
   Navigator.push(

@@ -88,8 +88,9 @@ class _SenderScreen extends StatelessWidget {
           if (!snapshot.hasData)
             return Button(
                 // this appears when ID or access token are not available
-                'log on to Facebook',
-                () => signInWithFacebook());
+                'log on to Facebook', () {
+              signInWithFacebook();
+            });
           else {
             print(snapshot.data);
             return Column(children: [
