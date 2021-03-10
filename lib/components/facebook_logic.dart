@@ -11,6 +11,7 @@ import 'package:app/components/livePsiTestStream.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/bloc/psitestsave_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:async';
 
 //AccessToken _accessToken;
 
@@ -57,9 +58,8 @@ void logOutOfFacebook(context) async {
     //
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('facebookAccessToken', null).catchError((error) {
-      print(error);
-    });
+    prefs.setString('facebookAccessToken', null);
+
     await globalCurrentUser.reload();
     resetMyId();
     Navigator.push(
@@ -72,6 +72,20 @@ void logOutOfFacebook(context) async {
 
 var facebookFriendsList;
 
+Stream<List> getFacebookFriendsListStream(context, currentTest) async* {
+  while (true) {
+    await Future.delayed(Duration(seconds: 1));
+    yield await getFacebookFriendsList(context, currentTest);
+  }
+}
+
+Future<DocumentSnapshot> gotInvitedToTest(testId) async {
+  var docRef = Firestore.instance.collection('test').document(testId);
+  DocumentSnapshot sharedTestDocumentSnapshot = await docRef.get();
+
+  return sharedTestDocumentSnapshot;
+}
+
 Future<List> getFacebookFriendsList(context, currentTest) async {
   if (globalCurrentUser.isAnonymous) return null;
   List<dynamic> facebookFriendsList = [];
@@ -80,8 +94,14 @@ Future<List> getFacebookFriendsList(context, currentTest) async {
   Map jsonResponse;
   List friends;
   try {
-    var response = await http.get(
+    var response;
+    response = await http.get(
         "https://graph.facebook.com/me/friends?access_token=$facebookAccessToken");
+
+    Timer.periodic(Duration(seconds: 5), (Timer t) {
+      response = http.get(
+          "https://graph.facebook.com/me/friends?access_token=$facebookAccessToken");
+    });
 
     if (response.statusCode == 200) {
       jsonResponse = convert.jsonDecode(response.body);

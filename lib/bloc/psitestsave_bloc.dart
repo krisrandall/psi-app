@@ -43,6 +43,9 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     if (event is CompletePsiTest) {
       yield* _mapCompletePsiTest(event);
     }
+    if (event is AcceptFacebookInvitation) {
+      yield* _mapAcceptFacebookInvitationToState(event);
+    }
   }
 
   Stream<PsiTestSaveState> _mapCreateAndSharePsiTestToState(
@@ -251,6 +254,11 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     } catch (error) {
       yield PsiTestInviteFacebookFriendFailed(error);
     }
+  }
+
+  Stream<PsiTestSaveState> _mapAcceptFacebookInvitationToState(
+      PsiTestSaveEvent event) async* {
+    yield PsiTestAcceptFacebookInvitationInProgress();
   }
 
   Stream<PsiTestSaveState> _mapAnswerPsiTestQuestionToState(

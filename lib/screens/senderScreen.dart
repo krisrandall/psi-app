@@ -185,6 +185,39 @@ class _SenderScreen extends StatelessWidget {
         return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [Image.asset("assets/sun_loading_spinner.gif")]);
+      else if (currentTest.invitedTo.isNotEmpty)
+        return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          TitleText(
+              '${currentTest.invitedTo[0]['inviter']} invited you to a test'),
+          FutureBuilder(
+              future: gotInvitedToTest(currentTest.invitedTo[0]['testId']),
+              builder: (context, AsyncSnapshot<dynamic> snapshot) {
+                if (!snapshot.hasData) {
+                  print(
+                      'looking for test with testID ${currentTest.invitedTo[0]['testId']}');
+                  return (Center(child: CopyText('looking for test...')));
+                } else if (snapshot.hasData) {
+                  if (snapshot.data.exists) {
+                    return Button('okay, join', () {
+                      var testToJoin = createTestFromFirestore([snapshot.data]);
+                      print(testToJoin.myRole);
+                      BlocProvider.of<PsiTestSaveBloc>(context)
+                          .add(JoinPsiTest(test: testToJoin));
+                    });
+                  } else
+                    return Column(children: [
+                      CopyText('Test no longer exists :('),
+                      Button('okay', () {
+                        BlocProvider.of<PsiTestSaveBloc>(context)
+                            .add(CancelPsiTest(test: currentTest));
+                      })
+                    ]);
+                } else if (snapshot.hasError) {
+                  print('snapshot has error');
+                }
+                return Container();
+              })
+        ]);
       else
         return SingleChildScrollView(
             child: Column(

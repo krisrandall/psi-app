@@ -187,8 +187,23 @@ class _ReceiverScreen extends StatelessWidget {
         return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           TitleText(
               '${currentTest.invitedTo[0]['inviter']} invited you to a test'),
-          Button('okay, join',
-              null /*invite(currentTest.invitedTo[0]['testId']) */)
+          FutureBuilder(
+              future: gotInvitedToTest(currentTest.invitedTo[0]['testId']),
+              builder: (context, AsyncSnapshot<dynamic> snapshot) {
+                if (!snapshot.hasData) {
+                  print(
+                      'looking for test with testID ${currentTest.invitedTo[0]['testId']}');
+                  return (Center(child: CopyText('looking for test...')));
+                } else if (snapshot.hasData) {
+                  return Button('okay, join', () {
+                    var testToJoin = createTestFromFirestore([snapshot.data]);
+                    print(testToJoin.myRole);
+                    BlocProvider.of<PsiTestSaveBloc>(context)
+                        .add(JoinPsiTest(test: testToJoin));
+                  });
+                } else
+                  return Container();
+              })
         ]);
       else
         return SingleChildScrollView(

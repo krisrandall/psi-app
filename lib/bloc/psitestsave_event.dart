@@ -44,6 +44,10 @@ class InviteFacebookFriend extends PsiTestSaveEvent {
       : super(test: test);
 }
 
+class AcceptFacebookInvitation extends PsiTestSaveEvent {
+  const AcceptFacebookInvitation({@required test}) : super(test: test);
+}
+
 class JoinPsiTest extends PsiTestSaveEvent {
   const JoinPsiTest({@required test}) : super(test: test);
 }
