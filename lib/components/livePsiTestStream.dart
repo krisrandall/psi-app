@@ -104,7 +104,7 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
           'error while populating answeredQuestions list and /or counting numQuestionsAnswered: $e');
     }
     print('$numQuestionsAnswered questions answered');
-    String invitedTo;
+    List invitedTo;
     String shareLink;
     try {
       invitedTo = documents[0].data['invitedTo'];

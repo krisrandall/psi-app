@@ -128,11 +128,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       senderUid = event.test.myRole == PsiTestRole.SENDER ? myID : "";
       receiverUid = event.test.myRole == PsiTestRole.RECEIVER ? myID : "";
 
-      //yield PsiTestSaveCreateInProgress(0.2);
-
-      //String testId = event.test.testId;
       var path = ('https://picsum.photos');
-
       var questions = new List<Map>();
       var question = new Map<String, dynamic>();
 
@@ -160,7 +156,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         'receiver': receiverUid,
         'sender': senderUid,
         'status': 'underway',
-        'invitedTo': ''
+        'invitedTo': []
       });
 
       event.test.testId = ref.documentID;
@@ -216,25 +212,41 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       PsiTestSaveEvent event) async* {
     try {
       yield PsiTestInviteFacebookFriendInProgress();
-      String testId = event.test.testId;
+      String inviterTestId = event.test.testId;
       var facebookFriendID = event.facebookFriend;
       var db = Firestore.instance;
+      String inviteeTestId;
 
-      Query facebookFriendQuery = db
+      String myID = getMyID();
+
+      Query facebookFriendActiveTestQuery = db
           .collection('test')
           .where('parties', arrayContains: facebookFriendID)
           .where("status", isEqualTo: "underway");
-      var snapshot = await facebookFriendQuery.getDocuments();
+      var snapshot = await facebookFriendActiveTestQuery.getDocuments();
       var length = snapshot.documents.length;
       print(length);
       if (length == 0) {
-        // send push notification
-      }
+        // if invitee doesn't have an active test
+        //
+        // TODO send push notification
+        db.collection('test').add({
+          'invitedTo': [
+            {'inviter': myID},
+            {'testId': inviterTestId}
+          ]
+        });
+      } else {
+        inviteeTestId = snapshot.documents[0].documentID;
+        //if invitee has an active test
 
-      var docRef = db
-          .collection('test')
-          .document(testId)
-          .updateData({'invitedTo': facebookFriendID});
+        var docRef = db.collection('test').document(inviteeTestId).updateData({
+          'invitedTo': FieldValue.arrayUnion([
+            {'inviter': myID},
+            {'testId': inviterTestId}
+          ]),
+        });
+      }
       yield PsiTestInviteFacebookFriendSuccessful();
     } catch (error) {
       yield PsiTestInviteFacebookFriendFailed(error);

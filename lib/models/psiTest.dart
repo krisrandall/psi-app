@@ -23,7 +23,7 @@ class PsiTest {
   int totalNumQuestions;
   int numQuestionsAnswered;
   PsiTestQuestion currentQuestion;
-  String invitedTo;
+  List invitedTo;
   String shareLink;
 
   List<PsiTestQuestion> answeredQuestions;
