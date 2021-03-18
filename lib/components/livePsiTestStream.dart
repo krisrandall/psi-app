@@ -27,6 +27,7 @@ Future<Null> resetMyId() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String facebookID = prefs.getString('facebookID');
     setMyID(facebookID);
+    print('setting myID to facebook uid');
   } else
     setMyID(globalCurrentUser.uid);
 }
