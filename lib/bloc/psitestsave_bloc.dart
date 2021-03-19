@@ -168,7 +168,6 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         'sender': senderUid,
         'status': 'underway',
         'shareLink': '',
-        'facebookFriends': [],
         'invitedTo': []
       });
 
