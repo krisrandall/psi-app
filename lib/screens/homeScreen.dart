@@ -119,10 +119,10 @@ class _HomeScreen extends StatelessWidget {
           BlocProvider.of<PsiTestSaveBloc>(context).add(event);
 
           BlocProvider.of<PsiTestSaveBloc>(context)
-              .add(SetFacebookFriendsOnFirestore(test: newlyCreatedTest));
+              .add(SharePsiTest(test: newlyCreatedTest));
 
           BlocProvider.of<PsiTestSaveBloc>(context)
-              .add(SharePsiTest(test: newlyCreatedTest));
+              .add(SetFacebookFriendsOnFirestore(test: newlyCreatedTest));
         },
       ),
       Button(

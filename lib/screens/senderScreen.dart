@@ -137,6 +137,16 @@ class _SenderScreen extends StatelessWidget {
       facebookFriends = BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
           builder: (context, state) {
         //facebookFriends = facebookFriends == null
+        if (state is SetFacebookFriendsOnFirestoreFailed)
+          return Column(
+            children: [
+              CopyText('There was a problem accessing your facebook friends'),
+              Button('Try again', () {
+                BlocProvider.of<PsiTestSaveBloc>(context)
+                    .add(SetFacebookFriendsOnFirestore(test: currentTest));
+              })
+            ],
+          );
         if (state is SetFacebookFriendsOnFirestoreInProgress)
           return CircularProgressIndicator();
         else if (state is SetFacebookFriendsOnFirestoreSuccessful) if (state
