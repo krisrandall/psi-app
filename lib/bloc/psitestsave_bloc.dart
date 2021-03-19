@@ -261,48 +261,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
           print('friend $friend');
           friendsListOnFirestore.add(friend);
         }
-        print('facebookFriendsList $friendsListOnFirestore');
       }
-      db
-          .collection('test')
-          .document(testId)
-          .updateData({'facebookFriends': friendsListOnFirestore});
-      /*
-
-          if (globalCurrentUser.isAnonymous) return null;
-        List<dynamic> facebookFriendsList = [];
-          List otherfunct(){
-             // createFriendsList from Firestore 
-              facebookFriendsList.add(ListTile(
-                  tileColor: Colors.purple[100],
-                  leading: Image.network(friendProfilePic),
-                  trailing: Icon(Icons.send_sharp),
-                  title: Text(friend['name']),
-                  onTap: () {
-                    var event = InviteFacebookFriend(
-                        test: currentTest, facebookFriend: '$friendID');
-                    BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-                    facebookFriendsList.add(SizedBox(height: 10));
-                  }));
-            }
-            if (facebookFriendsList.length == 0)
-              return [
-                Text(
-                    '''none of your Facebook friends have this app installed.''',
-                    style: TextStyle(color: Colors.white)),
-              ];
-          } else {
-            print(
-                'GET Request (facebook api) failed with status: ${response.statusCode}.');
-            return [Container()];
-          }
-        } catch (error) {
-          print(error);
-          return [Container()];
-        }
-        return facebookFriendsList;
-      }*/
-
       yield SetFacebookFriendsOnFirestoreSuccessful(friendsListOnFirestore);
     } catch (error) {
       yield SetFacebookFriendsOnFirestoreFailed(error: error);
