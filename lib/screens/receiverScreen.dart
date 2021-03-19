@@ -80,17 +80,18 @@ class _ReceiverScreen extends StatelessWidget {
       }
     });
     Widget actionButton;
-
+/*
     Widget facebookFriends = FutureBuilder<List>(
-        future: getFacebookFriendsList(context, currentTest),
+        future: getFacebookFriendsListFromTest(context, currentTest),
         builder: ((context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting)
+          if (snapshot.connectionState != ConnectionState.done)
             return CircularProgressIndicator();
           if (!snapshot.hasData)
             return Button(
                 // this appears when ID or access token are not available
                 'log on to Facebook',
-                () => signInWithFacebook());
+                () =>
+                    linkFacebookUserWithCurrentAnonUser(context, currentTest));
           else {
             print("snapshot.data is ${snapshot.data}");
             return Column(children: [
@@ -104,7 +105,25 @@ class _ReceiverScreen extends StatelessWidget {
                           children: [...snapshot.data])))
             ]);
           }
-        }));
+        }));*/
+
+    Widget facebookFriends =
+        buildFacebookFriendsList(['filler'], currentTest, context) == null
+            ? Button(
+                // this appears when ID or access token are not available
+                'log on to Facebook',
+                () => linkFacebookUserWithCurrentAnonUser(context, currentTest))
+            : Column(children: [
+                SizedBox(height: 30),
+                Padding(
+                    padding: EdgeInsets.only(left: 20, right: 20),
+                    child: SizedBox(
+                        width: 440,
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: buildFacebookFriendsList(
+                                ['filler'], currentTest, context))))
+              ]);
 
     if (currentTest != null) if (currentTest.testStatus ==
         PsiTestStatus.UNDERWAY) return TestScreen(currentTest.testId);

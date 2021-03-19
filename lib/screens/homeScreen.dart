@@ -101,8 +101,12 @@ class _HomeScreen extends StatelessWidget {
           var newlyCreatedTest = PsiTest.beginNewTestAsSender();
           var event = CreatePsiTest(test: newlyCreatedTest);
           BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+
           BlocProvider.of<PsiTestSaveBloc>(context)
               .add(SharePsiTest(test: newlyCreatedTest));
+
+          BlocProvider.of<PsiTestSaveBloc>(context)
+              .add(SetFacebookFriendsOnFirestore(test: newlyCreatedTest));
         },
       ),
       SizedBox(height: 10),
@@ -113,6 +117,10 @@ class _HomeScreen extends StatelessWidget {
           var newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
           var event = CreatePsiTest(test: newlyCreatedTest);
           BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+
+          BlocProvider.of<PsiTestSaveBloc>(context)
+              .add(SetFacebookFriendsOnFirestore(test: newlyCreatedTest));
+
           BlocProvider.of<PsiTestSaveBloc>(context)
               .add(SharePsiTest(test: newlyCreatedTest));
         },

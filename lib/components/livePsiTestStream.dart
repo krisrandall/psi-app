@@ -107,12 +107,29 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
     print('$numQuestionsAnswered questions answered');
     List invitedTo;
     String shareLink;
+    List facebookFriends;
     try {
       invitedTo = documents[0].data['invitedTo'];
 
       shareLink = documents[0].data['shareLink'];
+
+      //  facebookFriends = documents[0].data['facebookFriends'];
+      //if (facebookFriends == null)
     } catch (error) {
-      print('error looking for invitedTo property $error');
+      print(
+          'error looking for invitedTo, sharelink or facebookfriends property $error');
+
+      /*   if (facebookFriends.length > 0) {
+        for (Map friend in facebookFriends) {
+          friend = {
+            'friendId': friend['friendID'],
+            'name': friend['name'],
+            'profilePicUrl': friend['profilePicUrl']
+          };
+          print(facebookFriends);
+          facebookFriends.add(friend);
+        }
+      }*/
     }
 
     PsiTestStatus status;
@@ -128,19 +145,19 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
       status = PsiTestStatus.UNKNOWN;
 
     test = PsiTest(
-      testId: data.documentID,
-      myRole: iAm,
-      totalNumQuestions: DEFAULT_NUM_QUESTIONS,
-      testStatus: status,
-      numQuestionsAnswered: numQuestionsAnswered,
-      answeredQuestions: answeredQuestions,
-      currentQuestion: numQuestionsAnswered < questions.length
-          ? questions[numQuestionsAnswered]
-          : null,
-      questions: questions,
-      invitedTo: invitedTo,
-      shareLink: shareLink,
-    );
+        testId: data.documentID,
+        myRole: iAm,
+        totalNumQuestions: DEFAULT_NUM_QUESTIONS,
+        testStatus: status,
+        numQuestionsAnswered: numQuestionsAnswered,
+        answeredQuestions: answeredQuestions,
+        currentQuestion: numQuestionsAnswered < questions.length
+            ? questions[numQuestionsAnswered]
+            : null,
+        questions: questions,
+        invitedTo: invitedTo,
+        shareLink: shareLink);
+    // facebookFriends: facebookFriends);
   } catch (exception) {
     // TODO - better global app error handling
     print('Error happened during createTestFromFirestore');

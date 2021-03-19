@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:app/components/facebook_logic.dart';
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/utils.dart';
 import 'package:app/models/psiTest.dart';
@@ -8,6 +9,10 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:app/config.dart';
 import 'dart:math';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' as convert;
 part 'psitestsave_event.dart';
 part 'psitestsave_state.dart';
 
@@ -36,6 +41,9 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     }
     if (event is AnswerPsiTestQuestion) {
       yield* _mapAnswerPsiTestQuestionToState(event);
+    }
+    if (event is SetFacebookFriendsOnFirestore) {
+      yield* _mapSetFacebookFriendsOnFirestore(event);
     }
     if (event is InviteFacebookFriend) {
       yield* _mapInviteFacebookFriendToState(event);
@@ -159,6 +167,8 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         'receiver': receiverUid,
         'sender': senderUid,
         'status': 'underway',
+        'shareLink': '',
+        'facebookFriends': [],
         'invitedTo': []
       });
 
@@ -211,87 +221,175 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     }
   }
 
-  Stream<PsiTestSaveState> _mapInviteFacebookFriendToState(
-      PsiTestSaveEvent event) async* {
-    try {
-      yield PsiTestInviteFacebookFriendInProgress();
-      String inviterTestId = event.test.testId;
-      var facebookFriendID = event.facebookFriend;
-      var db = Firestore.instance;
-      String inviteeTestId;
-
-      String myID = getMyID();
-
-      Query facebookFriendActiveTestQuery = db
-          .collection('test')
-          .where('parties', arrayContains: facebookFriendID)
-          .where("status", isEqualTo: "underway");
-      var snapshot = await facebookFriendActiveTestQuery.getDocuments();
-      var length = snapshot.documents.length;
-      print(length);
-      if (length == 0) {
-        // if invitee doesn't have an active test
-        //
-        // TODO send push notification
-        db.collection('test').add({
-          'invitedTo': [
-            {'inviter': myID},
-            {'testId': inviterTestId}
-          ]
-        });
-      } else {
-        inviteeTestId = snapshot.documents[0].documentID;
-        //if invitee has an active test
-
-        var docRef = db.collection('test').document(inviteeTestId).updateData({
-          'invitedTo': FieldValue.arrayUnion([
-            {'inviter': myID},
-            {'testId': inviterTestId}
-          ]),
-        });
-      }
-      yield PsiTestInviteFacebookFriendSuccessful();
-    } catch (error) {
-      yield PsiTestInviteFacebookFriendFailed(error);
-    }
-  }
-
-  Stream<PsiTestSaveState> _mapAcceptFacebookInvitationToState(
-      PsiTestSaveEvent event) async* {
-    yield PsiTestAcceptFacebookInvitationInProgress();
-  }
-
-  Stream<PsiTestSaveState> _mapAnswerPsiTestQuestionToState(
+  Stream<PsiTestSaveState> _mapSetFacebookFriendsOnFirestore(
       PsiTestSaveEvent event) async* {
     final db = Firestore.instance;
-    yield PsiTestSaveAnswerQuestionInProgress();
+    final testId = event.test.testId;
+    yield SetFacebookFriendsOnFirestoreInProgress();
     try {
-      String testId = event.test.testId;
-      //int answerProvided = event.test.currentQuestion.providedAnswer;
-      int numCurrentQuestion = event.test.numQuestionsAnswered - 1;
-      var questions = new List<Map>();
-      for (int i = 0; i < DEFAULT_NUM_QUESTIONS; i++) {
-        Map question = event.test.questions[i].question;
-        if (i == numCurrentQuestion) {
-          print(
-              'adding question num ${i + 1} with provided answer ${question["providedAnswer"]}');
-          question = event.test.currentQuestion.question;
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      String facebookAccessToken = prefs.getString('facebookAccessToken');
+      print('in setfacebookfriends bloc');
+      print(facebookAccessToken);
+      Map jsonResponse;
+      List friends;
+      Map friend;
+      var friendsListOnFirestore = new List();
+
+      var response;
+      response = await http.get(
+          "https://graph.facebook.com/me/friends?access_token=$facebookAccessToken");
+      if (response.statusCode != 200) {
+        String errorMessage = ('error, status code is ${response.statusCode}');
+
+        yield SetFacebookFriendsOnFirestoreFailed(errorMessage: errorMessage);
+      } else {
+        jsonResponse = convert.jsonDecode(response.body);
+        friends = jsonResponse['data'];
+        print('friends as json response = $friends');
+
+        for (friend in friends) {
+          String friendID = friend['id'];
+          String name = friend['name'];
+          var friendProfilePic =
+              "https://graph.facebook.com/$friendID/picture?small?access_token=$facebookAccessToken";
+          friend = {
+            'friendId': friendID,
+            'name': name,
+            'profilePicUrl': friendProfilePic
+          };
+          print('friend $friend');
+          friendsListOnFirestore.add(friend);
         }
-        questions.add(question);
+        print('facebookFriendsList $friendsListOnFirestore');
       }
-      await db
+      db
           .collection('test')
           .document(testId)
-          .updateData({'questions': questions});
-      yield PsiTestSaveAnswerQuestionSuccessful();
+          .updateData({'facebookFriends': friendsListOnFirestore});
+      /*
 
-      if (event.test.numQuestionsAnswered == questions.length) {
-        // flag the test as done
-        yield* _mapCompletePsiTest(event);
-      }
-    } catch (_) {
-      yield PsiTestSaveAnswerQuestionFailed(exception: _);
+          if (globalCurrentUser.isAnonymous) return null;
+        List<dynamic> facebookFriendsList = [];
+          List otherfunct(){
+             // createFriendsList from Firestore 
+              facebookFriendsList.add(ListTile(
+                  tileColor: Colors.purple[100],
+                  leading: Image.network(friendProfilePic),
+                  trailing: Icon(Icons.send_sharp),
+                  title: Text(friend['name']),
+                  onTap: () {
+                    var event = InviteFacebookFriend(
+                        test: currentTest, facebookFriend: '$friendID');
+                    BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+                    facebookFriendsList.add(SizedBox(height: 10));
+                  }));
+            }
+            if (facebookFriendsList.length == 0)
+              return [
+                Text(
+                    '''none of your Facebook friends have this app installed.''',
+                    style: TextStyle(color: Colors.white)),
+              ];
+          } else {
+            print(
+                'GET Request (facebook api) failed with status: ${response.statusCode}.');
+            return [Container()];
+          }
+        } catch (error) {
+          print(error);
+          return [Container()];
+        }
+        return facebookFriendsList;
+      }*/
+
+      yield SetFacebookFriendsOnFirestoreSuccessful(friendsListOnFirestore);
+    } catch (error) {
+      yield SetFacebookFriendsOnFirestoreFailed(error: error);
     }
+  }
+}
+
+Stream<PsiTestSaveState> _mapInviteFacebookFriendToState(
+    PsiTestSaveEvent event) async* {
+  try {
+    yield PsiTestInviteFacebookFriendInProgress();
+    String inviterTestId = event.test.testId;
+    var facebookFriendID = event.facebookFriend;
+    var db = Firestore.instance;
+    String inviteeTestId;
+
+    String myID = getMyID();
+
+    Query facebookFriendActiveTestQuery = db
+        .collection('test')
+        .where('parties', arrayContains: facebookFriendID)
+        .where("status", isEqualTo: "underway");
+    var snapshot = await facebookFriendActiveTestQuery.getDocuments();
+    var length = snapshot.documents.length;
+    print(length);
+    if (length == 0) {
+      // if invitee doesn't have an active test
+      //
+      // TODO send push notification
+      db.collection('test').add({
+        'invitedTo': [
+          {'inviter': myID},
+          {'testId': inviterTestId}
+        ]
+      });
+    } else {
+      inviteeTestId = snapshot.documents[0].documentID;
+      //if invitee has an active test
+
+      var docRef = db.collection('test').document(inviteeTestId).updateData({
+        'invitedTo': FieldValue.arrayUnion([
+          {'inviter': myID},
+          {'testId': inviterTestId}
+        ]),
+      });
+    }
+    yield PsiTestInviteFacebookFriendSuccessful();
+  } catch (error) {
+    yield PsiTestInviteFacebookFriendFailed(error);
+  }
+}
+
+Stream<PsiTestSaveState> _mapAcceptFacebookInvitationToState(
+    PsiTestSaveEvent event) async* {
+  yield PsiTestAcceptFacebookInvitationInProgress();
+}
+
+Stream<PsiTestSaveState> _mapAnswerPsiTestQuestionToState(
+    PsiTestSaveEvent event) async* {
+  final db = Firestore.instance;
+  yield PsiTestSaveAnswerQuestionInProgress();
+  try {
+    String testId = event.test.testId;
+    //int answerProvided = event.test.currentQuestion.providedAnswer;
+    int numCurrentQuestion = event.test.numQuestionsAnswered - 1;
+    var questions = new List<Map>();
+    for (int i = 0; i < DEFAULT_NUM_QUESTIONS; i++) {
+      Map question = event.test.questions[i].question;
+      if (i == numCurrentQuestion) {
+        print(
+            'adding question num ${i + 1} with provided answer ${question["providedAnswer"]}');
+        question = event.test.currentQuestion.question;
+      }
+      questions.add(question);
+    }
+    await db
+        .collection('test')
+        .document(testId)
+        .updateData({'questions': questions});
+    yield PsiTestSaveAnswerQuestionSuccessful();
+
+    if (event.test.numQuestionsAnswered == questions.length) {
+      // flag the test as done
+      yield* _mapCompletePsiTest(event);
+    }
+  } catch (_) {
+    yield PsiTestSaveAnswerQuestionFailed(exception: _);
   }
 }
 
