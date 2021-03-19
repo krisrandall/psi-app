@@ -38,8 +38,8 @@ class CancelPsiTest extends PsiTestSaveEvent {
   const CancelPsiTest({@required test}) : super(test: test);
 }
 
-class SetFacebookFriendsOnFirestore extends PsiTestSaveEvent {
-  const SetFacebookFriendsOnFirestore({@required test}) : super(test: test);
+class GetFacebookFriendsList extends PsiTestSaveEvent {
+  const GetFacebookFriendsList({@required test}) : super(test: test);
 }
 
 class InviteFacebookFriend extends PsiTestSaveEvent {

@@ -106,7 +106,7 @@ class _HomeScreen extends StatelessWidget {
               .add(SharePsiTest(test: newlyCreatedTest));
 
           BlocProvider.of<PsiTestSaveBloc>(context)
-              .add(SetFacebookFriendsOnFirestore(test: newlyCreatedTest));
+              .add(GetFacebookFriendsList(test: newlyCreatedTest));
         },
       ),
       SizedBox(height: 10),
@@ -122,7 +122,7 @@ class _HomeScreen extends StatelessWidget {
               .add(SharePsiTest(test: newlyCreatedTest));
 
           BlocProvider.of<PsiTestSaveBloc>(context)
-              .add(SetFacebookFriendsOnFirestore(test: newlyCreatedTest));
+              .add(GetFacebookFriendsList(test: newlyCreatedTest));
         },
       ),
       Button(

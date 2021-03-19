@@ -42,8 +42,8 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     if (event is AnswerPsiTestQuestion) {
       yield* _mapAnswerPsiTestQuestionToState(event);
     }
-    if (event is SetFacebookFriendsOnFirestore) {
-      yield* _mapSetFacebookFriendsOnFirestore(event);
+    if (event is GetFacebookFriendsList) {
+      yield* _mapGetFacebookFriendsList(event);
     }
     if (event is InviteFacebookFriend) {
       yield* _mapInviteFacebookFriendToState(event);
@@ -221,11 +221,11 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     }
   }
 
-  Stream<PsiTestSaveState> _mapSetFacebookFriendsOnFirestore(
+  Stream<PsiTestSaveState> _mapGetFacebookFriendsList(
       PsiTestSaveEvent event) async* {
     final db = Firestore.instance;
     final testId = event.test.testId;
-    yield SetFacebookFriendsOnFirestoreInProgress();
+    yield GetFacebookFriendsListInProgress();
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       String facebookAccessToken = prefs.getString('facebookAccessToken');
@@ -242,7 +242,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       if (response.statusCode != 200) {
         String errorMessage = ('error, status code is ${response.statusCode}');
 
-        yield SetFacebookFriendsOnFirestoreFailed(errorMessage: errorMessage);
+        yield GetFacebookFriendsListFailed(errorMessage: errorMessage);
       } else {
         jsonResponse = convert.jsonDecode(response.body);
         friends = jsonResponse['data'];
@@ -262,9 +262,9 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
           friendsListOnFirestore.add(friend);
         }
       }
-      yield SetFacebookFriendsOnFirestoreSuccessful(friendsListOnFirestore);
+      yield GetFacebookFriendsListSuccessful(friendsListOnFirestore);
     } catch (error) {
-      yield SetFacebookFriendsOnFirestoreFailed(error: error);
+      yield GetFacebookFriendsListFailed(error: error);
     }
   }
 }
