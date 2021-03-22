@@ -55,9 +55,14 @@ Future<Null> signInWithFacebook() async {
 
 void logOutOfFacebook(context) async {
   try {
-    await FacebookAuth.instance.logOut();
     await FirebaseAuth.instance.signOut();
-
+    //await FirebaseAuth.instance.clearAuthCache();
+    print('SignedOut');
+    // await globalCurrentUser.delete();
+    //await FirebaseAuth.instance.signOut();
+    print('signedOut from FireBase');
+    //await FacebookAuth.instance.logOut();
+    // await FirebaseAuth.instance.signOut();
     //
 
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -112,23 +117,29 @@ List<Widget> buildFacebookFriendsList(
   {
     print(facebookFriends.length);
     for (Map friend in facebookFriends) {
-      var friendId = friend['friendID'];
+      String friendId = friend['friendID'];
+      String friendName = friend['name'];
+      //  if (friendName.length ) Susan Alfebhiffbgga Greeneberg
       facebookFriendsList.add(FlatButton(
           height: 62,
           color: Colors.purple,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          child: (Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Image.network(friend['profilePicUrl']),
-              Text(
-                friend['name'],
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16.0,
-                    color: Colors.white.withOpacity(1.0)),
-              ),
+              Flexible(
+                  child: CopyText(
+                      friendName) /* Text(
+                  friendName,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0,
+                      color: Colors.white.withOpacity(1.0)),
+                ),*/
+                  ),
+              Icon(Icons.share)
             ],
-          ),
+          )),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(32.0),
               side: BorderSide(color: Colors.white, width: 4.0)),
