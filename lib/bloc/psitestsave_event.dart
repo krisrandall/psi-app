@@ -44,7 +44,9 @@ class GetFacebookFriendsList extends PsiTestSaveEvent {
 
 class InviteFacebookFriend extends PsiTestSaveEvent {
   final String facebookFriend;
-  const InviteFacebookFriend({@required test, @required this.facebookFriend})
+  final PsiTest test;
+  const InviteFacebookFriend(
+      {@required this.test, @required this.facebookFriend})
       : super(test: test);
 }
 

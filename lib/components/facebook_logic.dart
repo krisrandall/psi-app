@@ -13,6 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/bloc/psitestsave_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
+import 'package:app/models/psiTest.dart';
 
 //AccessToken _accessToken;
 
@@ -103,7 +104,7 @@ Future<DocumentSnapshot> gotInvitedToTest(testId) async {
         var friendProfilePic =
             "https://graph.facebook.com/$friendID/picture?small?access_token=$facebookAccessToken";*/
 List<Widget> buildFacebookFriendsList(
-    List facebookFriends, currentTest, context) {
+    List facebookFriends, PsiTest currentTest, BuildContext context) {
   var facebookFriendsList = new List<Widget>();
   if (globalCurrentUser.isAnonymous) return [];
   // List facebookFriends = currentTest.facebookFriends;
@@ -111,19 +112,46 @@ List<Widget> buildFacebookFriendsList(
   {
     print(facebookFriends.length);
     for (Map friend in facebookFriends) {
-      facebookFriendsList.add(ListTile(
-          tileColor: Colors.purple,
-          leading: Image.network(friend['profilePicUrl']),
-          trailing: Icon(
-            Icons.psychology,
-            size: 40,
-          ),
-          title: Center(child: CopyText(friend['name'])),
-          onTap: () {
-            var event = InviteFacebookFriend(
-                test: currentTest, facebookFriend: friend['friendID']);
-            BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-          }));
+      var friendId = friend['friendID'];
+      facebookFriendsList.add(FlatButton(
+              height: 62,
+              color: Colors.purple,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Image.network(friend['profilePicUrl']),
+                  Text(
+                    friend['name'],
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  Icon(Icons.share)
+                ],
+              ),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(32.0),
+                  side: BorderSide(color: Colors.white, width: 4.0)),
+              onPressed: () {
+                var event = InviteFacebookFriend(
+                    test: currentTest, facebookFriend: friendId);
+                BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+              })
+
+          /* child: ListTile(
+              tileColor: Colors.purple,
+              leading: Image.network(friend['profilePicUrl']),
+              //trailing: Image.asset('assets/icon-fg.png'),
+              trailing: Icon(
+                Icons.share,
+                color: Colors.black,
+                size: 35,
+              ),
+              title: Center(child: CopyText(friend['name'])),
+              onTap: () {
+                var event = InviteFacebookFriend(
+                    test: currentTest, facebookFriend: friendId);
+                BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+              }))*/
+          );
       facebookFriendsList.add(SizedBox(height: 10));
     }
   }

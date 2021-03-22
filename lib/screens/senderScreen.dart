@@ -169,11 +169,11 @@ class _SenderScreen extends StatelessWidget {
               Padding(
                   padding: EdgeInsets.only(left: 20, right: 20),
                   child: SizedBox(
-                      width: 440,
+                      width: 400,
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: buildFacebookFriendsList(
-                              state.facebookFriends, context, currentTest))))
+                              state.facebookFriends, currentTest, context))))
             ]);
         }
         return Button(
