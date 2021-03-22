@@ -114,44 +114,29 @@ List<Widget> buildFacebookFriendsList(
     for (Map friend in facebookFriends) {
       var friendId = friend['friendID'];
       facebookFriendsList.add(FlatButton(
-              height: 62,
-              color: Colors.purple,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Image.network(friend['profilePicUrl']),
-                  Text(
-                    friend['name'],
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  Icon(Icons.share)
-                ],
+          height: 62,
+          color: Colors.purple,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Image.network(friend['profilePicUrl']),
+              Text(
+                friend['name'],
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16.0,
+                    color: Colors.white.withOpacity(1.0)),
               ),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(32.0),
-                  side: BorderSide(color: Colors.white, width: 4.0)),
-              onPressed: () {
-                var event = InviteFacebookFriend(
-                    test: currentTest, facebookFriend: friendId);
-                BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-              })
-
-          /* child: ListTile(
-              tileColor: Colors.purple,
-              leading: Image.network(friend['profilePicUrl']),
-              //trailing: Image.asset('assets/icon-fg.png'),
-              trailing: Icon(
-                Icons.share,
-                color: Colors.black,
-                size: 35,
-              ),
-              title: Center(child: CopyText(friend['name'])),
-              onTap: () {
-                var event = InviteFacebookFriend(
-                    test: currentTest, facebookFriend: friendId);
-                BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-              }))*/
-          );
+            ],
+          ),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(32.0),
+              side: BorderSide(color: Colors.white, width: 4.0)),
+          onPressed: () {
+            var event = InviteFacebookFriend(
+                test: currentTest, facebookFriend: friendId);
+            BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+          }));
       facebookFriendsList.add(SizedBox(height: 10));
     }
   }
