@@ -126,6 +126,9 @@ class _LandingPageState extends State<LandingPage> {
 
             resetMyId();
 
+            print(
+                'firebaseAuthState changed, isAnon = ${globalCurrentUser.isAnonymous}');
+
             return HomeScreen();
           } else
             return Container();

@@ -149,27 +149,40 @@ class _SenderScreen extends StatelessWidget {
           );
         if (state is GetFacebookFriendsListInProgress)
           return CircularProgressIndicator();
-        else if (state is GetFacebookFriendsListSuccessful) if (state
-                .facebookFriends.length ==
-            0)
-          return Button(
-              // this appears when ID or access token are not available
-              'log on to Facebook',
-              () => linkFacebookUserWithCurrentAnonUser(context, currentTest));
-        else
-          return Column(children: [
-            SizedBox(height: 30),
-            Padding(
-                padding: EdgeInsets.only(left: 20, right: 20),
-                child: SizedBox(
-                    width: 440,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: buildFacebookFriendsList(
-                            state.facebookFriends, context, currentTest))))
-          ]);
-        else
-          return Text('dont know how i got here');
+        else if (state is GetFacebookFriendsListSuccessful) {
+          if (globalCurrentUser.isAnonymous)
+            return Button(
+                // this appears when ID or access token are not available
+                'log on to Facebook', () {
+              linkFacebookUserWithCurrentAnonUser(context, currentTest);
+              BlocProvider.of<PsiTestSaveBloc>(context)
+                  .add(GetFacebookFriendsList(test: currentTest));
+            });
+
+          if (state.facebookFriends.length == 0)
+            return Text(
+                '''none of your Facebook friends have this app installed.''',
+                style: TextStyle(color: Colors.white));
+          else
+            return Column(children: [
+              SizedBox(height: 30),
+              Padding(
+                  padding: EdgeInsets.only(left: 20, right: 20),
+                  child: SizedBox(
+                      width: 440,
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: buildFacebookFriendsList(
+                              state.facebookFriends, context, currentTest))))
+            ]);
+        }
+        return Button(
+            // this appears when ID or access token are not available
+            'log on to Facebook', () {
+          linkFacebookUserWithCurrentAnonUser(context, currentTest);
+          BlocProvider.of<PsiTestSaveBloc>(context)
+              .add(GetFacebookFriendsList(test: currentTest));
+        });
       });
     } else {
       actionButton = Column(children: [

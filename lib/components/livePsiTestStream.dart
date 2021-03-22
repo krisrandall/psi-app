@@ -44,6 +44,7 @@ Query userTestStats = Firestore.instance
 ///
 PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
   String myID = getMyID();
+  if (myID == null) resetMyId();
 
   if (documents.length == 0) {
     print('no matching documents found');
@@ -168,7 +169,7 @@ Widget psiTestNotAvailableWidget(
 
     Future.delayed(Duration(milliseconds: 300))
         .then((value) => CopyText("Fetching existing test data .."));
-    return Container(child: Text('stuck'));
+    return Container(child: Image.asset("assets/sun_loading_spinner.gif"));
   } else {
     List<DocumentSnapshot> documents = snapshot.data.documents;
     DocumentSnapshot document;

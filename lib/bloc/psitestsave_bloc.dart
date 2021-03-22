@@ -236,6 +236,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       var friendsListOnFirestore = new List();
 
       var response;
+      // get facebook friends as JSON
       response = await http.get(
           "https://graph.facebook.com/me/friends?access_token=$facebookAccessToken");
       if (response.statusCode != 200) {

@@ -1,3 +1,4 @@
+import 'package:app/components/textComponents.dart';
 import 'package:app/components/utils.dart';
 import 'package:app/main.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
@@ -27,8 +28,12 @@ Future<Null> saveFacebookAccessToken(AccessToken accessToken) async {
 
 Future<Null> signInWithFacebook() async {
   // Trigger the sign-in flow
+
   try {
-    final AccessToken _accessToken = await FacebookAuth.instance.login();
+    final AccessToken _accessToken = await FacebookAuth.instance.login(
+      permissions: ['user_friends'],
+      //loginBehavior: LoginBehavior.DIALOG_ONLY
+    );
 
     // Create a credential from the access token
     final FacebookAuthCredential facebookAuthCredential =
@@ -107,10 +112,13 @@ List<Widget> buildFacebookFriendsList(
     print(facebookFriends.length);
     for (Map friend in facebookFriends) {
       facebookFriendsList.add(ListTile(
-          tileColor: Colors.purple[100],
+          tileColor: Colors.purple,
           leading: Image.network(friend['profilePicUrl']),
-          trailing: Icon(Icons.send_sharp),
-          title: Text(friend['name']),
+          trailing: Icon(
+            Icons.psychology,
+            size: 40,
+          ),
+          title: Center(child: CopyText(friend['name'])),
           onTap: () {
             var event = InviteFacebookFriend(
                 test: currentTest, facebookFriend: friend['friendID']);
@@ -130,7 +138,11 @@ List<Widget> buildFacebookFriendsList(
 
 Future<Null> linkFacebookUserWithCurrentAnonUser(context, currentTest) async {
   // Trigger the sign-in flow
-  final AccessToken _accessToken = await FacebookAuth.instance.login();
+  final AccessToken _accessToken = await FacebookAuth.instance.login(
+    permissions: ['user_friends'],
+  );
+  final userData = await FacebookAuth.instance.getUserData();
+  print(userData);
   // Create a credential from the access token
   final FacebookAuthCredential facebookAuthCredential =
       FacebookAuthProvider.getCredential(accessToken: _accessToken.token);
@@ -145,7 +157,15 @@ Future<Null> linkFacebookUserWithCurrentAnonUser(context, currentTest) async {
   //need to call getFacebookFriends again to reset the FutureBuilder
   //
 
+  BlocProvider.of<PsiTestSaveBloc>(context)
+      .add(GetFacebookFriendsList(test: currentTest));
+
   saveFacebookAccessToken(_accessToken).catchError((error) {
+    print('error possibly user cancelled facebook login$error');
+  });
+  globalCurrentUser
+      .linkWithCredential(facebookAuthCredential)
+      .catchError((error) {
     print('error possibly user cancelled facebook login$error');
   });
 }
@@ -171,7 +191,7 @@ Future<Null> linkFacebookUserWithCurrentAnonUser(context) async {
   //need to call getFacebookFriends again to reset the FutureBuilder
   //
   getFacebookFriendsList(context, currentTest);
-
+  
   globalCurrentUser
       .linkWithCredential(facebookAuthCredential)
       .catchError((error) {
