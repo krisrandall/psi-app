@@ -150,7 +150,7 @@ class _SenderScreen extends StatelessWidget {
         if (state is GetFacebookFriendsListInProgress)
           return CircularProgressIndicator();
         else if (state is GetFacebookFriendsListSuccessful) {
-          if (globalCurrentUser.isAnonymous)
+          if (state.facebookFriends == [])
             return Button(
                 // this appears when ID or access token are not available
                 'log on to Facebook', () {
@@ -176,13 +176,14 @@ class _SenderScreen extends StatelessWidget {
                               state.facebookFriends, currentTest, context))))
             ]);
         }
-        return Button(
+        /*return Button(
             // this appears when ID or access token are not available
             'log on to Facebook', () {
           linkFacebookUserWithCurrentAnonUser(context, currentTest);
           BlocProvider.of<PsiTestSaveBloc>(context)
               .add(GetFacebookFriendsList(test: currentTest));
-        });
+        });*/
+        return Image.asset("assets/sun_loading_spinner.gif");
       });
     } else {
       actionButton = Column(children: [

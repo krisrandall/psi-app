@@ -63,6 +63,7 @@ class _LandingPageState extends State<LandingPage> {
 
   Future<void> _signInAnonymously() async {
     try {
+      await saveUserIsAnonymous(true);
       await FirebaseAuth.instance.signInAnonymously();
     } catch (e) {
       setState(() {
@@ -125,9 +126,6 @@ class _LandingPageState extends State<LandingPage> {
             globalCurrentUser = user;
 
             resetMyId();
-
-            print(
-                'firebaseAuthState changed, isAnon = ${globalCurrentUser.isAnonymous}');
 
             return HomeScreen();
           } else

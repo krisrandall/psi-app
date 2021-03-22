@@ -12,6 +12,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:async';
 import 'package:app/models/psiTest.dart';
 
+import 'package:app/components/button.dart';
+
 //AccessToken _accessToken;
 
 Future<Null> saveFacebookAccessToken(AccessToken accessToken) async {
@@ -22,6 +24,11 @@ Future<Null> saveFacebookAccessToken(AccessToken accessToken) async {
   } catch (error) {
     print("error while saving fAcebook access token $error");
   }
+}
+
+Future<Null> saveUserIsAnonymous(bool isAnon) async {
+  final SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setBool('isAnonymous', isAnon);
 }
 
 Future<Null> signInWithFacebook() async {
@@ -41,7 +48,9 @@ Future<Null> signInWithFacebook() async {
     // Once signed in, return the UserCredential
 
     await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
-    saveFacebookAccessToken(_accessToken);
+    await saveFacebookAccessToken(_accessToken);
+
+    await saveUserIsAnonymous(false);
     //resetGlobalCurrentuser();
     //await globalCurrentUser.reload();
   } catch (error) {
@@ -84,8 +93,20 @@ Future<DocumentSnapshot> gotInvitedToTest(testId) async {
 
 List<Widget> buildFacebookFriendsList(
     List facebookFriends, PsiTest currentTest, BuildContext context) {
+  if (facebookFriends[0] == 'userIsAnonymous') {
+    print('user is anonymous, returning []');
+    return [
+      Button(
+          // this appears when ID or access token are not available
+          'log on to Facebook', () {
+        linkFacebookUserWithCurrentAnonUser(context, currentTest);
+        BlocProvider.of<PsiTestSaveBloc>(context)
+            .add(GetFacebookFriendsList(test: currentTest));
+      })
+    ];
+  }
+
   var facebookFriendsList = new List<Widget>();
-  if (globalCurrentUser.isAnonymous) return [];
   print('now in buildFacebookFriendsList $facebookFriends');
   {
     print(facebookFriends.length);
@@ -114,13 +135,14 @@ List<Widget> buildFacebookFriendsList(
       facebookFriendsList.add(SizedBox(height: 10));
     }
   }
+  /*
   if (facebookFriends.length == 0)
     return [
       Text('''none of your Facebook friends have this app installed.''',
           style: TextStyle(color: Colors.white))
     ];
-  else
-    return facebookFriendsList;
+  else*/
+  return facebookFriendsList;
 }
 
 Future<Null> linkFacebookUserWithCurrentAnonUser(context, currentTest) async {
@@ -159,8 +181,9 @@ Future<Null> linkFacebookUserWithCurrentAnonUser(context, currentTest) async {
     for (UserInfo provider in providers)
       print(
           'provider (printing just AFTER user link occurs) ${provider.providerId}');
-
     //isAnonymous unfortunately returns "true" after signing in to FB.
+    //
+    saveUserIsAnonymous(false);
 
     //need to call getFacebookFriends again to reset the FacebookFriednsList
     //

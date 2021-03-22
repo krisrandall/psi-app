@@ -231,41 +231,51 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       String facebookAccessToken = prefs.getString('facebookAccessToken');
-      print('in setfacebookfriends bloc');
-      print(facebookAccessToken);
-      Map jsonResponse;
-      List friends;
-      Map friend;
-      var friendsListOnFirestore = new List();
+      bool isAnonymous = prefs.getBool('isAnonymous');
 
-      var response;
-      // get facebook friends as JSON
-      response = await http.get(
-          "https://graph.facebook.com/me/friends?access_token=$facebookAccessToken");
-      if (response.statusCode != 200) {
-        String errorMessage = ('error, status code is ${response.statusCode}');
-
-        yield GetFacebookFriendsListFailed(errorMessage: errorMessage);
+      if (isAnonymous) {
+        print('user is anonymous');
+        yield GetFacebookFriendsListSuccessful(['userIsAnonymous']);
       } else {
-        jsonResponse = convert.jsonDecode(response.body);
-        friends = jsonResponse['data'];
-        print('friends as json response = $friends');
+        print('continuing along here');
 
-        for (friend in friends) {
-          String friendID = friend['id'];
-          String name = friend['name'];
-          var friendProfilePic =
-              "https://graph.facebook.com/$friendID/picture?small?access_token=$facebookAccessToken";
-          friend = {
-            'friendId': friendID,
-            'name': name,
-            'profilePicUrl': friendProfilePic
-          };
-          print('friend $friend');
-          friendsListOnFirestore.add(friend);
+        print('in setfacebookfriends bloc');
+        print(facebookAccessToken);
+        Map jsonResponse;
+        List friends;
+        Map friend;
+        var friendsListOnFirestore = new List();
+
+        var response;
+        // get facebook friends as JSON
+        response = await http.get(
+            "https://graph.facebook.com/me/friends?access_token=$facebookAccessToken");
+        if (response.statusCode != 200) {
+          String errorMessage =
+              ('error, status code is ${response.statusCode}');
+
+          yield GetFacebookFriendsListFailed(errorMessage: errorMessage);
+        } else {
+          jsonResponse = convert.jsonDecode(response.body);
+          friends = jsonResponse['data'];
+          print('friends as json response = $friends');
+
+          for (friend in friends) {
+            String friendID = friend['id'];
+            String name = friend['name'];
+            var friendProfilePic =
+                "https://graph.facebook.com/$friendID/picture?small?access_token=$facebookAccessToken";
+            friend = {
+              'friendId': friendID,
+              'name': name,
+              'profilePicUrl': friendProfilePic
+            };
+            print('friend $friend');
+            friendsListOnFirestore.add(friend);
+          }
         }
+        yield GetFacebookFriendsListSuccessful(friendsListOnFirestore);
       }
-      yield GetFacebookFriendsListSuccessful(friendsListOnFirestore);
     } catch (error) {
       yield GetFacebookFriendsListFailed(error: error);
     }
