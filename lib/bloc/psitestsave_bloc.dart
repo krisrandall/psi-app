@@ -54,6 +54,9 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     if (event is AcceptFacebookInvitation) {
       yield* _mapAcceptFacebookInvitationToState(event);
     }
+    if (event is RewriteTestUserAnonID) {
+      yield* _mapRewriteTestUserAnonID(event);
+    }
   }
 
   Stream<PsiTestSaveState> _mapCreateAndSharePsiTestToState(
@@ -266,6 +269,21 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     } catch (error) {
       yield GetFacebookFriendsListFailed(error: error);
     }
+  }
+}
+
+Stream<PsiTestSaveState> _mapRewriteTestUserAnonID(
+    PsiTestSaveEvent event) async* {
+  final db = Firestore.instance;
+  final testId = event.test.testId;
+  yield RewriteTestUserAnonIDInProgress();
+  globalCurrentUser.email;
+  try {
+    var docRef = db.collection('test').document(testId).updateData({});
+
+    yield RewriteTestUserAnonIDSuccessful();
+  } catch (error) {
+    yield RewriteTestUserAnonIDFailed(error: error);
   }
 }
 

@@ -33,7 +33,6 @@ Future<Null> signInWithFacebook() async {
   try {
     final AccessToken _accessToken = await FacebookAuth.instance.login(
       permissions: ['user_friends'],
-      //loginBehavior: LoginBehavior.DIALOG_ONLY
     );
 
     // Create a credential from the access token
@@ -75,7 +74,6 @@ void logOutOfFacebook(context) async {
   } catch (error) {
     print(error);
   }
-  //print('firebase user ${user.uid}');
 }
 
 var facebookFriendsList;
@@ -87,39 +85,16 @@ Future<DocumentSnapshot> gotInvitedToTest(testId) async {
   return sharedTestDocumentSnapshot;
 }
 
-/*Future<List> getFacebookFriendsList(context, currentTest) async {
-  if (globalCurrentUser.isAnonymous) return null;
-  List<dynamic> facebookFriendsList = [];
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  String facebookAccessToken = prefs.getString('facebookAccessToken');
-  Map jsonResponse;
-  List friends;
-  try {
-    var response;
-    response = await http.get(
-        "https://graph.facebook.com/me/friends?access_token=$facebookAccessToken");
-    if (response.statusCode == 200) {
-      jsonResponse = convert.jsonDecode(response.body);
-      friends = jsonResponse['data'];
-      print(friends);
-
-      for (Map friend in friends) {
-        String friendID = friend['id'];
-
-        var friendProfilePic =
-            "https://graph.facebook.com/$friendID/picture?small?access_token=$facebookAccessToken";*/
 List<Widget> buildFacebookFriendsList(
     List facebookFriends, PsiTest currentTest, BuildContext context) {
   var facebookFriendsList = new List<Widget>();
   if (globalCurrentUser.isAnonymous) return [];
-  // List facebookFriends = currentTest.facebookFriends;
   print('now in buildFacebookFriendsList $facebookFriends');
   {
     print(facebookFriends.length);
     for (Map friend in facebookFriends) {
       String friendId = friend['friendID'];
       String friendName = friend['name'];
-      //  if (friendName.length ) Susan Alfebhiffbgga Greeneberg
       facebookFriendsList.add(FlatButton(
           height: 62,
           color: Colors.purple,
@@ -127,16 +102,7 @@ List<Widget> buildFacebookFriendsList(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Image.network(friend['profilePicUrl']),
-              Flexible(
-                  child: CopyText(
-                      friendName) /* Text(
-                  friendName,
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.0,
-                      color: Colors.white.withOpacity(1.0)),
-                ),*/
-                  ),
+              Flexible(child: CopyText(friendName)),
               Icon(Icons.share)
             ],
           )),
@@ -161,70 +127,52 @@ List<Widget> buildFacebookFriendsList(
 }
 
 Future<Null> linkFacebookUserWithCurrentAnonUser(context, currentTest) async {
+  FirebaseUser oldUser = globalCurrentUser;
+
+  var anonUser = await FirebaseAuth.instance.currentUser();
+
+  print(
+      'just before facebook sign in occurs: current(anon user) is ${anonUser.uid} isanon = ${anonUser.isAnonymous}');
+
   // Trigger the sign-in flow
   final AccessToken _accessToken = await FacebookAuth.instance.login(
     permissions: ['user_friends'],
   );
   final userData = await FacebookAuth.instance.getUserData();
-  print(userData);
+  print(userData['id']);
+
   // Create a credential from the access token
   final FacebookAuthCredential facebookAuthCredential =
       FacebookAuthProvider.getCredential(accessToken: _accessToken.token);
-  // Once signed in, return the UserCredential
-  await FirebaseAuth.instance
-      .signInWithCredential(facebookAuthCredential)
-      .catchError((error) {
-    print('error possibly user cancelled facebook login$error');
-  });
-  //globalCurrentUser = await FirebaseAuth.instance.currentUser();
 
-  //need to call getFacebookFriends again to reset the FutureBuilder
+  var fbUser = await FirebaseAuth.instance.currentUser();
+  print(
+      'just before facebook user link occurs: anonuser is ${anonUser.uid}, current user ${fbUser.uid} isanon = ${fbUser.isAnonymous}');
+
+  List providers = fbUser.providerData;
+  for (UserInfo provider in providers)
+    print(
+        'provider (printing just before user link occurs) ${provider.toString}');
+
+  //link the anonymous user with the facebook User **** (keeping the anon user's uid) ****
   //
+  anonUser.linkWithCredential(facebookAuthCredential);
 
+  fbUser = await FirebaseAuth.instance.currentUser();
+
+  print(
+      'just after facebook user link occurs: anonuser is ${anonUser.uid}, fb user ${fbUser.uid}  isanon = ${fbUser.isAnonymous}');
+
+  //isAnonymous unfortunately returns "true" after signing in to FB.
+  //
+  for (UserInfo provider in providers)
+    print(
+        'provider (printing just AFTER user link occurs) ${provider.providerId}');
+
+  //need to call getFacebookFriends again to reset the FacebookFriednsList
+  //
   BlocProvider.of<PsiTestSaveBloc>(context)
       .add(GetFacebookFriendsList(test: currentTest));
 
-  saveFacebookAccessToken(_accessToken).catchError((error) {
-    print('error possibly user cancelled facebook login$error');
-  });
-  globalCurrentUser
-      .linkWithCredential(facebookAuthCredential)
-      .catchError((error) {
-    print('error possibly user cancelled facebook login$error');
-  });
+  saveFacebookAccessToken(_accessToken);
 }
-
-/*
-Future<Null> linkFacebookUserWithCurrentAnonUser(context) async {
-  // Trigger the sign-in flow
-  final AccessToken _accessToken =
-      await FacebookAuth.instance.login().catchError((error) {
-    print('error possibly user cancelled facebook login$error');
-  });
-  // Create a credential from the access token
-  final FacebookAuthCredential facebookAuthCredential =
-      FacebookAuthProvider.getCredential(accessToken: _accessToken.token);
-  // Once signed in, return the UserCredential
-  await FirebaseAuth.instance
-      .signInWithCredential(facebookAuthCredential)
-      .catchError((error) {
-    print('error possibly user cancelled facebook login$error');
-  });
-  //globalCurrentUser = await FirebaseAuth.instance.currentUser();
-
-  //need to call getFacebookFriends again to reset the FutureBuilder
-  //
-  getFacebookFriendsList(context, currentTest);
-  
-  globalCurrentUser
-      .linkWithCredential(facebookAuthCredential)
-      .catchError((error) {
-    print('error possibly user cancelled facebook login$error');
-  });
-
-  saveFacebookAccessToken(_accessToken).catchError((error) {
-    print('error possibly user cancelled facebook login$error');
-  });
-  Navigator.push(
-      context, MaterialPageRoute(builder: (context) => LandingPage()));
-}*/
