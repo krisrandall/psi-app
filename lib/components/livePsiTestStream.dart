@@ -80,10 +80,12 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
     print('$numQuestionsAnswered questions answered');
     List invitedTo;
     String shareLink;
+    String facebookID;
     try {
       invitedTo = documents[0].data['invitedTo'];
 
       shareLink = documents[0].data['shareLink'];
+      facebookID = documents[0].data['facebookID'];
     } catch (error) {
       print('error looking for invitedTo property $error');
     }
@@ -101,19 +103,19 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
       status = PsiTestStatus.UNKNOWN;
 
     test = PsiTest(
-      testId: data.documentID,
-      myRole: iAm,
-      totalNumQuestions: DEFAULT_NUM_QUESTIONS,
-      testStatus: status,
-      numQuestionsAnswered: numQuestionsAnswered,
-      answeredQuestions: answeredQuestions,
-      currentQuestion: numQuestionsAnswered < questions.length
-          ? questions[numQuestionsAnswered]
-          : null,
-      questions: questions,
-      invitedTo: invitedTo,
-      shareLink: shareLink,
-    );
+        testId: data.documentID,
+        myRole: iAm,
+        totalNumQuestions: DEFAULT_NUM_QUESTIONS,
+        testStatus: status,
+        numQuestionsAnswered: numQuestionsAnswered,
+        answeredQuestions: answeredQuestions,
+        currentQuestion: numQuestionsAnswered < questions.length
+            ? questions[numQuestionsAnswered]
+            : null,
+        questions: questions,
+        invitedTo: invitedTo,
+        shareLink: shareLink,
+        facebookID: facebookID);
   } catch (exception) {
     // TODO - better global app error handling
     print('Error happened during createTestFromFirestore');

@@ -131,6 +131,13 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       final db = Firestore.instance;
       String senderUid;
       String receiverUid;
+      String facebookID;
+
+      // check if facebook or anonymous user
+      SharedPreferences _prefs = await SharedPreferences.getInstance();
+      bool isAnon = _prefs.getBool('isAnonymous');
+
+      facebookID = isAnon ? '' : _prefs.getString('facebookID');
 
       senderUid =
           event.test.myRole == PsiTestRole.SENDER ? globalCurrentUser.uid : "";
@@ -167,6 +174,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         'sender': senderUid,
         'status': 'underway',
         'shareLink': '',
+        'facebookID': facebookID,
         'invitedTo': []
       });
 
