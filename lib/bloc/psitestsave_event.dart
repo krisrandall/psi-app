@@ -2,8 +2,10 @@ part of 'psitestsave_bloc.dart';
 
 abstract class PsiTestSaveEvent extends Equatable {
   final PsiTest test;
-  final String facebookFriend;
-  const PsiTestSaveEvent({@required this.test, this.facebookFriend})
+  final String facebookFriendName;
+  final String facebookFriendID;
+  const PsiTestSaveEvent(
+      {@required this.test, this.facebookFriendName, this.facebookFriendID})
       : assert(test != null);
   @override
   List<Object> get props => [test];
@@ -43,10 +45,13 @@ class GetFacebookFriendsList extends PsiTestSaveEvent {
 }
 
 class InviteFacebookFriend extends PsiTestSaveEvent {
-  final String facebookFriend;
+  final String facebookFriendID;
+  final String facebookFriendName;
   final PsiTest test;
   const InviteFacebookFriend(
-      {@required this.test, @required this.facebookFriend})
+      {@required this.test,
+      @required this.facebookFriendName,
+      @required this.facebookFriendID})
       : super(test: test);
 }
 

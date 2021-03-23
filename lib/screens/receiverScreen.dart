@@ -84,7 +84,8 @@ class _ReceiverScreen extends StatelessWidget {
 
     if (currentTest != null) if (currentTest.testStatus ==
         PsiTestStatus.UNDERWAY) return TestScreen(currentTest.testId);
-
+    // if test hasn't finished being created
+    //
     if (currentTest == null) {
       actionButton = Image.asset("assets/sun_loading_spinner.gif");
     }
@@ -97,6 +98,8 @@ class _ReceiverScreen extends StatelessWidget {
         },
       );
       facebookFriends = Container();
+      // if test is created but waiting for friend
+      //
     } else if (currentTest.testStatus == PsiTestStatus.AWAITING_SENDER) {
       String shareLink = currentTest.shareLink;
       actionButton =
@@ -196,7 +199,7 @@ class _ReceiverScreen extends StatelessWidget {
                 if (!snapshot.hasData) {
                   print(
                       'looking for test with testID ${currentTest.invitedTo[0]['testId']}');
-                  return (Center(child: CopyText('looking for test...')));
+                  return Image.asset("assets/sun_loading_spinner.gif");
                 } else if (snapshot.hasData) {
                   return Button('okay, join', () {
                     var testToJoin = createTestFromFirestore([snapshot.data]);

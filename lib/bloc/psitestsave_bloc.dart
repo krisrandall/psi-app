@@ -132,12 +132,14 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       String senderUid;
       String receiverUid;
       String facebookID;
+      String facebookName;
 
       // check if facebook or anonymous user
       SharedPreferences _prefs = await SharedPreferences.getInstance();
       bool isAnon = _prefs.getBool('isAnonymous');
 
       facebookID = isAnon ? '' : _prefs.getString('facebookID');
+      facebookName = isAnon ? '' : _prefs.getString('facebookName');
 
       senderUid =
           event.test.myRole == PsiTestRole.SENDER ? globalCurrentUser.uid : "";
@@ -175,6 +177,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         'status': 'underway',
         'shareLink': '',
         'facebookID': facebookID,
+        'facebookName': facebookName,
         'invitedTo': []
       });
 
@@ -291,11 +294,11 @@ Stream<PsiTestSaveState> _mapAddFacebookUIdToTest(
     final testId = event.test.testId;
     final SharedPreferences _prefs = await SharedPreferences.getInstance();
     String facebookID = _prefs.getString('facebookID');
-
+    String facebookName = _prefs.getString('facebookName');
     var docRef = db
         .collection('test')
         .document(testId)
-        .updateData({'facebookID': facebookID});
+        .updateData({'facebookID': facebookID, 'facebookName': facebookName});
 
     yield AddFacebookUIdToTestSuccessful();
   } catch (error) {
@@ -308,12 +311,13 @@ Stream<PsiTestSaveState> _mapInviteFacebookFriendToState(
   try {
     yield PsiTestInviteFacebookFriendInProgress();
     String inviterTestId = event.test.testId;
-    var facebookFriendID = event.facebookFriend;
+    var facebookFriendID = event.facebookFriendID;
+    var facebookFriendName = event.facebookFriendName;
     var db = Firestore.instance;
     String inviteeTestId;
     Query facebookFriendActiveTestQuery = db
         .collection('test')
-        .where('parties', arrayContains: facebookFriendID)
+        .where('facebookID', arrayContains: facebookFriendID)
         .where("status", isEqualTo: "underway");
     var snapshot = await facebookFriendActiveTestQuery.getDocuments();
     var length = snapshot.documents.length;
@@ -331,7 +335,9 @@ Stream<PsiTestSaveState> _mapInviteFacebookFriendToState(
     } else {
       inviteeTestId = snapshot.documents[0].documentID;
       //if invitee has an active test
-
+      //
+      print(
+          'adding the following to $inviteeTestId : invited to : inviter : ${globalCurrentUser.uid} , testId ');
       var docRef = db.collection('test').document(inviteeTestId).updateData({
         'invitedTo': FieldValue.arrayUnion([
           {'inviter': globalCurrentUser.uid},

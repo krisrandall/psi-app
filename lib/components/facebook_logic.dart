@@ -16,11 +16,13 @@ import 'package:app/components/button.dart';
 
 //AccessToken _accessToken;
 
-Future<Null> saveFacebookAccessToken(AccessToken accessToken) async {
+Future<Null> saveFacebookAccessTokenAndName(
+    AccessToken accessToken, String name) async {
   try {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('facebookAccessToken', accessToken.token);
     prefs.setString('facebookID', accessToken.userId);
+    prefs.setString('facebookName', name);
   } catch (error) {
     print("error while saving fAcebook access token $error");
   }
@@ -38,23 +40,25 @@ Future<Null> signInWithFacebook() async {
     final AccessToken _accessToken = await FacebookAuth.instance.login(
       permissions: ['user_friends'],
     );
-
+    final userData = await FacebookAuth.instance.getUserData();
     // Create a credential from the access token
     final FacebookAuthCredential facebookAuthCredential =
         FacebookAuthProvider.getCredential(accessToken: _accessToken.token);
 
-    print("_accessToken.userId is ${_accessToken.userId}");
+    print("user data name is ${userData['name']}");
 
     // Once signed in, return the UserCredential
-
+    String name = userData['name'];
     await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
-    await saveFacebookAccessToken(_accessToken);
+    await saveFacebookAccessTokenAndName(_accessToken, name);
     await saveUserIsAnonymous(false);
   } catch (error) {
     print(error);
   }
 }
 
+// this function is for logging in to Facebook after having logged in as Anonymous User
+//
 Future<Null> linkFacebookUserWithCurrentAnonUser(context, currentTest) async {
   var anonUser = await FirebaseAuth.instance.currentUser();
   print(
@@ -66,7 +70,8 @@ Future<Null> linkFacebookUserWithCurrentAnonUser(context, currentTest) async {
       permissions: ['user_friends'],
     );
     final userData = await FacebookAuth.instance.getUserData();
-    print(userData['id']);
+    String name = userData['name'];
+    print(userData['name']);
 
     // Create a credential from the access token
     final FacebookAuthCredential facebookAuthCredential =
@@ -103,7 +108,7 @@ Future<Null> linkFacebookUserWithCurrentAnonUser(context, currentTest) async {
     BlocProvider.of<PsiTestSaveBloc>(context)
         .add(GetFacebookFriendsList(test: currentTest));
 
-    saveFacebookAccessToken(_accessToken);
+    saveFacebookAccessTokenAndName(_accessToken, name);
   } catch (error) {
     print(error);
   }
@@ -161,7 +166,7 @@ List<Widget> buildFacebookFriendsList(
   {
     print(facebookFriends.length);
     for (Map friend in facebookFriends) {
-      String friendId = friend['friendID'];
+      String friendID = friend['friendID'];
       String friendName = friend['name'];
       facebookFriendsList.add(FlatButton(
           height: 62,
@@ -179,7 +184,9 @@ List<Widget> buildFacebookFriendsList(
               side: BorderSide(color: Colors.white, width: 4.0)),
           onPressed: () {
             var event = InviteFacebookFriend(
-                test: currentTest, facebookFriend: friendId);
+                test: currentTest,
+                facebookFriendID: friendID,
+                facebookFriendName: friendName);
             BlocProvider.of<PsiTestSaveBloc>(context).add(event);
           }));
       facebookFriendsList.add(SizedBox(height: 10));

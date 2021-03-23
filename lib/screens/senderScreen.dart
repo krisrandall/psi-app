@@ -84,6 +84,8 @@ class _SenderScreen extends StatelessWidget {
     if (currentTest != null) if (currentTest.testStatus ==
         PsiTestStatus.UNDERWAY) return TestScreen(currentTest.testId);
 
+    // if test hasn't finished being created
+    //
     if (currentTest == null) {
       actionButton = Image.asset("assets/sun_loading_spinner.gif");
     }
@@ -96,6 +98,8 @@ class _SenderScreen extends StatelessWidget {
         },
       );
       facebookFriends = Container();
+      // if test is created but waiting for friend
+      //
     } else if (currentTest.testStatus == PsiTestStatus.AWAITING_RECEIVER) {
       String shareLink = currentTest.shareLink;
       actionButton =
@@ -122,13 +126,6 @@ class _SenderScreen extends StatelessWidget {
                 child: shareLink == ''
                     ? CircularProgressIndicator()
                     : Text(shareLink, style: TextStyle(color: Colors.white)))),
-        /*TextFormField(
-                              //enabled: false,
-                              decoration: InputDecoration(
-                                  border: const OutlineInputBorder(),
-                                  fillColor: Colors.purple[50],
-                                  filled: true),
-                              initialValue: shareLink))),*/
         SizedBox(height: 20),
       ]);
       facebookFriends = BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
@@ -202,7 +199,7 @@ class _SenderScreen extends StatelessWidget {
                 if (!snapshot.hasData) {
                   print(
                       'looking for test with testID ${currentTest.invitedTo[0]['testId']}');
-                  return (Center(child: CopyText('looking for test...')));
+                  return Image.asset("assets/sun_loading_spinner.gif");
                 } else if (snapshot.hasData) {
                   if (snapshot.data.exists) {
                     return Button('okay, join', () {
