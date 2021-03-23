@@ -79,7 +79,6 @@ class _SenderScreen extends StatelessWidget {
       }
     });
     Widget actionButton;
-
     Widget facebookFriends;
 
     if (currentTest != null) if (currentTest.testStatus ==
@@ -88,8 +87,6 @@ class _SenderScreen extends StatelessWidget {
     if (currentTest == null) {
       actionButton = Image.asset("assets/sun_loading_spinner.gif");
     }
-    //} else if (currentTest.myRole == PsiTestRole.SENDER) {
-
     if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
       actionButton = TitleText('Test starting now...');
       Button(
@@ -136,7 +133,6 @@ class _SenderScreen extends StatelessWidget {
       ]);
       facebookFriends = BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
           builder: (context, state) {
-        //facebookFriends = facebookFriends == null
         if (state is GetFacebookFriendsListFailed)
           return Column(
             children: [
@@ -176,13 +172,6 @@ class _SenderScreen extends StatelessWidget {
                               state.facebookFriends, currentTest, context))))
             ]);
         }
-        /*return Button(
-            // this appears when ID or access token are not available
-            'log on to Facebook', () {
-          linkFacebookUserWithCurrentAnonUser(context, currentTest);
-          BlocProvider.of<PsiTestSaveBloc>(context)
-              .add(GetFacebookFriendsList(test: currentTest));
-        });*/
         return CircularProgressIndicator();
       });
     } else {

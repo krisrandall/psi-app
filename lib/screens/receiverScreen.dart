@@ -80,117 +80,101 @@ class _ReceiverScreen extends StatelessWidget {
       }
     });
     Widget actionButton;
-/*
-    Widget facebookFriends = FutureBuilder<List>(
-        future: getFacebookFriendsListFromTest(context, currentTest),
-        builder: ((context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done)
-            return CircularProgressIndicator();
-          if (!snapshot.hasData)
-            return Button(
-                // this appears when ID or access token are not available
-                'log on to Facebook',
-                () =>
-                    linkFacebookUserWithCurrentAnonUser(context, currentTest));
-          else {
-            print("snapshot.data is ${snapshot.data}");
-            return Column(children: [
-              SizedBox(height: 30),
-              Padding(
-                  padding: EdgeInsets.only(left: 20, right: 20),
-                  child: SizedBox(
-                      width: 440,
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [...snapshot.data])))
-            ]);
-          }
-        }));*/
-
-    Widget facebookFriends =
-        buildFacebookFriendsList(['filler'], currentTest, context) == null
-            ? Button(
-                // this appears when ID or access token are not available
-                'log on to Facebook',
-                () => linkFacebookUserWithCurrentAnonUser(context, currentTest))
-            : Column(children: [
-                SizedBox(height: 30),
-                Padding(
-                    padding: EdgeInsets.only(left: 20, right: 20),
-                    child: SizedBox(
-                        width: 440,
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: buildFacebookFriendsList(
-                                ['filler'], currentTest, context))))
-              ]);
+    Widget facebookFriends;
 
     if (currentTest != null) if (currentTest.testStatus ==
         PsiTestStatus.UNDERWAY) return TestScreen(currentTest.testId);
 
     if (currentTest == null) {
       actionButton = Image.asset("assets/sun_loading_spinner.gif");
-    } else if (currentTest.myRole == PsiTestRole.RECEIVER) {
-      if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
-        actionButton = TitleText('Test starting now...');
-        Button(
-          'Continue Test',
-          () {
-            goToScreen(context, TestScreen(currentTest.testId));
-          },
-        );
-      } else if (currentTest.testStatus == PsiTestStatus.AWAITING_SENDER) {
-        actionButton = BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
-            builder: (context, state) {
-          print(state);
-          String shareLink = '';
-          if (state is PsiTestSaveShareSuccessful) {
-            if (shareLink == '') shareLink = currentTest.shareLink;
-            return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CopyText('''Send the link below to a friend
+    }
+    if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
+      actionButton = TitleText('Test starting now...');
+      Button(
+        'Continue Test',
+        () {
+          goToScreen(context, TestScreen(currentTest.testId));
+        },
+      );
+      facebookFriends = Container();
+    } else if (currentTest.testStatus == PsiTestStatus.AWAITING_SENDER) {
+      String shareLink = currentTest.shareLink;
+      actionButton =
+          Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        CopyText('''Send the link below to a friend
       to invite them to the test'''),
-                  SizedBox(height: 30),
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    PsiIconButton(Icon(Icons.copy), () {
-                      FlutterClipboard.copy(shareLink);
-                      _showSnackBar();
-                    }),
-                    SizedBox(width: 20),
-                    PsiIconButton(Icon(Icons.share), () {
-                      Share.share(shareLink);
-                    })
-                  ]),
-                  SizedBox(height: 20),
-                  Padding(
-                      padding: EdgeInsets.only(left: 20, right: 20),
-                      child: SizedBox(
-                          width: 440,
-                          height: 70,
-                          child: Text(shareLink == null ? '' : shareLink,
-                              style: TextStyle(color: Colors.white)))),
-                  /*TextFormField(
-                              //enabled: false,
-                              decoration: InputDecoration(
-                                  border: const OutlineInputBorder(),
-                                  fillColor: Colors.purple[50],
-                                  filled: true),
-                              initialValue: shareLink))),*/
-                  SizedBox(height: 20),
-                ]);
-          } else {
+        SizedBox(height: 30),
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          PsiIconButton(Icon(Icons.copy), () {
+            FlutterClipboard.copy(shareLink);
+            _showSnackBar();
+          }),
+          SizedBox(width: 20),
+          PsiIconButton(Icon(Icons.share), () {
+            Share.share(shareLink);
+          })
+        ]),
+        SizedBox(height: 20),
+        Padding(
+            padding: EdgeInsets.only(left: 20, right: 20),
+            child: SizedBox(
+                width: 440,
+                height: 70,
+                child: shareLink == ''
+                    ? CircularProgressIndicator()
+                    : Text(shareLink, style: TextStyle(color: Colors.white)))),
+        SizedBox(height: 20),
+      ]);
+      facebookFriends = BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
+          builder: (context, state) {
+        if (state is GetFacebookFriendsListFailed)
+          return Column(
+            children: [
+              CopyText('There was a problem accessing your facebook friends'),
+              Button('Try again', () {
+                BlocProvider.of<PsiTestSaveBloc>(context)
+                    .add(GetFacebookFriendsList(test: currentTest));
+              })
+            ],
+          );
+        if (state is GetFacebookFriendsListInProgress)
+          return CircularProgressIndicator();
+        else if (state is GetFacebookFriendsListSuccessful) {
+          if (state.facebookFriends == [])
+            return Button(
+                // this appears when ID or access token are not available
+                'log on to Facebook', () {
+              linkFacebookUserWithCurrentAnonUser(context, currentTest);
+              BlocProvider.of<PsiTestSaveBloc>(context)
+                  .add(GetFacebookFriendsList(test: currentTest));
+            });
+
+          if (state.facebookFriends.length == 0)
+            return Text(
+                '''none of your Facebook friends have this app installed.''',
+                style: TextStyle(color: Colors.white));
+          else
             return Column(children: [
-              CopyText('loading shareLink'),
-              CircularProgressIndicator(),
-              SizedBox(height: 20),
+              SizedBox(height: 30),
+              Padding(
+                  padding: EdgeInsets.only(left: 20, right: 20),
+                  child: SizedBox(
+                      width: 400,
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: buildFacebookFriendsList(
+                              state.facebookFriends, currentTest, context))))
             ]);
-          }
-        });
-      } else {
-        actionButton = CopyText(
-            "There is a test underway and you are the Receiver.\n\nGo back and complete the test.");
-      }
+        }
+        return CircularProgressIndicator();
+      });
+    } else {
+      actionButton = Column(children: [
+        CopyText('loading shareLink'),
+        CircularProgressIndicator(),
+        SizedBox(height: 20),
+      ]);
+      facebookFriends = Container(child: Text('here i am'));
     }
 
     return BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
