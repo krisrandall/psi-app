@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:app/screens/testScreen.dart';
 
 class PictureButton extends StatefulWidget {
   final String pictureUrl;
@@ -23,7 +24,19 @@ class _PictureButtonState extends State<PictureButton> {
                 duration: Duration(milliseconds: 1000),
                 child: FadeInImage.assetNetwork(
                     placeholder: 'assets/white_box.png',
-                    image: widget.pictureUrl),
+                    image: widget.pictureUrl,
+                    imageErrorBuilder: (BuildContext context, Object exception,
+                            StackTrace stacktrace) =>
+                        FutureBuilder(
+                            future: findValidUrl(widget.pictureUrl, exception),
+                            builder: (context, snapshot) {
+                              if (!snapshot.hasData)
+                                return CircularProgressIndicator();
+                              else {
+                                print(snapshot.data);
+                                return Image.network(snapshot.data);
+                              }
+                            })),
               ),
             )));
   }

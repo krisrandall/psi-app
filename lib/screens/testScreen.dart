@@ -9,6 +9,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/screens/testCompleteScreen.dart';
+import 'package:http/http.dart' as http;
 
 class TestScreen extends StatelessWidget {
   final String testId;
@@ -88,6 +89,30 @@ class _TestScreen extends StatelessWidget {
   }
 }
 
+// this function fires if the image url returns 404, which happens because we
+// are using random numbers to generate the PsiTest images. Some of the image IDs don't exist
+// the function just takes the image ID (eg 744) and increases it by 1 and then tries that.
+// It keeps going until it gets a different status code to 404
+Future<String> findValidUrl(imageUrl, exception) async {
+  int statusCode = 404;
+  print('exception $exception');
+  String newImageUrl;
+  while (statusCode == 404) {
+    var uri = Uri.dataFromString(imageUrl);
+    List data = uri.pathSegments;
+    String newImageId = data[4];
+    int imageAsInt = int.parse(newImageId);
+    imageAsInt++;
+    String imageId = imageAsInt.toString();
+    newImageUrl = 'https://picsum.photos/id/$imageId/400';
+    var response = await http.get(newImageUrl);
+    statusCode = response.statusCode;
+    print('next try $statusCode');
+  }
+  print('out of while loop');
+  return newImageUrl;
+}
+
 class TestQuestionSender extends StatelessWidget {
   final String imageUrl;
   final int currentQuestionNumber;
@@ -98,6 +123,7 @@ class TestQuestionSender extends StatelessWidget {
       this.currentQuestionNumber,
       this.totalNumberQuestions,
       this.currentTest});
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -106,7 +132,20 @@ class TestQuestionSender extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             FadeInImage.assetNetwork(
-                placeholder: 'assets/white_box.png', image: imageUrl),
+                placeholder: 'assets/white_box.png',
+                image: imageUrl,
+                imageErrorBuilder: (BuildContext context, Object exception,
+                        StackTrace stacktrace) =>
+                    FutureBuilder(
+                        future: findValidUrl(imageUrl, exception),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData)
+                            return CircularProgressIndicator();
+                          else {
+                            print(snapshot.data);
+                            return Image.network(snapshot.data);
+                          }
+                        })),
             Padding(
               padding: EdgeInsets.all(30.0),
               child: Text('Concentrate on this image\n\n\n' +

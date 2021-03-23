@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/components/textComponents.dart';
 import 'package:app/screens/homeScreen.dart';
+import 'package:app/screens/testScreen.dart';
 
 class TestCompleteScreen extends StatelessWidget {
   final PsiTest currentTest;
@@ -51,10 +52,24 @@ class TestCompleteScreen extends StatelessWidget {
                       alignment: AlignmentDirectional.bottomCenter,
                       children: [
                     Container(
-                        //margin: EdgeInsets.only(b20.0),
-                        child: FadeInImage.assetNetwork(
-                            placeholder: 'assets/purple_box.png',
-                            image: providedAnswerUrl)),
+                      //margin: EdgeInsets.only(b20.0),
+                      child: FadeInImage.assetNetwork(
+                          placeholder: 'assets/purple_box.png',
+                          image: providedAnswerUrl,
+                          imageErrorBuilder: (BuildContext context,
+                                  Object exception, StackTrace stacktrace) =>
+                              FutureBuilder(
+                                  future: findValidUrl(
+                                      providedAnswerUrl, exception),
+                                  builder: (context, snapshot) {
+                                    if (!snapshot.hasData)
+                                      return CircularProgressIndicator();
+                                    else {
+                                      print(snapshot.data);
+                                      return Image.network(snapshot.data);
+                                    }
+                                  })),
+                    ),
                     Container(
                         alignment: Alignment.center,
                         color: Colors.white,
@@ -68,10 +83,24 @@ class TestCompleteScreen extends StatelessWidget {
                     alignment: AlignmentDirectional.bottomCenter,
                     children: [
                       Container(
-                          //margin: EdgeInsets.all(20.0),
-                          child: FadeInImage.assetNetwork(
-                              placeholder: 'assets/purple_box.png',
-                              image: correctAnswerUrl)),
+                        //margin: EdgeInsets.all(20.0),
+                        child: FadeInImage.assetNetwork(
+                            placeholder: 'assets/purple_box.png',
+                            image: correctAnswerUrl,
+                            imageErrorBuilder: (BuildContext context,
+                                    Object exception, StackTrace stacktrace) =>
+                                FutureBuilder(
+                                    future: findValidUrl(
+                                        correctAnswerUrl, exception),
+                                    builder: (context, snapshot) {
+                                      if (!snapshot.hasData)
+                                        return CircularProgressIndicator();
+                                      else {
+                                        print(snapshot.data);
+                                        return Image.network(snapshot.data);
+                                      }
+                                    })),
+                      ),
                       Container(color: Colors.white, child: Text('Receiver'))
                     ]),
               )
