@@ -145,14 +145,14 @@ class _OpenedViaLinkWidget extends StatelessWidget {
         goToScreen(context, TableBgWrapper(HomeScreen()));
       })
     ];
-    var myID = getMyID();
-
     if (receiverId != '' && senderId != '') {
-      if (myID == receiverId || myID == senderId) {
+      if (globalCurrentUser.uid == receiverId ||
+          globalCurrentUser.uid == senderId) {
         screenOptions = linkIsYourActiveTest;
       } else
         screenOptions = testAlreadyFull;
-    } else if (myID == receiverId || myID == senderId) {
+    } else if (globalCurrentUser.uid == receiverId ||
+        globalCurrentUser.uid == senderId) {
       screenOptions = triedToJoinOwnTest;
     } else if (status != 'underway') {
       screenOptions = testNotUnderway;

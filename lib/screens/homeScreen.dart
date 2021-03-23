@@ -15,7 +15,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:app/components/facebook_logic.dart';
 
 class HomeScreen extends StatelessWidget {
   final GlobalKey<ScaffoldState> _homeScaffoldKey =
@@ -24,7 +23,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     print('in home screen');
     print(
-        'isFacebookUser = ${globalCurrentUser.isAnonymous} gcu uid is ${globalCurrentUser.uid} myID is ${getMyID()}');
+        'isFacebookUser = ${globalCurrentUser.isAnonymous} gcu uid is ${globalCurrentUser.uid}');
     return Scaffold(
         appBar: AppBar(
           title: Text('𝚿 Psi Telepathy Test'),
@@ -96,7 +95,6 @@ class _HomeScreen extends StatelessWidget {
       Button(
         "Be the Sender",
         () {
-          resetMyId();
           goToScreen(context, SenderScreen());
           var newlyCreatedTest = PsiTest.beginNewTestAsSender();
           var event = CreatePsiTest(test: newlyCreatedTest);
@@ -128,7 +126,7 @@ class _HomeScreen extends StatelessWidget {
       Button(
           'print user',
           () => print(
-              'isFacebookUser = ${!globalCurrentUser.isAnonymous} gcu uid is ${globalCurrentUser.uid} email is ${globalCurrentUser.email} myID = ${getMyID()}')),
+              'isFacebookUser = ${!globalCurrentUser.isAnonymous} gcu uid is ${globalCurrentUser.uid} email is ${globalCurrentUser.email}')),
       StreamBuilder<QuerySnapshot>(
           stream: userTestStats.snapshots(),
           builder:

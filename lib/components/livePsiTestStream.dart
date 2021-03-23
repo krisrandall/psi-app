@@ -9,43 +9,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 var globalCurrentUser;
-var _myID;
-
-void setMyID(myID) {
-  _myID = myID;
-}
-
-String getMyID() {
-  print('getting myID: $_myID');
-  return _myID;
-}
-
-Future<Null> resetMyId() async {
-  globalCurrentUser = await FirebaseAuth.instance.currentUser();
-  if (!globalCurrentUser.isAnonymous) {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    String facebookID = prefs.getString('facebookID');
-    setMyID(facebookID);
-  } else
-    setMyID(globalCurrentUser.uid);
-}
-
 Query firestoreDatabaseStream = Firestore.instance
     .collection('test')
-    .where('parties', arrayContains: _myID)
+    .where('parties', arrayContains: globalCurrentUser.uid)
     .where("status", isEqualTo: "underway");
 
 Query userTestStats = Firestore.instance
     .collection('test')
-    .where('parties', arrayContains: _myID)
+    .where('parties', arrayContains: globalCurrentUser.uid)
     .where("status", isEqualTo: "completed");
 
 /// Convert a firestore data snapshot into a psiTest
 ///
 PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
-  String myID = getMyID();
-  if (myID == null) resetMyId();
-
   if (documents.length == 0) {
     print('no matching documents found');
     return null;
@@ -53,14 +29,12 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
 
   PsiTest test;
 
-  print('livePsi myID = $_myID');
   try {
     var data = documents[0];
     var iAm;
-    print(data['sender']);
 
-    if (data['sender'] == myID) iAm = PsiTestRole.SENDER;
-    if (data['receiver'] == myID) iAm = PsiTestRole.RECEIVER;
+    if (data['sender'] == globalCurrentUser.uid) iAm = PsiTestRole.SENDER;
+    if (data['receiver'] == globalCurrentUser.uid) iAm = PsiTestRole.RECEIVER;
     print('first try $iAm');
     if (iAm == null) {
       if (data['sender'] == '') iAm = PsiTestRole.SENDER;

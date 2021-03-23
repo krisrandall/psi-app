@@ -125,8 +125,6 @@ class _LandingPageState extends State<LandingPage> {
           } else if (user != null && signinErrorMessage == '') {
             globalCurrentUser = user;
 
-            resetMyId();
-
             return HomeScreen();
           } else
             return Container();

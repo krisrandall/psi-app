@@ -128,19 +128,15 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
   ) async* {
     yield PsiTestSaveCreateInProgress(0.2);
     try {
-      //print(myID);
-
       final db = Firestore.instance;
       String senderUid;
       String receiverUid;
-      String myID;
 
-      myID = getMyID();
-
-      print(myID);
-
-      senderUid = event.test.myRole == PsiTestRole.SENDER ? myID : "";
-      receiverUid = event.test.myRole == PsiTestRole.RECEIVER ? myID : "";
+      senderUid =
+          event.test.myRole == PsiTestRole.SENDER ? globalCurrentUser.uid : "";
+      receiverUid = event.test.myRole == PsiTestRole.RECEIVER
+          ? globalCurrentUser.uid
+          : "";
 
       var path = ('https://picsum.photos');
       var questions = new List<Map>();
@@ -165,7 +161,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       }
 
       DocumentReference ref = await db.collection('test').add({
-        'parties': [myID],
+        'parties': [globalCurrentUser.uid],
         'questions': questions,
         'receiver': receiverUid,
         'sender': senderUid,
@@ -204,17 +200,16 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     try {
       String testId = event.test.testId;
       var myRole = event.test.myRole;
-      var myID = getMyID();
 
       if (myRole == PsiTestRole.SENDER) {
         db.collection('test').document(testId).updateData({
-          'parties': FieldValue.arrayUnion([myID]),
-          'sender': myID,
+          'parties': FieldValue.arrayUnion([globalCurrentUser.uid]),
+          'sender': globalCurrentUser.uid,
         });
       } else if (myRole == PsiTestRole.RECEIVER) {
         db.collection('test').document(testId).updateData({
-          'parties': FieldValue.arrayUnion([myID]),
-          'receiver': myID
+          'parties': FieldValue.arrayUnion([globalCurrentUser.uid]),
+          'receiver': globalCurrentUser.uid
         });
       }
       yield PsiTestJoinSuccessful();
@@ -305,9 +300,6 @@ Stream<PsiTestSaveState> _mapInviteFacebookFriendToState(
     var facebookFriendID = event.facebookFriend;
     var db = Firestore.instance;
     String inviteeTestId;
-
-    String myID = getMyID();
-
     Query facebookFriendActiveTestQuery = db
         .collection('test')
         .where('parties', arrayContains: facebookFriendID)
@@ -321,7 +313,7 @@ Stream<PsiTestSaveState> _mapInviteFacebookFriendToState(
       // TODO send push notification
       db.collection('test').add({
         'invitedTo': [
-          {'inviter': myID},
+          {'inviter': globalCurrentUser.uid},
           {'testId': inviterTestId}
         ]
       });
@@ -331,7 +323,7 @@ Stream<PsiTestSaveState> _mapInviteFacebookFriendToState(
 
       var docRef = db.collection('test').document(inviteeTestId).updateData({
         'invitedTo': FieldValue.arrayUnion([
-          {'inviter': myID},
+          {'inviter': globalCurrentUser.uid},
           {'testId': inviterTestId}
         ]),
       });

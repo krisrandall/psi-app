@@ -74,7 +74,6 @@ void logOutOfFacebook(context) async {
     prefs.setString('facebookAccessToken', null);
     globalCurrentUser = await FirebaseAuth.instance.currentUser();
     await globalCurrentUser.reload();
-    resetMyId();
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => LandingPage()));
   } catch (error) {
