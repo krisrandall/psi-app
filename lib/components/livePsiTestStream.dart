@@ -1,18 +1,22 @@
+import 'package:app/components/facebook_logic.dart';
 import 'package:app/components/textComponents.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:app/models/psiTestQuestion.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:app/bloc/psitestsave_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 var globalCurrentUser;
 Query firestoreDatabaseStream = Firestore.instance
     .collection('test')
     .where('parties', arrayContains: globalCurrentUser.uid)
     .where("status", isEqualTo: "underway");
+
+String _facebookID;
+void setFacebookID(id) {
+  _facebookID = id;
+}
 
 Query userTestStats = Firestore.instance
     .collection('test')

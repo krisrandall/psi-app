@@ -53,7 +53,7 @@ class _LandingPageState extends State<LandingPage> {
 
   void goToHomeScreenAsynchronously(BuildContext context) async {
     await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        context, MaterialPageRoute(builder: (context) => InviteWrapper()));
   }
 
   Future<void> precacheImages() async {
@@ -126,7 +126,7 @@ class _LandingPageState extends State<LandingPage> {
           } else if (user != null && signinErrorMessage == '') {
             globalCurrentUser = user;
 
-            return HomeScreen();
+            return InviteWrapper();
           } else
             return Container();
         } else {

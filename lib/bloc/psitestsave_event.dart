@@ -67,6 +67,10 @@ class JoinPsiTest extends PsiTestSaveEvent {
   const JoinPsiTest({@required test}) : super(test: test);
 }
 
+class GetFacebookID extends PsiTestSaveEvent {
+  const GetFacebookID({@required test}) : super(test: test);
+}
+
 class CompletePsiTest extends PsiTestSaveEvent {
   const CompletePsiTest({@required test}) : super(test: test);
 }

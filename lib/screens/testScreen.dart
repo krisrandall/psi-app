@@ -107,9 +107,8 @@ Future<String> findValidUrl(imageUrl, exception) async {
     newImageUrl = 'https://picsum.photos/id/$imageId/400';
     var response = await http.get(newImageUrl);
     statusCode = response.statusCode;
-    print('next try $statusCode');
+    print('next try using $newImageUrl $statusCode');
   }
-  print('out of while loop');
   return newImageUrl;
 }
 

@@ -52,6 +52,7 @@ Future<Null> signInWithFacebook() async {
     await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
     await saveFacebookAccessTokenAndName(_accessToken, name);
     await saveUserIsAnonymous(false);
+    setFacebookID(_accessToken.userId);
   } catch (error) {
     print(error);
   }
@@ -162,12 +163,13 @@ List<Widget> buildFacebookFriendsList(
   }
 
   var facebookFriendsList = new List<Widget>();
-  print('now in buildFacebookFriendsList $facebookFriends');
+
   {
     print(facebookFriends.length);
     for (Map friend in facebookFriends) {
       String friendID = friend['friendID'];
       String friendName = friend['name'];
+      print('now in buildFacebookFriendsList $facebookFriends');
       facebookFriendsList.add(FlatButton(
           height: 62,
           color: Colors.purple,
@@ -188,6 +190,10 @@ List<Widget> buildFacebookFriendsList(
                 facebookFriendID: friendID,
                 facebookFriendName: friendName);
             BlocProvider.of<PsiTestSaveBloc>(context).add(event);
+            //call Get Facebook Friends List to set State to GetFacebookFriendsListSuccessful and return the list
+            //
+            BlocProvider.of<PsiTestSaveBloc>(context)
+                .add(GetFacebookFriendsList(test: currentTest));
           }));
       facebookFriendsList.add(SizedBox(height: 10));
     }

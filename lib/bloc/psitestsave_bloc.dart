@@ -57,6 +57,9 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     if (event is AddFacebookUIdToTest) {
       yield* _mapAddFacebookUIdToTest(event);
     }
+    if (event is GetFacebookID) {
+      yield* _mapGetFacebookIDToState(event);
+    }
   }
 
   Stream<PsiTestSaveState> _mapCreateAndSharePsiTestToState(
@@ -310,25 +313,32 @@ Stream<PsiTestSaveState> _mapInviteFacebookFriendToState(
     PsiTestSaveEvent event) async* {
   try {
     yield PsiTestInviteFacebookFriendInProgress();
+    final SharedPreferences _prefs = await SharedPreferences.getInstance();
+    String inviterFacebookName = _prefs.getString('facebookName');
+
     String inviterTestId = event.test.testId;
-    var facebookFriendID = event.facebookFriendID;
-    var facebookFriendName = event.facebookFriendName;
+    String inviteeFriendID = event.facebookFriendID;
+    //var facebookFriendName = event.facebookFriendName;
     var db = Firestore.instance;
     String inviteeTestId;
     Query facebookFriendActiveTestQuery = db
         .collection('test')
-        .where('facebookID', arrayContains: facebookFriendID)
+        .where('facebookID', isEqualTo: inviteeFriendID)
         .where("status", isEqualTo: "underway");
     var snapshot = await facebookFriendActiveTestQuery.getDocuments();
     var length = snapshot.documents.length;
-    print(length);
+    print(
+        'number of tests found that match facebookID isEqualto $inviteeFriendID = $length');
     if (length == 0) {
       // if invitee doesn't have an active test
       //
       // TODO send push notification
+      print(
+          'creating the following $inviteeTestId : invited to : inviter : ${globalCurrentUser.uid} , $inviterFacebookName');
       db.collection('test').add({
+        'parties': [inviteeTestId],
         'invitedTo': [
-          {'inviter': globalCurrentUser.uid},
+          {'inviter': inviterFacebookName},
           {'testId': inviterTestId}
         ]
       });
@@ -337,12 +347,13 @@ Stream<PsiTestSaveState> _mapInviteFacebookFriendToState(
       //if invitee has an active test
       //
       print(
-          'adding the following to $inviteeTestId : invited to : inviter : ${globalCurrentUser.uid} , testId ');
+          'adding the following to $inviteeTestId : invited to : inviter : ${globalCurrentUser.uid} , $inviterFacebookName');
       var docRef = db.collection('test').document(inviteeTestId).updateData({
-        'invitedTo': FieldValue.arrayUnion([
-          {'inviter': globalCurrentUser.uid},
+        //'invitedTo': FieldValue.arrayUnion([
+        'invitedTo': [
+          {'inviter': inviterFacebookName},
           {'testId': inviterTestId}
-        ]),
+        ]
       });
     }
     yield PsiTestInviteFacebookFriendSuccessful();
@@ -354,6 +365,15 @@ Stream<PsiTestSaveState> _mapInviteFacebookFriendToState(
 Stream<PsiTestSaveState> _mapAcceptFacebookInvitationToState(
     PsiTestSaveEvent event) async* {
   yield PsiTestAcceptFacebookInvitationInProgress();
+}
+
+Stream<PsiTestSaveState> _mapGetFacebookIDToState(
+    PsiTestSaveEvent event) async* {
+  SharedPreferences _prefs = await SharedPreferences.getInstance();
+  bool isAnon = _prefs.getBool('isAnonymous');
+  String facebookID = isAnon ? 'isAnon' : _prefs.getString('facebookID');
+
+  yield GetFacebookIDSuccessful(facebookID);
 }
 
 Stream<PsiTestSaveState> _mapAnswerPsiTestQuestionToState(
