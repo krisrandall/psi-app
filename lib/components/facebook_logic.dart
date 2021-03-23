@@ -49,7 +49,6 @@ Future<Null> signInWithFacebook() async {
 
     await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
     await saveFacebookAccessToken(_accessToken);
-
     await saveUserIsAnonymous(false);
   } catch (error) {
     print(error);
@@ -98,6 +97,9 @@ Future<Null> linkFacebookUserWithCurrentAnonUser(context, currentTest) async {
 
     //need to call getFacebookFriends again to reset the FacebookFriednsList
     //
+
+    BlocProvider.of<PsiTestSaveBloc>(context)
+        .add(AddFacebookUIdToTest(test: currentTest));
     BlocProvider.of<PsiTestSaveBloc>(context)
         .add(GetFacebookFriendsList(test: currentTest));
 

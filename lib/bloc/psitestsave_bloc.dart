@@ -54,8 +54,8 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     if (event is AcceptFacebookInvitation) {
       yield* _mapAcceptFacebookInvitationToState(event);
     }
-    if (event is RewriteTestUserAnonID) {
-      yield* _mapRewriteTestUserAnonID(event);
+    if (event is AddFacebookUIdToTest) {
+      yield* _mapAddFacebookUIdToTest(event);
     }
   }
 
@@ -228,8 +228,6 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
 
   Stream<PsiTestSaveState> _mapGetFacebookFriendsList(
       PsiTestSaveEvent event) async* {
-    final db = Firestore.instance;
-    final testId = event.test.testId;
     yield GetFacebookFriendsListInProgress();
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -285,18 +283,23 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
   }
 }
 
-Stream<PsiTestSaveState> _mapRewriteTestUserAnonID(
+Stream<PsiTestSaveState> _mapAddFacebookUIdToTest(
     PsiTestSaveEvent event) async* {
-  final db = Firestore.instance;
-  final testId = event.test.testId;
-  yield RewriteTestUserAnonIDInProgress();
-  globalCurrentUser.email;
+  yield AddFacebookUIdToTestInProgress();
   try {
-    var docRef = db.collection('test').document(testId).updateData({});
+    final db = Firestore.instance;
+    final testId = event.test.testId;
+    final SharedPreferences _prefs = await SharedPreferences.getInstance();
+    String facebookID = _prefs.getString('facebookID');
 
-    yield RewriteTestUserAnonIDSuccessful();
+    var docRef = db
+        .collection('test')
+        .document(testId)
+        .updateData({'facebookID': facebookID});
+
+    yield AddFacebookUIdToTestSuccessful();
   } catch (error) {
-    yield RewriteTestUserAnonIDFailed(error: error);
+    yield AddFacebookUIdToTestFailed(error: error);
   }
 }
 

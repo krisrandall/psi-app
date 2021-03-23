@@ -143,14 +143,14 @@ class GetFacebookFriendsListFailed extends PsiTestSaveState {
   List<Object> get props => [error];
 }
 
-class RewriteTestUserAnonIDInProgress extends PsiTestSaveState {}
+class AddFacebookUIdToTestInProgress extends PsiTestSaveState {}
 
-class RewriteTestUserAnonIDSuccessful extends PsiTestSaveState {}
+class AddFacebookUIdToTestSuccessful extends PsiTestSaveState {}
 
-class RewriteTestUserAnonIDFailed extends PsiTestSaveState {
+class AddFacebookUIdToTestFailed extends PsiTestSaveState {
   final Error error;
   final String errorMessage;
-  const RewriteTestUserAnonIDFailed({this.error, this.errorMessage});
+  const AddFacebookUIdToTestFailed({this.error, this.errorMessage});
   @override
   List<Object> get props => [error];
 }

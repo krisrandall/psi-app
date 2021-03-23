@@ -54,8 +54,8 @@ class AcceptFacebookInvitation extends PsiTestSaveEvent {
   const AcceptFacebookInvitation({@required test}) : super(test: test);
 }
 
-class RewriteTestUserAnonID extends PsiTestSaveEvent {
-  const RewriteTestUserAnonID({@required test}) : super(test: test);
+class AddFacebookUIdToTest extends PsiTestSaveEvent {
+  const AddFacebookUIdToTest({@required test}) : super(test: test);
 }
 
 class JoinPsiTest extends PsiTestSaveEvent {

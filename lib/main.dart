@@ -113,6 +113,7 @@ class _LandingPageState extends State<LandingPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   TitleText("Sign in with Facebook"),
+                  SizedBox(height: 40),
                   Button("Sign in with Facebook", signInWithFacebook),
                   SecondaryButton("Not now", () {
                     _signInAnonymously().catchError((error) {

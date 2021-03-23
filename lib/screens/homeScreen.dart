@@ -118,15 +118,11 @@ class _HomeScreen extends StatelessWidget {
 
           BlocProvider.of<PsiTestSaveBloc>(context)
               .add(SharePsiTest(test: newlyCreatedTest));
-
+          //This has to be last so that the facebook friends are returned in the State of GetFacebookFriendsList
           BlocProvider.of<PsiTestSaveBloc>(context)
               .add(GetFacebookFriendsList(test: newlyCreatedTest));
         },
       ),
-      Button(
-          'print user',
-          () => print(
-              'isFacebookUser = ${!globalCurrentUser.isAnonymous} gcu uid is ${globalCurrentUser.uid} email is ${globalCurrentUser.email}')),
       StreamBuilder<QuerySnapshot>(
           stream: userTestStats.snapshots(),
           builder:
@@ -165,13 +161,14 @@ class _HomeScreen extends StatelessWidget {
           ];
 
     List<Widget> awaitingReceiver = [
-      CopyText('''              You are the Sender.
-Try inviting a friend to join your test.'''),
+      CopyText('''You are the Sender.'''),
       SizedBox(height: 30),
       Button(
         'Invite Friend to your Test',
         () {
           goToScreen(context, SenderScreen());
+          BlocProvider.of<PsiTestSaveBloc>(context)
+              .add(GetFacebookFriendsList(test: currentTest));
         },
       ),
       SecondaryButton('Choose different role', () {
@@ -183,13 +180,15 @@ Try inviting a friend to join your test.'''),
     ];
 
     List<Widget> awaitingSender = [
-      CopyText('''              You are the Receiver.
-Try inviting a friend to join your test.'''),
+      CopyText('''You are the Receiver.'''),
       SizedBox(height: 30),
       Button(
         'Invite Friend to your Test',
         () {
           goToScreen(context, ReceiverScreen());
+
+          BlocProvider.of<PsiTestSaveBloc>(context)
+              .add(GetFacebookFriendsList(test: currentTest));
         },
       ),
       SecondaryButton('Choose different role', () {

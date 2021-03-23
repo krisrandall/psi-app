@@ -183,7 +183,7 @@ class _SenderScreen extends StatelessWidget {
           BlocProvider.of<PsiTestSaveBloc>(context)
               .add(GetFacebookFriendsList(test: currentTest));
         });*/
-        return Image.asset("assets/sun_loading_spinner.gif");
+        return CircularProgressIndicator();
       });
     } else {
       actionButton = Column(children: [
