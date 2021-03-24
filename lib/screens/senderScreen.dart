@@ -88,7 +88,9 @@ class _SenderScreen extends StatelessWidget {
     //
     if (currentTest == null) {
       actionButton = Image.asset("assets/sun_loading_spinner.gif");
+      facebookFriends = Container();
     }
+
     if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
       actionButton = TitleText('Test starting now...');
       Button(
@@ -102,6 +104,11 @@ class _SenderScreen extends StatelessWidget {
       //
     } else if (currentTest.testStatus == PsiTestStatus.AWAITING_RECEIVER) {
       String shareLink = currentTest.shareLink;
+      // create share link if necessary
+      /* if (shareLink == '')
+        BlocProvider.of<PsiTestSaveBloc>(context)
+            .add(GetFacebookFriendsList(test: currentTest));*/
+
       actionButton =
           Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         CopyText('''Send the link below to a friend
@@ -189,39 +196,6 @@ class _SenderScreen extends StatelessWidget {
         return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [Image.asset("assets/sun_loading_spinner.gif")]);
-      else if (currentTest.invitedTo.isNotEmpty)
-        return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          TitleText(
-              '${currentTest.invitedTo[0]['inviter']} invited you to a test'),
-          FutureBuilder(
-              future: gotInvitedToTest(currentTest.invitedTo[0]['testId']),
-              builder: (context, AsyncSnapshot<dynamic> snapshot) {
-                if (!snapshot.hasData) {
-                  print(
-                      'looking for test with testID ${currentTest.invitedTo[0]['testId']}');
-                  return Image.asset("assets/sun_loading_spinner.gif");
-                } else if (snapshot.hasData) {
-                  if (snapshot.data.exists) {
-                    return Button('okay, join', () {
-                      var testToJoin = createTestFromFirestore([snapshot.data]);
-                      print(testToJoin.myRole);
-                      BlocProvider.of<PsiTestSaveBloc>(context)
-                          .add(JoinPsiTest(test: testToJoin));
-                    });
-                  } else
-                    return Column(children: [
-                      CopyText('Test no longer exists :('),
-                      Button('okay', () {
-                        BlocProvider.of<PsiTestSaveBloc>(context)
-                            .add(CancelPsiTest(test: currentTest));
-                      })
-                    ]);
-                } else if (snapshot.hasError) {
-                  print('snapshot has error');
-                }
-                return Container();
-              })
-        ]);
       else
         return SingleChildScrollView(
             child: Column(

@@ -12,11 +12,11 @@ Query firestoreDatabaseStream = Firestore.instance
     .collection('test')
     .where('parties', arrayContains: globalCurrentUser.uid)
     .where("status", isEqualTo: "underway");
-
+/*
 String _facebookID;
 void setFacebookID(id) {
   _facebookID = id;
-}
+}*/
 
 Query userTestStats = Firestore.instance
     .collection('test')
@@ -82,16 +82,16 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
           'error while populating answeredQuestions list and /or counting numQuestionsAnswered: $e');
     }
     print('$numQuestionsAnswered questions answered');
-    List invitedTo;
+    String invitedFriend;
     String shareLink;
-    String facebookID;
+    String myFacebookID;
     bool full;
     try {
-      invitedTo = documents[0].data['invitedTo'];
+      invitedFriend = documents[0].data['invitedFriend'];
 
       shareLink = documents[0].data['shareLink'];
-      facebookID = documents[0].data['facebookID'];
-      full = documents[0].data['facebookID'];
+      myFacebookID = documents[0].data['myFacebookID'];
+      full = documents[0].data['full'];
     } catch (error) {
       print('error looking for invitedTo property $error');
     }
@@ -119,9 +119,9 @@ PsiTest createTestFromFirestore(List<DocumentSnapshot> documents) {
             ? questions[numQuestionsAnswered]
             : null,
         questions: questions,
-        invitedTo: invitedTo,
+        invitedFriend: invitedFriend,
         shareLink: shareLink,
-        facebookID: facebookID,
+        myFacebookID: myFacebookID,
         full: full);
   } catch (exception) {
     // TODO - better global app error handling

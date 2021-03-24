@@ -14,8 +14,6 @@ import 'package:app/models/psiTest.dart';
 
 import 'package:app/components/button.dart';
 
-//AccessToken _accessToken;
-
 Future<Null> saveFacebookAccessTokenAndName(
     AccessToken accessToken, String name) async {
   try {
@@ -52,7 +50,7 @@ Future<Null> signInWithFacebook() async {
     await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
     await saveFacebookAccessTokenAndName(_accessToken, name);
     await saveUserIsAnonymous(false);
-    setFacebookID(_accessToken.userId);
+    //setFacebookID(_accessToken.userId);
   } catch (error) {
     print(error);
   }
@@ -150,7 +148,7 @@ Future<DocumentSnapshot> gotInvitedToTest(testId) async {
 List<Widget> buildFacebookFriendsList(
     List facebookFriends, PsiTest currentTest, BuildContext context) {
   if (facebookFriends[0] == 'userIsAnonymous') {
-    print('user is anonymous, returning []');
+    print('user is anonymous, buildFacebookFriends returning []');
     return [
       Button(
           // this appears when ID or access token are not available
@@ -169,6 +167,7 @@ List<Widget> buildFacebookFriendsList(
     for (Map friend in facebookFriends) {
       String friendID = friend['friendID'];
       String friendName = friend['name'];
+      print('friend ID is therefore: $friendID');
       print('now in buildFacebookFriendsList $facebookFriends');
       facebookFriendsList.add(FlatButton(
           height: 62,
@@ -185,6 +184,7 @@ List<Widget> buildFacebookFriendsList(
               borderRadius: BorderRadius.circular(32.0),
               side: BorderSide(color: Colors.white, width: 4.0)),
           onPressed: () {
+            print('inviting $friendID');
             var event = InviteFacebookFriend(
                 test: currentTest,
                 facebookFriendID: friendID,

@@ -134,15 +134,15 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
       final db = Firestore.instance;
       String senderUid;
       String receiverUid;
-      String facebookID;
-      String facebookName;
+      String myFacebookID;
+      String myFacebookName;
 
       // check if facebook or anonymous user
       SharedPreferences _prefs = await SharedPreferences.getInstance();
       bool isAnon = _prefs.getBool('isAnonymous');
 
-      facebookID = isAnon ? '' : _prefs.getString('facebookID');
-      facebookName = isAnon ? '' : _prefs.getString('facebookName');
+      myFacebookID = isAnon ? '' : _prefs.getString('facebookID');
+      myFacebookName = isAnon ? '' : _prefs.getString('facebookName');
 
       senderUid =
           event.test.myRole == PsiTestRole.SENDER ? globalCurrentUser.uid : "";
@@ -179,10 +179,10 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         'sender': senderUid,
         'status': 'underway',
         'shareLink': '',
-        'facebookID': facebookID,
-        'facebookName': facebookName,
+        'myFacebookID': myFacebookID,
+        'myFacebookName': myFacebookName,
         'full': false,
-        'invitedTo': []
+        'invitedFriend': ''
       });
 
       event.test.testId = ref.documentID;
@@ -254,7 +254,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         Map jsonResponse;
         List friends;
         Map friend;
-        var friendsListOnFirestore = new List();
+        var friendsList = new List();
 
         var response;
         // get facebook friends as JSON
@@ -276,15 +276,15 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
             var friendProfilePic =
                 "https://graph.facebook.com/$friendID/picture?small?access_token=$facebookAccessToken";
             friend = {
-              'friendId': friendID,
+              'friendID': friendID,
               'name': name,
               'profilePicUrl': friendProfilePic
             };
             print('friend $friend');
-            friendsListOnFirestore.add(friend);
+            friendsList.add(friend);
           }
         }
-        yield GetFacebookFriendsListSuccessful(friendsListOnFirestore);
+        yield GetFacebookFriendsListSuccessful(friendsList);
       }
     } catch (error) {
       yield GetFacebookFriendsListFailed(error: error);
@@ -299,12 +299,10 @@ Stream<PsiTestSaveState> _mapAddFacebookUIdToTest(
     final db = Firestore.instance;
     final testId = event.test.testId;
     final SharedPreferences _prefs = await SharedPreferences.getInstance();
-    String facebookID = _prefs.getString('facebookID');
-    String facebookName = _prefs.getString('facebookName');
-    var docRef = db
-        .collection('test')
-        .document(testId)
-        .updateData({'facebookID': facebookID, 'facebookName': facebookName});
+    String myFacebookID = _prefs.getString('facebookID');
+    String myFacebookName = _prefs.getString('facebookName');
+    var docRef = db.collection('test').document(testId).updateData(
+        {'facebookID': myFacebookID, 'facebookName': myFacebookName});
 
     yield AddFacebookUIdToTestSuccessful();
   } catch (error) {
@@ -316,6 +314,16 @@ Stream<PsiTestSaveState> _mapInviteFacebookFriendToState(
     PsiTestSaveEvent event) async* {
   try {
     yield PsiTestInviteFacebookFriendInProgress();
+    var db = Firestore.instance;
+    String inviterTestId = event.test.testId;
+    String inviteeFriendID = event.facebookFriendID;
+
+    print('inviterTestId = $inviterTestId, inviteeFriendID = $inviteeFriendID');
+    db
+        .collection('test')
+        .document(inviterTestId)
+        .updateData({'invitedFriend': inviteeFriendID});
+    /*
     final SharedPreferences _prefs = await SharedPreferences.getInstance();
     String inviterFacebookName = _prefs.getString('facebookName');
 
@@ -358,7 +366,7 @@ Stream<PsiTestSaveState> _mapInviteFacebookFriendToState(
           {'testId': inviterTestId}
         ]
       });
-    }
+    }*/
     yield PsiTestInviteFacebookFriendSuccessful();
   } catch (error) {
     yield PsiTestInviteFacebookFriendFailed(error);

@@ -56,7 +56,7 @@ class InviteWrapper extends StatelessWidget {
                   for (DocumentSnapshot document in documents) {
                     String inviterFacebookName =
                         //snapshot.data.documents[0].data['facebookName'];
-                        document.data['facebookName'];
+                        document.data['myFacebookName'];
                     String invitedToTestID =
                         // snapshot.data.documents[0].documentID;
                         document.documentID;
@@ -93,13 +93,11 @@ class InviteWrapper extends StatelessWidget {
                     return SenderScreen();
                 }
               } //else if (!snapshot.hasData) {
-              print('destination is $destination');
-
-              return Column(children: [
-                CircularProgressIndicator(),
-                Text('problem with fetching Database docs '),
-                Text('facebookID of test = ${snapshot.data}')
-              ]);
+              // while checking database for invites
+              print(
+                  'checking database for invites before loading $destination');
+              return Center(
+                  child: Image.asset("assets/sun_loading_spinner.gif"));
             }));
       }
       return Column(
