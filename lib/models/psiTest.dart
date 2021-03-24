@@ -26,6 +26,7 @@ class PsiTest {
   List invitedTo;
   String shareLink;
   String facebookID;
+  bool full;
 
   List<PsiTestQuestion> answeredQuestions;
   List<PsiTestQuestion> questions;
@@ -41,7 +42,8 @@ class PsiTest {
       this.questions,
       this.invitedTo,
       this.shareLink,
-      this.facebookID});
+      this.facebookID,
+      this.full});
 
   PsiTest.beginNewTestAsSender() {
     myRole = PsiTestRole.SENDER;

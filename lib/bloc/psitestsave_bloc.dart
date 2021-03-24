@@ -181,6 +181,7 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         'shareLink': '',
         'facebookID': facebookID,
         'facebookName': facebookName,
+        'full': false,
         'invitedTo': []
       });
 
@@ -219,11 +220,13 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         db.collection('test').document(testId).updateData({
           'parties': FieldValue.arrayUnion([globalCurrentUser.uid]),
           'sender': globalCurrentUser.uid,
+          'full': true
         });
       } else if (myRole == PsiTestRole.RECEIVER) {
         db.collection('test').document(testId).updateData({
           'parties': FieldValue.arrayUnion([globalCurrentUser.uid]),
-          'receiver': globalCurrentUser.uid
+          'receiver': globalCurrentUser.uid,
+          'full': true
         });
       }
       yield PsiTestJoinSuccessful();
@@ -371,9 +374,9 @@ Stream<PsiTestSaveState> _mapGetFacebookIDToState(
     PsiTestSaveEvent event) async* {
   SharedPreferences _prefs = await SharedPreferences.getInstance();
   bool isAnon = _prefs.getBool('isAnonymous');
-  String facebookID = isAnon ? 'isAnon' : _prefs.getString('facebookID');
+  String myFacebookID = isAnon ? 'isAnon' : _prefs.getString('facebookID');
 
-  yield GetFacebookIDSuccessful(facebookID);
+  yield GetFacebookIDSuccessful(myFacebookID);
 }
 
 Stream<PsiTestSaveState> _mapAnswerPsiTestQuestionToState(

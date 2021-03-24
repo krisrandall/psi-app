@@ -5,7 +5,6 @@ import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:app/components/textComponents.dart';
 import 'package:app/components/utils.dart';
-import 'package:app/screens/homeScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,6 +12,7 @@ import 'package:uni_links/uni_links.dart';
 import 'dart:async';
 import 'package:app/screens/joinScreen.dart';
 import 'package:app/components/facebook_logic.dart';
+import 'package:app/screens/inviteWrapper.dart';
 
 void main() => runApp(MyApp());
 
@@ -52,8 +52,8 @@ class _LandingPageState extends State<LandingPage> {
   String deepLink;
 
   void goToHomeScreenAsynchronously(BuildContext context) async {
-    await Navigator.push(
-        context, MaterialPageRoute(builder: (context) => InviteWrapper()));
+    await Navigator.push(context,
+        MaterialPageRoute(builder: (context) => InviteWrapper('home')));
   }
 
   Future<void> precacheImages() async {
@@ -126,7 +126,7 @@ class _LandingPageState extends State<LandingPage> {
           } else if (user != null && signinErrorMessage == '') {
             globalCurrentUser = user;
 
-            return InviteWrapper();
+            return InviteWrapper('homeScreen');
           } else
             return Container();
         } else {

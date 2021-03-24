@@ -15,80 +15,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-class InviteWrapper extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    var dummyTest = new PsiTest();
-    BlocProvider.of<PsiTestSaveBloc>(context)
-        .add(GetFacebookID(test: dummyTest));
-    return BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
-        builder: (context, state) {
-      String _facebookID;
-      if (state is GetFacebookIDInProgress)
-        return CircularProgressIndicator();
-      else if (state is GetFacebookIDFailed)
-        return Text('failed');
-      else if (state is GetFacebookIDSuccessful) {
-        _facebookID = state.facebookID;
-        if (state.facebookID == 'isAnon') return HomeScreen();
-
-        return Scaffold(
-            appBar: AppBar(
-              title: Text('𝚿 Psi Telepathy Test'),
-              actions: [
-                IconButton(
-                  icon: Icon(Icons.settings),
-                  onPressed: () => goToScreen(context, SettingsScreen()),
-                )
-              ],
-            ),
-            body: TableBgWrapper(StreamBuilder<QuerySnapshot>(
-                stream: Firestore.instance
-                    .collection('test')
-                    .where('invite', isEqualTo: state.facebookID)
-                    .where("status", isEqualTo: "underway")
-                    .snapshots(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasError) print(snapshot.error);
-                  if (snapshot.hasData) {
-                    print('has data');
-                    print('${state.facebookID}');
-                    print('number of docs ${snapshot.data.documents.length}');
-                    if (snapshot.data.documents.length > 0) {
-                      print(snapshot.data.documents[0].data['parties']);
-                      print(snapshot.data.documents[0].data['invite']);
-                      return Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            TitleText(
-                                '''You have been invited to a test by '''),
-                            TitleText(
-                                '''${snapshot.data.documents[0].data['facebookName']}'''),
-                            SizedBox(height: 40),
-                            Button('Join Test', null),
-                            SizedBox(height: 10),
-                            SecondaryButton('no thanks', null)
-                          ]);
-                    } else
-                      return HomeScreen();
-                  } else
-                    return Column(children: [
-                      CircularProgressIndicator(),
-                      Text('second to bottom')
-                    ]);
-                })));
-      }
-      return Column(
-          children: [CircularProgressIndicator(), Text('very bottom')]);
-    });
-  }
-}
-
 class HomeScreen extends StatelessWidget {
-  final GlobalKey<ScaffoldState> _homeScaffoldKey =
-      new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     print('in home screen');
@@ -114,15 +41,14 @@ class HomeScreen extends StatelessWidget {
               var currentTest =
                   createTestFromFirestore(snapshot.data.documents);
               print('got to bottom of _HomeScreen');
-              return _HomeScreen(currentTest, _homeScaffoldKey);
+              return _HomeScreen(currentTest);
             })));
   }
 }
 
 class _HomeScreen extends StatelessWidget {
   final PsiTest currentTest;
-  final _homeScaffoldKey;
-  _HomeScreen(this.currentTest, this._homeScaffoldKey);
+  _HomeScreen(this.currentTest);
 
   void goToTestScreenAsynchronously(
       BuildContext context, PsiTest currentTest) async {
@@ -130,20 +56,6 @@ class _HomeScreen extends StatelessWidget {
         context,
         MaterialPageRoute(
             builder: (context) => TestScreen(currentTest.testId)));
-  }
-
-  _showSnackBar() {
-    final snackBar = new SnackBar(
-        backgroundColor: Colors.purple,
-        //duration: Duration(milliseconds: 1000),
-        content: new Center(
-            child: Column(children: [
-          CopyText('Copied link'),
-          Button(() {
-            _homeScaffoldKey.currentState.hideCurrentSnackBar();
-          }, 'No, Thanks'),
-        ])));
-    _homeScaffoldKey.currentState.showSnackBar(snackBar);
   }
 
   @override

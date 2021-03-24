@@ -119,8 +119,8 @@ class PsiTestInviteFacebookFriendFailed extends PsiTestSaveState {
 class GetFacebookIDInProgress extends PsiTestSaveState {}
 
 class GetFacebookIDSuccessful extends PsiTestSaveState {
-  final facebookID;
-  GetFacebookIDSuccessful(this.facebookID);
+  final myFacebookID;
+  GetFacebookIDSuccessful(this.myFacebookID);
 }
 
 class GetFacebookIDFailed extends PsiTestSaveState {
