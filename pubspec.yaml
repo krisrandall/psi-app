@@ -94,6 +94,8 @@ flutter:
     - assets/white_box.png
     - assets/sun_loading_spinner.gif
     - assets/icon-fg.png
+    - assets/Receiver.jpg
+    - assets/Sender.jpg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
