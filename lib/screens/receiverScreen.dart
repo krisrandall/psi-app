@@ -17,13 +17,13 @@ import 'package:clipboard/clipboard.dart';
 import 'package:app/main.dart';
 
 class ReceiverScreen extends StatelessWidget {
-  final GlobalKey<ScaffoldState> _receiverScreenScaffoldKey =
-      new GlobalKey<ScaffoldState>();
+  final receiverScreenScaffoldKey;
+  ReceiverScreen({this.receiverScreenScaffoldKey});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: _receiverScreenScaffoldKey,
+        key: receiverScreenScaffoldKey,
         appBar: AppBar(
           title: Text('𝚿 Psi Telepathy Test'),
           actions: [
@@ -41,7 +41,7 @@ class ReceiverScreen extends StatelessWidget {
               var currentTest =
                   createTestFromFirestore(snapshot.data.documents);
               print(currentTest);
-              return _ReceiverScreen(currentTest, _receiverScreenScaffoldKey);
+              return _ReceiverScreen(currentTest, receiverScreenScaffoldKey);
             })));
   }
 }

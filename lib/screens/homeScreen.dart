@@ -7,8 +7,6 @@ import 'package:app/models/psiTest.dart';
 import 'package:app/screens/creditsScreen.dart';
 import 'package:app/screens/inviteWrapper.dart';
 import 'package:app/screens/learnMoreScreen.dart';
-import 'package:app/screens/receiverScreen.dart';
-import 'package:app/screens/senderScreen.dart';
 import 'package:app/screens/settingsScreen.dart';
 import 'package:app/screens/testScreen.dart';
 import 'package:flutter/material.dart';
