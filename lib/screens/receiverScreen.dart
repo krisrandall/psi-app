@@ -7,6 +7,7 @@ import 'package:app/components/screenBackground.dart';
 import 'package:app/components/textComponents.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:app/screens/infoScreens.dart';
+import 'package:app/screens/inviteWrapper.dart';
 import 'package:app/screens/testScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -153,9 +154,8 @@ class _ReceiverScreen extends StatelessWidget {
             return Button(
                 // this appears when ID or access token are not available
                 'log on to Facebook', () {
-              linkFacebookUserWithCurrentAnonUser(context, currentTest);
-              BlocProvider.of<PsiTestSaveBloc>(context)
-                  .add(GetFacebookFriendsList(test: currentTest));
+              linkFacebookUserWithCurrentAnonUser(
+                  context, currentTest, 'receiverScreen');
             });
 
           if (state.facebookFriends.length == 0)
@@ -172,7 +172,10 @@ class _ReceiverScreen extends StatelessWidget {
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: buildFacebookFriendsList(
-                              state.facebookFriends, currentTest, context))))
+                              state.facebookFriends,
+                              currentTest,
+                              context,
+                              'receiverScreen'))))
             ]);
         }
         return CircularProgressIndicator();

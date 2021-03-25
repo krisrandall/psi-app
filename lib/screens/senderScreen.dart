@@ -154,9 +154,8 @@ class _SenderScreen extends StatelessWidget {
             return Button(
                 // this appears when ID or access token are not available
                 'log on to Facebook', () {
-              linkFacebookUserWithCurrentAnonUser(context, currentTest);
-              BlocProvider.of<PsiTestSaveBloc>(context)
-                  .add(GetFacebookFriendsList(test: currentTest));
+              linkFacebookUserWithCurrentAnonUser(
+                  context, currentTest, 'senderScreen');
             });
 
           if (state.facebookFriends.length == 0)
@@ -173,7 +172,10 @@ class _SenderScreen extends StatelessWidget {
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: buildFacebookFriendsList(
-                              state.facebookFriends, currentTest, context))))
+                              state.facebookFriends,
+                              currentTest,
+                              context,
+                              'senderScreen'))))
             ]);
         }
         return CircularProgressIndicator();

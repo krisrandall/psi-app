@@ -13,6 +13,9 @@ import 'dart:async';
 import 'package:app/models/psiTest.dart';
 
 import 'package:app/components/button.dart';
+import 'package:app/components/utils.dart';
+
+import 'package:app/screens/inviteWrapper.dart';
 
 Future<Null> saveFacebookAccessTokenAndName(
     AccessToken accessToken, String name) async {
@@ -42,15 +45,10 @@ Future<Null> signInWithFacebook() async {
     // Create a credential from the access token
     final FacebookAuthCredential facebookAuthCredential =
         FacebookAuthProvider.getCredential(accessToken: _accessToken.token);
-
-    print("user data name is ${userData['name']}");
-
-    // Once signed in, return the UserCredential
     String name = userData['name'];
     await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
-    await saveFacebookAccessTokenAndName(_accessToken, name);
     await saveUserIsAnonymous(false);
-    //setFacebookID(_accessToken.userId);
+    await saveFacebookAccessTokenAndName(_accessToken, name);
   } catch (error) {
     print(error);
   }
@@ -58,11 +56,9 @@ Future<Null> signInWithFacebook() async {
 
 // this function is for logging in to Facebook after having logged in as Anonymous User
 //
-Future<Null> linkFacebookUserWithCurrentAnonUser(context, currentTest) async {
+Future<Null> linkFacebookUserWithCurrentAnonUser(
+    context, currentTest, origin) async {
   var anonUser = await FirebaseAuth.instance.currentUser();
-  print(
-      'just before facebook sign in occurs: current(anon user) is ${anonUser.uid} isanon = ${anonUser.isAnonymous}');
-
   // Trigger the sign-in flow
   try {
     final AccessToken _accessToken = await FacebookAuth.instance.login(
@@ -70,45 +66,25 @@ Future<Null> linkFacebookUserWithCurrentAnonUser(context, currentTest) async {
     );
     final userData = await FacebookAuth.instance.getUserData();
     String name = userData['name'];
-    print(userData['name']);
-
     // Create a credential from the access token
     final FacebookAuthCredential facebookAuthCredential =
         FacebookAuthProvider.getCredential(accessToken: _accessToken.token);
-
-    var fbUser = await FirebaseAuth.instance.currentUser();
-    print(
-        'just before facebook user link occurs: anonuser is ${anonUser.uid}, current user ${fbUser.uid} isanon = ${fbUser.isAnonymous}');
-
-    List providers = fbUser.providerData;
-    for (UserInfo provider in providers)
-      print(
-          'provider (printing just before user link occurs) ${provider.toString}');
-
     //link the anonymous user with the facebook User **** (keeping the anon user's uid) ****
     //
     anonUser.linkWithCredential(facebookAuthCredential);
-
-    fbUser = await FirebaseAuth.instance.currentUser();
-    print(
-        'just after facebook user link occurs: anonuser is ${anonUser.uid}, fb user ${fbUser.uid}  isanon = ${fbUser.isAnonymous}');
-    for (UserInfo provider in providers)
-      print(
-          'provider (printing just AFTER user link occurs) ${provider.providerId}');
     //isAnonymous unfortunately returns "true" after signing in to FB.
     // therefore we save user is anonymous to sharedPreferences
-    saveUserIsAnonymous(false);
-    //setFacebookID(_accessToken.userId);
-
-    //need to call getFacebookFriends again to reset the FacebookFriednsList
-    //
-
+    await saveUserIsAnonymous(false);
+    await saveFacebookAccessTokenAndName(_accessToken, name);
+    // ...add facebook ID to current test so that user can be invited
+    // by their facebook friends
     BlocProvider.of<PsiTestSaveBloc>(context)
         .add(AddFacebookUIdToTest(test: currentTest));
+    // need to call getFacebookFriends again to reset the FacebookFriednsList
+    //
     BlocProvider.of<PsiTestSaveBloc>(context)
         .add(GetFacebookFriendsList(test: currentTest));
-
-    saveFacebookAccessTokenAndName(_accessToken, name);
+    goToScreen(context, InviteWrapper(origin));
   } catch (error) {
     print(error);
   }
@@ -147,14 +123,14 @@ Future<DocumentSnapshot> gotInvitedToTest(testId) async {
 }
 
 List<Widget> buildFacebookFriendsList(
-    List facebookFriends, PsiTest currentTest, BuildContext context) {
+    List facebookFriends, PsiTest currentTest, BuildContext context, origin) {
   if (facebookFriends[0] == 'userIsAnonymous') {
     print('user is anonymous, buildFacebookFriends returning []');
     return [
       Button(
           // this appears when ID or access token are not available
           'log on to Facebook', () {
-        linkFacebookUserWithCurrentAnonUser(context, currentTest);
+        linkFacebookUserWithCurrentAnonUser(context, currentTest, origin);
         BlocProvider.of<PsiTestSaveBloc>(context)
             .add(GetFacebookFriendsList(test: currentTest));
       })
