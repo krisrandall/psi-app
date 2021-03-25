@@ -82,7 +82,7 @@ class InviteWrapper extends StatelessWidget {
                                   SizedBox(height: 40),
                                   Button('Join Test', () {
                                     var testToJoin =
-                                        new PsiTest(testId: invitedToTestID);
+                                        createTestFromFirestore([document]);
 
                                     ///this is TODO add roles
                                     BlocProvider.of<PsiTestSaveBloc>(context)
@@ -95,6 +95,9 @@ class InviteWrapper extends StatelessWidget {
                                     BlocProvider.of<PsiTestSaveBloc>(context)
                                         .add(RejectFacebookInvitation(
                                             test: testToReject));
+                                    BlocProvider.of<PsiTestSaveBloc>(context)
+                                        .add(GetFacebookFriendsList(
+                                            test: new PsiTest()));
                                   })
                                 ]);
                             invitations.add(invitation);
@@ -114,7 +117,9 @@ class InviteWrapper extends StatelessWidget {
                               receiverScreenScaffoldKey: _scaffoldKey,
                             );
                           case 'senderScreen':
-                            return SenderScreen();
+                            return SenderScreen(
+                              senderScreenScaffoldKey: _scaffoldKey,
+                            );
                           default:
                             print('in default of invite Wrapper');
                             return Container();
