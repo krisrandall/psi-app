@@ -11,97 +11,119 @@ import 'package:app/components/screenBackground.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:app/screens/homeScreen.dart';
 
+import 'package:app/components/livePsiTestStream.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+
 class InviteWrapper extends StatelessWidget {
   final String destination;
   InviteWrapper(this.destination);
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<PsiTestSaveBloc>(context)
+    /* BlocProvider.of<PsiTestSaveBloc>(context)
         // bloc requires a test so we send a blank test
         .add(GetFacebookID(test: new PsiTest()));
     return BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
         builder: (context, state) {
-      String _myFacebookID;
+     // String _myFacebookID;
       if (state is GetFacebookIDInProgress)
         return CircularProgressIndicator();
       else if (state is GetFacebookIDFailed)
         return Text('couldnt get my Facebook ID');
       else if (state is GetFacebookIDSuccessful) {
-        _myFacebookID = state.myFacebookID;
-        print('facebook id from state : ${_myFacebookID}');
+       // _myFacebookID = state.myFacebookID;
+   //     print('facebook id from state : ${_myFacebookID}');
         // shouldn't need this because no test should have 'isAnon' as invitedFriend value
-        // ***if (state.myFacebookID == 'isAnon') return HomeScreen();
+        // ***if (state.myFacebookID == 'isAnon') return HomeScreen();*/
 
-        return TableBgWrapper(StreamBuilder<QuerySnapshot>(
-            stream: Firestore.instance
-                .collection('test')
-                .where("invitedFriend", isEqualTo: _myFacebookID)
-                .where("status", isEqualTo: "underway")
-                .where("full", isEqualTo: false)
-                .snapshots(),
-            builder:
-                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-              if (snapshot.hasError) {
-                print(snapshot.error);
-                return Center(
-                    child: TitleText(
-                        'error connecting with database ${snapshot.error}'));
-              } else if (snapshot.hasData) {
-                print('has data');
-                print('${state.myFacebookID}');
-                print('number of docs ${snapshot.data.documents.length}');
-                if (snapshot.data.documents.length > 0) {
-                  List documents = snapshot.data.documents;
-                  var invitations = new List<Widget>();
-                  for (DocumentSnapshot document in documents) {
-                    String inviterFacebookName =
-                        //snapshot.data.documents[0].data['facebookName'];
-                        document.data['myFacebookName'];
-                    String invitedToTestID =
-                        // snapshot.data.documents[0].documentID;
-                        document.documentID;
-                    Widget invitation = Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CopyText('''You have been invited to a test by '''),
-                          TitleText(inviterFacebookName),
-                          SizedBox(height: 40),
-                          Button('Join Test', () {
-                            var testToJoin =
-                                new PsiTest(testId: invitedToTestID);
-                            BlocProvider.of<PsiTestSaveBloc>(context).add(
-                                AcceptFacebookInvitation(test: testToJoin));
-                          }),
-                          SizedBox(height: 10),
-                          SecondaryButton('no thanks', null)
-                        ]);
-                    invitations.add(invitation);
+    Future<String> getFacebookID() async {
+      SharedPreferences _prefs = await SharedPreferences.getInstance();
+      bool isAnon = _prefs.getBool('isAnonymous');
+      String fbID = isAnon ? 'isAnon' : _prefs.getString('facebookID');
+      print('got FacebookID $fbID');
+      return isAnon ? 'isAnon' : _prefs.getString('facebookID');
+    }
+
+    return FutureBuilder(
+        future: getFacebookID(),
+        builder: (context, snapshot) {
+          String _myFacebookID = snapshot.data;
+          if (snapshot.connectionState == ConnectionState.done)
+            return TableBgWrapper(StreamBuilder<QuerySnapshot>(
+                stream: Firestore.instance
+                    .collection('test')
+                    .where("invitedFriend", isEqualTo: _myFacebookID)
+                    .where("status", isEqualTo: "underway")
+                    .where("full", isEqualTo: false)
+                    .snapshots(),
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                  ////////////
+                  if (snapshot.hasError) {
+                    print(snapshot.error);
+                    return Center(
+                        child: TitleText(
+                            'error connecting with database ${snapshot.error}'));
                   }
-                  return Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [...invitations]);
-                } else
-                  // if documents.length == 0
-                  // then there is no active FB invitation for this user
-                  print(destination);
-                switch (destination) {
-                  case 'homeScreen':
-                    return HomeScreen();
-                  case 'receiverScreen':
-                    return ReceiverScreen();
-                  case 'senderScreen':
-                    return SenderScreen();
-                }
-              } //else if (!snapshot.hasData) {
-              // while checking database for invites
-              print(
-                  'checking database for invites before loading $destination');
-              return Center(
-                  child: Image.asset("assets/sun_loading_spinner.gif"));
-            }));
-      }
-      return Column(
-          children: [CircularProgressIndicator(), Text('very bottom')]);
-    });
+                  /////////////
+                  if (!snapshot.hasData) {
+                    print(
+                        'checking database for invites before loading $destination');
+                    return Center(
+                        child: Image.asset("assets/sun_loading_spinner.gif"));
+                    ////////////
+                  } else if (snapshot.hasData) {
+                    print('has data');
+                    print('number of docs ${snapshot.data.documents.length}');
+                    if (snapshot.data.documents.length > 0) {
+                      List documents = snapshot.data.documents;
+                      var invitations = new List<Widget>();
+                      for (DocumentSnapshot document in documents) {
+                        String inviterFacebookName =
+                            //snapshot.data.documents[0].data['facebookName'];
+                            document.data['myFacebookName'];
+                        String invitedToTestID =
+                            // snapshot.data.documents[0].documentID;
+                            document.documentID;
+                        Widget invitation = Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CopyText(
+                                  '''You have been invited to a test by '''),
+                              TitleText(inviterFacebookName),
+                              SizedBox(height: 40),
+                              Button('Join Test', () {
+                                var testToJoin =
+                                    new PsiTest(testId: invitedToTestID);
+                                BlocProvider.of<PsiTestSaveBloc>(context).add(
+                                    AcceptFacebookInvitation(test: testToJoin));
+                              }),
+                              SizedBox(height: 10),
+                              SecondaryButton('no thanks', null)
+                            ]);
+                        invitations.add(invitation);
+                      }
+                      return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [...invitations]);
+                    } else
+                      // if documents.length == 0
+                      // then there is no active FB invitation for this user
+                      print(destination);
+                    switch (destination) {
+                      case 'homeScreen':
+                        return HomeScreen();
+                      case 'receiverScreen':
+                        return ReceiverScreen();
+                      case 'senderScreen':
+                        return SenderScreen();
+                      default:
+                        return Image.asset("assets/sun_loading_spinner.gif");
+                    }
+                  }
+                  return Image.asset("assets/sun_loading_spinner.gif");
+                }));
+          return Text('down here at the bottom');
+        });
   }
 }

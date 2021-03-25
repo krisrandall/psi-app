@@ -50,7 +50,7 @@ Future<Null> signInWithFacebook() async {
     await FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);
     await saveFacebookAccessTokenAndName(_accessToken, name);
     await saveUserIsAnonymous(false);
-    //setFacebookID(_accessToken.userId);
+    setFacebookID(_accessToken.userId);
   } catch (error) {
     print(error);
   }
@@ -98,6 +98,7 @@ Future<Null> linkFacebookUserWithCurrentAnonUser(context, currentTest) async {
     //isAnonymous unfortunately returns "true" after signing in to FB.
     // therefore we save user is anonymous to sharedPreferences
     saveUserIsAnonymous(false);
+    setFacebookID(_accessToken.userId);
 
     //need to call getFacebookFriends again to reset the FacebookFriednsList
     //
