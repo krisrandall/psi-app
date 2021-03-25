@@ -5,6 +5,7 @@ import 'package:app/components/secondaryButton.dart';
 import 'package:app/components/textComponents.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:app/screens/creditsScreen.dart';
+import 'package:app/screens/inviteWrapper.dart';
 import 'package:app/screens/learnMoreScreen.dart';
 import 'package:app/screens/receiverScreen.dart';
 import 'package:app/screens/senderScreen.dart';
@@ -78,7 +79,7 @@ class _HomeScreen extends StatelessWidget {
       Button(
         "Be the Sender",
         () {
-          goToScreen(context, SenderScreen());
+          goToScreen(context, InviteWrapper('senderScreen'));
           var newlyCreatedTest = PsiTest.beginNewTestAsSender();
           var event = CreatePsiTest(test: newlyCreatedTest);
           BlocProvider.of<PsiTestSaveBloc>(context).add(event);
@@ -94,7 +95,7 @@ class _HomeScreen extends StatelessWidget {
       Button(
         'Be the Receiver',
         () {
-          goToScreen(context, ReceiverScreen());
+          goToScreen(context, InviteWrapper('receiverScreen'));
           var newlyCreatedTest = PsiTest.beginNewTestAsReceiver();
           var event = CreatePsiTest(test: newlyCreatedTest);
           BlocProvider.of<PsiTestSaveBloc>(context).add(event);
@@ -149,7 +150,7 @@ class _HomeScreen extends StatelessWidget {
       Button(
         'Invite Friend to your Test',
         () {
-          goToScreen(context, SenderScreen());
+          goToScreen(context, InviteWrapper('senderScreen'));
           BlocProvider.of<PsiTestSaveBloc>(context)
               .add(GetFacebookFriendsList(test: currentTest));
         },
@@ -158,7 +159,7 @@ class _HomeScreen extends StatelessWidget {
         print('do logic to cancel the test');
         var event = CancelPsiTest(test: currentTest);
         BlocProvider.of<PsiTestSaveBloc>(context).add(event);
-        goToScreen(context, TableBgWrapper(HomeScreen()));
+        goToScreen(context, InviteWrapper('homeScreen'));
       }),
     ];
 
@@ -168,7 +169,7 @@ class _HomeScreen extends StatelessWidget {
       Button(
         'Invite Friend to your Test',
         () {
-          goToScreen(context, ReceiverScreen());
+          goToScreen(context, InviteWrapper('receiverScreen'));
 
           BlocProvider.of<PsiTestSaveBloc>(context)
               .add(GetFacebookFriendsList(test: currentTest));
@@ -179,7 +180,7 @@ class _HomeScreen extends StatelessWidget {
         var event = CancelPsiTest(test: currentTest);
         BlocProvider.of<PsiTestSaveBloc>(context).add(event);
         event = CancelPsiTest(test: currentTest);
-        goToScreen(context, TableBgWrapper(HomeScreen()));
+        goToScreen(context, InviteWrapper('homeScreen'));
       }),
     ];
 
