@@ -66,7 +66,9 @@ class _TestScreen extends StatelessWidget {
     loadTestCompleteScreenIfTestComplete(context, currentTest);
 
     if (currentTest.numQuestionsAnswered == currentTest.questions.length)
-      return Text('Test complete .. calculating telepathic ability score ..');
+      return Column(
+        children: [Image.asset("assets/sun_loading_spinner.gif")],
+      );
     else if (currentTest.myRole == PsiTestRole.SENDER) {
       String imageUrl = currentTest
           .currentQuestion.options[currentTest.currentQuestion.correctAnswer];
@@ -100,6 +102,7 @@ Future<String> findValidUrl(imageUrl, exception) async {
   while (statusCode == 404) {
     var uri = Uri.dataFromString(imageUrl);
     List data = uri.pathSegments;
+    // get the 5th segment of the uri path segments: the image ID
     String newImageId = data[4];
     int imageAsInt = int.parse(newImageId);
     imageAsInt++;

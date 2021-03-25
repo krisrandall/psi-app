@@ -20,22 +20,6 @@ class InviteWrapper extends StatelessWidget {
   InviteWrapper(this.destination);
   @override
   Widget build(BuildContext context) {
-    /* BlocProvider.of<PsiTestSaveBloc>(context)
-        // bloc requires a test so we send a blank test
-        .add(GetFacebookID(test: new PsiTest()));
-    return BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
-        builder: (context, state) {
-     // String _myFacebookID;
-      if (state is GetFacebookIDInProgress)
-        return CircularProgressIndicator();
-      else if (state is GetFacebookIDFailed)
-        return Text('couldnt get my Facebook ID');
-      else if (state is GetFacebookIDSuccessful) {
-       // _myFacebookID = state.myFacebookID;
-   //     print('facebook id from state : ${_myFacebookID}');
-        // shouldn't need this because no test should have 'isAnon' as invitedFriend value
-        // ***if (state.myFacebookID == 'isAnon') return HomeScreen();*/
-
     Future<String> getFacebookID() async {
       SharedPreferences _prefs = await SharedPreferences.getInstance();
       bool isAnon = _prefs.getBool('isAnonymous');
@@ -95,11 +79,19 @@ class InviteWrapper extends StatelessWidget {
                               Button('Join Test', () {
                                 var testToJoin =
                                     new PsiTest(testId: invitedToTestID);
-                                BlocProvider.of<PsiTestSaveBloc>(context).add(
-                                    AcceptFacebookInvitation(test: testToJoin));
+
+                                ///this is TODO add roles
+                                BlocProvider.of<PsiTestSaveBloc>(context)
+                                    .add(JoinPsiTest(test: testToJoin));
                               }),
                               SizedBox(height: 10),
-                              SecondaryButton('no thanks', null)
+                              SecondaryButton('no thanks', () {
+                                PsiTest testToReject =
+                                    createTestFromFirestore([document]);
+                                BlocProvider.of<PsiTestSaveBloc>(context).add(
+                                    RejectFacebookInvitation(
+                                        test: testToReject));
+                              })
                             ]);
                         invitations.add(invitation);
                       }

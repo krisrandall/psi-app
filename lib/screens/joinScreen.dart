@@ -75,7 +75,7 @@ class _OpenedViaLinkWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String receiverId = sharedTestSnapshot['receiver'];
-    print(receiverId);
+
     String senderId = sharedTestSnapshot['sender'];
 
     String status = sharedTestSnapshot['status'];

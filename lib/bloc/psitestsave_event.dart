@@ -55,8 +55,8 @@ class InviteFacebookFriend extends PsiTestSaveEvent {
       : super(test: test);
 }
 
-class AcceptFacebookInvitation extends PsiTestSaveEvent {
-  const AcceptFacebookInvitation({@required test}) : super(test: test);
+class RejectFacebookInvitation extends PsiTestSaveEvent {
+  const RejectFacebookInvitation({@required test}) : super(test: test);
 }
 
 class AddFacebookUIdToTest extends PsiTestSaveEvent {

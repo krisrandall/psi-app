@@ -51,8 +51,8 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     if (event is CompletePsiTest) {
       yield* _mapCompletePsiTest(event);
     }
-    if (event is AcceptFacebookInvitation) {
-      yield* _mapAcceptFacebookInvitationToState(event);
+    if (event is RejectFacebookInvitation) {
+      yield* _mapRejectFacebookInvitationToState(event);
     }
     if (event is AddFacebookUIdToTest) {
       yield* _mapAddFacebookUIdToTest(event);
@@ -373,9 +373,16 @@ Stream<PsiTestSaveState> _mapInviteFacebookFriendToState(
   }
 }
 
-Stream<PsiTestSaveState> _mapAcceptFacebookInvitationToState(
+Stream<PsiTestSaveState> _mapRejectFacebookInvitationToState(
     PsiTestSaveEvent event) async* {
-  yield PsiTestAcceptFacebookInvitationInProgress();
+  String testId = event.test.testId;
+  var db = Firestore.instance;
+  db
+      .collection('test')
+      .document(testId)
+      .updateData({'invitedFriend': '', 'full': false});
+
+  yield PsiTestRejectFacebookInvitationInProgress();
 }
 
 Stream<PsiTestSaveState> _mapGetFacebookIDToState(
