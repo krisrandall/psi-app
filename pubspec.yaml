@@ -52,6 +52,7 @@ dependencies:
   clipboard: ^0.1.2+8
   flutter_facebook_auth: "^1.0.0"
   shared_preferences: ^0.5.12+4
+  audioplayers: ^0.10.0
 
   
 
@@ -96,6 +97,8 @@ flutter:
     - assets/icon-fg.png
     - assets/Receiver.jpg
     - assets/Sender.jpg
+    - assets/bg-music.wav
+    
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -5,6 +5,7 @@ import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:app/components/textComponents.dart';
 import 'package:app/components/utils.dart';
+import 'package:audioplayers/audio_cache.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,6 +51,7 @@ class _LandingPageState extends State<LandingPage> {
   String signinErrorMessage = "";
   StreamSubscription _sub;
   String deepLink;
+  AudioCache audioCache = AudioCache();
 
   void goToHomeScreenAsynchronously(BuildContext context) async {
     await Navigator.push(context,
@@ -125,6 +127,7 @@ class _LandingPageState extends State<LandingPage> {
             return TitleText(signinErrorMessage);
           } else if (user != null && signinErrorMessage == '') {
             globalCurrentUser = user;
+            audioCache.loop('bg-music.wav');
 
             return InviteWrapper('homeScreen');
           } else
