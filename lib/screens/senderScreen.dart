@@ -130,7 +130,10 @@ class _SenderScreen extends StatelessWidget {
                 height: 70,
                 child: shareLink == ''
                     ? CircularProgressIndicator()
-                    : Text(shareLink, style: TextStyle(color: Colors.white)))),
+                    : Center(
+                        child: Text(shareLink,
+                            style: TextStyle(
+                                color: Colors.white, fontSize: 18))))),
         SizedBox(height: 20),
       ]);
       facebookFriends = BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
