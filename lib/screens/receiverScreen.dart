@@ -175,7 +175,8 @@ class _ReceiverScreen extends StatelessWidget {
                               state.facebookFriends,
                               currentTest,
                               context,
-                              'receiverScreen'))))
+                              'receiverScreen',
+                              _receiverScreenScaffoldKey))))
             ]);
         }
         return CircularProgressIndicator();

@@ -175,7 +175,8 @@ class _SenderScreen extends StatelessWidget {
                               state.facebookFriends,
                               currentTest,
                               context,
-                              'senderScreen'))))
+                              'senderScreen',
+                              _senderScreenScaffoldKey))))
             ]);
         }
         return CircularProgressIndicator();

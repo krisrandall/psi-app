@@ -122,8 +122,18 @@ Future<DocumentSnapshot> gotInvitedToTest(testId) async {
   return sharedTestDocumentSnapshot;
 }
 
-List<Widget> buildFacebookFriendsList(
-    List facebookFriends, PsiTest currentTest, BuildContext context, origin) {
+_showSnackBar(scaffoldKey, facebookFriend) {
+  final snackBar = new SnackBar(
+      backgroundColor: Colors.purple,
+      duration: Duration(milliseconds: 1000),
+      content: new Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        CopyText('$facebookFriend invited'),
+      ]));
+  scaffoldKey.currentState.showSnackBar(snackBar);
+}
+
+List<Widget> buildFacebookFriendsList(List facebookFriends, PsiTest currentTest,
+    BuildContext context, origin, scaffoldKey) {
   if (facebookFriends[0] == 'userIsAnonymous') {
     print('user is anonymous, buildFacebookFriends returning []');
     return [
@@ -171,6 +181,7 @@ List<Widget> buildFacebookFriendsList(
             //
             BlocProvider.of<PsiTestSaveBloc>(context)
                 .add(GetFacebookFriendsList(test: currentTest));
+            _showSnackBar(scaffoldKey, friendName);
           }));
       facebookFriendsList.add(SizedBox(height: 10));
     }

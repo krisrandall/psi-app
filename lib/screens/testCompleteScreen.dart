@@ -70,39 +70,45 @@ class TestCompleteScreen extends StatelessWidget {
                                     }
                                   })),
                     ),
-                    Container(
+                    /*  Container(
                         alignment: Alignment.center,
                         color: Colors.white,
                         child: Text('Sender'))
+                  */
                   ])),
               SizedBox(
                 width: 10,
               ),
               Center(
-                child: Stack(
-                    alignment: AlignmentDirectional.bottomCenter,
-                    children: [
-                      Container(
-                        //margin: EdgeInsets.all(20.0),
-                        child: FadeInImage.assetNetwork(
-                            placeholder: 'assets/purple_box.png',
-                            image: correctAnswerUrl,
-                            imageErrorBuilder: (BuildContext context,
-                                    Object exception, StackTrace stacktrace) =>
-                                FutureBuilder(
-                                    future: findValidUrl(
-                                        correctAnswerUrl, exception),
-                                    builder: (context, snapshot) {
-                                      if (!snapshot.hasData)
-                                        return CircularProgressIndicator();
-                                      else {
-                                        print(snapshot.data);
-                                        return Image.network(snapshot.data);
-                                      }
-                                    })),
-                      ),
-                      Container(color: Colors.white, child: Text('Receiver'))
-                    ]),
+                child: Stack(alignment: AlignmentDirectional.center, children: [
+                  Container(
+                    //margin: EdgeInsets.all(20.0),
+                    child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/purple_box.png',
+                        image: correctAnswerUrl,
+                        imageErrorBuilder: (BuildContext context,
+                                Object exception, StackTrace stacktrace) =>
+                            FutureBuilder(
+                                future:
+                                    findValidUrl(correctAnswerUrl, exception),
+                                builder: (context, snapshot) {
+                                  if (!snapshot.hasData)
+                                    return CircularProgressIndicator();
+                                  else {
+                                    print(snapshot.data);
+                                    return Image.network(snapshot.data);
+                                  }
+                                })),
+                  ),
+                  Container(
+                      height: 50,
+                      color: correctAnswer == providedAnswer
+                          ? Colors.green
+                          : Colors.red,
+                      child: Icon(correctAnswer == providedAnswer
+                          ? Icons.check
+                          : Icons.clear)) //child: Text('Receiver'))
+                ]),
               )
             ],
           )));
@@ -122,8 +128,9 @@ class TestCompleteScreen extends StatelessWidget {
                 Container(child: (Text('Receiver received')))
               ]),*/
               ...images,
-              CopyText(
-                  'Test complete, you got $numCorrect right out of ${currentTest.numQuestionsAnswered}'),
+              Center(
+                  child: CopyText(
+                      'Test complete, you got $numCorrect right out of ${currentTest.numQuestionsAnswered}')),
               BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
                   builder: (context, state) {
                 if (state is PsiTestCompleteInProgress)

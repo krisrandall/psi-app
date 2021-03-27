@@ -127,7 +127,7 @@ class _LandingPageState extends State<LandingPage> {
             return TitleText(signinErrorMessage);
           } else if (user != null && signinErrorMessage == '') {
             globalCurrentUser = user;
-            audioCache.loop('psi-bg-music.mp3');
+            // audioCache.loop('psi-bg-music.mp3');
 
             return InviteWrapper('homeScreen');
           } else
