@@ -3,6 +3,7 @@ import 'package:app/components/utils.dart';
 import 'package:app/bloc/psitestsave_bloc.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:app/models/psiTest.dart';
+import 'package:app/screens/inviteWrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/components/textComponents.dart';
@@ -102,12 +103,14 @@ class TestCompleteScreen extends StatelessWidget {
                   ),
                   Container(
                       height: 50,
+                      width: 50,
                       color: correctAnswer == providedAnswer
                           ? Colors.green
                           : Colors.red,
-                      child: Icon(correctAnswer == providedAnswer
-                          ? Icons.check
-                          : Icons.clear)) //child: Text('Receiver'))
+                      child: correctAnswer == providedAnswer
+                          ? Icon(Icons.check, size: 45)
+                          : Icon(Icons.clear,
+                              size: 45)) //child: Text('Receiver'))
                 ]),
               )
             ],
@@ -134,11 +137,20 @@ class TestCompleteScreen extends StatelessWidget {
               BlocBuilder<PsiTestSaveBloc, PsiTestSaveState>(
                   builder: (context, state) {
                 if (state is PsiTestCompleteInProgress)
-                  return Container(child: CircularProgressIndicator());
+                  return Row(children: [
+                    Spacer(),
+                    CircularProgressIndicator(),
+                    Spacer()
+                  ]);
                 else
-                  return Button('OK', () {
-                    goToScreen(context, TableBgWrapper(HomeScreen()));
-                  });
+                  return Row(children: [
+                    Spacer(),
+                    Button('OK', () {
+                      goToScreen(
+                          context, TableBgWrapper(InviteWrapper('homeScreen')));
+                    }),
+                    Spacer()
+                  ]);
               })
             ])));
   }

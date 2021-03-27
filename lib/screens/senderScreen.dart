@@ -89,9 +89,7 @@ class _SenderScreen extends StatelessWidget {
     if (currentTest == null) {
       actionButton = Image.asset("assets/sun_loading_spinner.gif");
       facebookFriends = Container();
-    }
-
-    if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
+    } else if (currentTest.testStatus == PsiTestStatus.UNDERWAY) {
       actionButton = TitleText('Test starting now...');
       Button(
         'Continue Test',

@@ -176,12 +176,12 @@ List<Widget> buildFacebookFriendsList(List facebookFriends, PsiTest currentTest,
                 test: currentTest,
                 facebookFriendID: friendID,
                 facebookFriendName: friendName);
+            _showSnackBar(scaffoldKey, friendName);
             BlocProvider.of<PsiTestSaveBloc>(context).add(event);
             //call Get Facebook Friends List to set State to GetFacebookFriendsListSuccessful and return the list
             //
             BlocProvider.of<PsiTestSaveBloc>(context)
                 .add(GetFacebookFriendsList(test: currentTest));
-            _showSnackBar(scaffoldKey, friendName);
           }));
       facebookFriendsList.add(SizedBox(height: 10));
     }

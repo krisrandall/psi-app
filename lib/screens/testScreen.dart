@@ -66,9 +66,7 @@ class _TestScreen extends StatelessWidget {
     loadTestCompleteScreenIfTestComplete(context, currentTest);
 
     if (currentTest.numQuestionsAnswered == currentTest.questions.length)
-      return Column(
-        children: [Image.asset("assets/sun_loading_spinner.gif")],
-      );
+      return Center(child: Image.asset("assets/sun_loading_spinner.gif"));
     else if (currentTest.myRole == PsiTestRole.SENDER) {
       String imageUrl = currentTest
           .currentQuestion.options[currentTest.currentQuestion.correctAnswer];
