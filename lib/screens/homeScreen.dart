@@ -7,13 +7,13 @@ import 'package:app/models/psiTest.dart';
 import 'package:app/screens/creditsScreen.dart';
 import 'package:app/screens/inviteWrapper.dart';
 import 'package:app/screens/learnMoreScreen.dart';
-import 'package:app/screens/settingsScreen.dart';
 import 'package:app/screens/testScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/screenBackground.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:app/screens/infoScreens.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -26,8 +26,8 @@ class HomeScreen extends StatelessWidget {
           title: Text('𝚿 Psi Telepathy Test'),
           actions: [
             IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: () => goToScreen(context, SettingsScreen()),
+              icon: Icon(Icons.help),
+              onPressed: () => goToScreen(context, SenderAndReceiverInfo()),
             )
           ],
         ),

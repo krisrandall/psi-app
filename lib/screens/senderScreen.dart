@@ -28,7 +28,7 @@ class SenderScreen extends StatelessWidget {
           actions: [
             IconButton(
                 icon: Icon(Icons.help),
-                onPressed: () => goToScreen(context, SenderInfo())),
+                onPressed: () => goToScreen(context, SenderAndReceiverInfo())),
           ],
         ),
         body: LeftBgWrapper(StreamBuilder<QuerySnapshot>(

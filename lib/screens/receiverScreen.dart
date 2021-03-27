@@ -30,7 +30,7 @@ class ReceiverScreen extends StatelessWidget {
           actions: [
             IconButton(
                 icon: Icon(Icons.help),
-                onPressed: () => goToScreen(context, ReceiverInfo())),
+                onPressed: () => goToScreen(context, SenderAndReceiverInfo())),
           ],
         ),
         body: RightBgWrapper(StreamBuilder<QuerySnapshot>(
