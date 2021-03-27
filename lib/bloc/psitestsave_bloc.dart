@@ -68,31 +68,6 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
     yield* _mapSharePsiTestToState(event);
   }
 
-  /*Stream<PsiTestSaveState> _mapCreateShareLinkforPsiTestToState(
-    PsiTestSaveEvent event,
-  ) async* {
-    yield PsiTestCreateShareLinkInProgress();
-    try {
-      var shareTestUrl = await dynamicLink(event.test.testId);
-      print(shareTestUrl);
-      var shortUrl = await shortenLink(shareTestUrl.toString());
-      if (shortUrl == null) {
-        shortUrl = shareTestUrl.toString();
-        print(
-            'URL shortener returned null, maybe free limit exhausted, using the long URL');
-      }
-      print(shortUrl);
-      //Share.share('Take a Telepathy Test with me! $shortUrl');
-      print('shortUrl $shortUrl');
-      
-      print('shared');
-      yield PsiTestSaveShareSuccessful(shortUrl);
-    } catch (_) {
-      print('share failed');
-      yield PsiTestSaveShareFailed(exception: _);
-    }
-  }*/
-
   Stream<PsiTestSaveState> _mapSharePsiTestToState(
     PsiTestSaveEvent event,
   ) async* {
@@ -161,9 +136,16 @@ class PsiTestSaveBloc extends Bloc<PsiTestSaveEvent, PsiTestSaveState> {
         var options = List<String>();
 
         for (int j = 0; j < 4; j++) {
-          // var response = await http.get('$path/$DEFAULT_IMAGE_SIZE');
-          // var imageId = (response.headers['picsum-id']);
-          var imageId = rng.nextInt(1000);
+          int imageId;
+          bool validChoice = false;
+          while (!validChoice) {
+            var rng = new Random();
+            imageId = rng.nextInt(1085);
+            final isBlacklisted = blacklisted
+                .where((brokenLinkEntry) => imageId == brokenLinkEntry);
+            if (isBlacklisted.isNotEmpty) print('blacklisted imageID $imageId');
+            if (isBlacklisted.isEmpty) validChoice = true;
+          }
           options.add('$path/id/$imageId/$DEFAULT_IMAGE_SIZE');
         }
         question = {'options': options, 'correctAnswer': correctAnswer};
