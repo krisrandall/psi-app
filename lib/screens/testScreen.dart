@@ -2,6 +2,7 @@ import 'package:app/bloc/psitestsave_bloc.dart';
 
 import 'package:app/components/livePsiTestStream.dart';
 import 'package:app/components/pictureButton.dart';
+import 'package:app/components/textComponents.dart';
 import 'package:app/components/utils.dart';
 import 'package:app/config.dart';
 import 'package:app/models/psiTest.dart';
@@ -66,7 +67,10 @@ class _TestScreen extends StatelessWidget {
     loadTestCompleteScreenIfTestComplete(context, currentTest);
 
     if (currentTest.numQuestionsAnswered == currentTest.questions.length)
-      return Center(child: Image.asset("assets/sun_loading_spinner.gif"));
+      return Stack(alignment: AlignmentDirectional.center, children: [
+        Image.asset("assets/sun_loading_spinner.gif"),
+        CopyText('calculating score...')
+      ]);
     else if (currentTest.myRole == PsiTestRole.SENDER) {
       String imageUrl = currentTest
           .currentQuestion.options[currentTest.currentQuestion.correctAnswer];
@@ -93,7 +97,7 @@ class _TestScreen extends StatelessWidget {
 // are using random numbers to generate the PsiTest images. Some of the image IDs don't exist
 // the function just takes the image ID (eg 744) and increases it by 1 and then tries that.
 // It keeps going until it gets a different status code to 404
-Future<String> findValidUrl(imageUrl, exception) async {
+/*Future<String> findValidUrl(imageUrl, exception) async {
   int statusCode = 404;
   print('exception $exception');
   String newImageUrl;
@@ -111,7 +115,7 @@ Future<String> findValidUrl(imageUrl, exception) async {
     print('next try using $newImageUrl $statusCode');
   }
   return newImageUrl;
-}
+}*/
 
 class TestQuestionSender extends StatelessWidget {
   final String imageUrl;
@@ -135,8 +139,12 @@ class TestQuestionSender extends StatelessWidget {
                 placeholder: 'assets/white_box.png',
                 image: imageUrl,
                 imageErrorBuilder: (BuildContext context, Object exception,
-                        StackTrace stacktrace) =>
-                    FutureBuilder(
+                    StackTrace stacktrace) {
+                  print(exception);
+                  print(stacktrace);
+                  return Image.network('https://picsum.photos/id/1/400');
+                }),
+            /*FutureBuilder(
                         future: findValidUrl(imageUrl, exception),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData)
@@ -145,7 +153,7 @@ class TestQuestionSender extends StatelessWidget {
                             print(snapshot.data);
                             return Image.network(snapshot.data);
                           }
-                        })),
+                        })),*/
             Padding(
               padding: EdgeInsets.all(30.0),
               child: Text('Concentrate on this image\n\n\n' +

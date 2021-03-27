@@ -26,8 +26,11 @@ class _PictureButtonState extends State<PictureButton> {
                     placeholder: 'assets/white_box.png',
                     image: widget.pictureUrl,
                     imageErrorBuilder: (BuildContext context, Object exception,
-                            StackTrace stacktrace) =>
-                        FutureBuilder(
+                        StackTrace stacktrace) {
+                      print(exception.toString());
+                      return Image.network('https://picsum.photos/id/1/400');
+                    }),
+                /* FutureBuilder(
                             future: findValidUrl(widget.pictureUrl, exception),
                             builder: (context, snapshot) {
                               if (!snapshot.hasData)
@@ -36,7 +39,7 @@ class _PictureButtonState extends State<PictureButton> {
                                 print(snapshot.data);
                                 return Image.network(snapshot.data);
                               }
-                            })),
+                            })),*/
               ),
             )));
   }

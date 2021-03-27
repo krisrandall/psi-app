@@ -59,7 +59,8 @@ class TestCompleteScreen extends StatelessWidget {
                           image: providedAnswerUrl,
                           imageErrorBuilder: (BuildContext context,
                                   Object exception, StackTrace stacktrace) =>
-                              FutureBuilder(
+                              Image.network('https://picsum.photos/id/1/400')),
+                      /*FutureBuilder(
                                   future: findValidUrl(
                                       providedAnswerUrl, exception),
                                   builder: (context, snapshot) {
@@ -69,7 +70,7 @@ class TestCompleteScreen extends StatelessWidget {
                                       print(snapshot.data);
                                       return Image.network(snapshot.data);
                                     }
-                                  })),
+                                  })),*/
                     ),
                     /*  Container(
                         alignment: Alignment.center,
@@ -89,7 +90,8 @@ class TestCompleteScreen extends StatelessWidget {
                         image: correctAnswerUrl,
                         imageErrorBuilder: (BuildContext context,
                                 Object exception, StackTrace stacktrace) =>
-                            FutureBuilder(
+                            Image.network('https://picsum.photos/id/1/400')),
+                    /*FutureBuilder(
                                 future:
                                     findValidUrl(correctAnswerUrl, exception),
                                 builder: (context, snapshot) {
@@ -99,7 +101,7 @@ class TestCompleteScreen extends StatelessWidget {
                                     print(snapshot.data);
                                     return Image.network(snapshot.data);
                                   }
-                                })),
+                                })),*/
                   ),
                   Container(
                       height: 50,
