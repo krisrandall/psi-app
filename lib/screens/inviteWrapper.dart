@@ -1,7 +1,10 @@
 import 'package:app/bloc/psitestsave_bloc.dart';
 import 'package:app/components/button.dart';
+import 'package:app/components/facebook_logic.dart';
 import 'package:app/components/secondaryButton.dart';
 import 'package:app/components/textComponents.dart';
+import 'package:app/components/utils.dart';
+import 'package:app/main.dart';
 import 'package:app/models/psiTest.dart';
 import 'package:app/screens/receiverScreen.dart';
 import 'package:app/screens/senderScreen.dart';
@@ -21,6 +24,19 @@ class InviteWrapper extends StatelessWidget {
   InviteWrapper(this.destination);
   @override
   Widget build(BuildContext context) {
+    // these reset methods are for the (theoretically impossible) situation where a user is logged in but
+    // SharedPreferences hasn't saved a facebookID for them.
+    //
+    void resetFacebookID() async {
+      await signInWithFacebook();
+      goToScreen(context, LandingPage());
+    }
+
+    void resetIsAnon() async {
+      await signInAnonymously();
+      goToScreen(context, LandingPage());
+    }
+
     Future<String> getFacebookID() async {
       SharedPreferences _prefs = await SharedPreferences.getInstance();
       bool isAnon = _prefs.getBool('isAnonymous');
@@ -36,6 +52,18 @@ class InviteWrapper extends StatelessWidget {
             future: getFacebookID(),
             builder: (context, snapshot) {
               String _myFacebookID = snapshot.data;
+              /////if for some reason the user is logged in but Shared Preferences doesnt have their Facebook uid
+              if (_myFacebookID == null)
+                return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CopyText('Something went wrong. Please log in again'),
+                      Button('log in to Facebook', () {
+                        resetFacebookID();
+                      }),
+                      SecondaryButton('no thanks', () => resetIsAnon())
+                    ]);
               if (snapshot.connectionState == ConnectionState.done)
                 return TableBgWrapper(StreamBuilder<QuerySnapshot>(
                     stream: Firestore.instance

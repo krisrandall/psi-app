@@ -195,3 +195,12 @@ List<Widget> buildFacebookFriendsList(List facebookFriends, PsiTest currentTest,
   else*/
   return facebookFriendsList;
 }
+
+Future<void> signInAnonymously() async {
+  try {
+    await saveUserIsAnonymous(true);
+    await FirebaseAuth.instance.signInAnonymously();
+  } catch (e) {
+    print(e);
+  }
+}
